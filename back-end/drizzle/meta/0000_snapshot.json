@@ -1,9 +1,73 @@
 {
-  "id": "7251c1ed-63ba-4dae-b5d6-c7db50196c4d",
+  "id": "2ac7b006-8d9b-4b2b-8bab-a6442eb7893d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.priority": {
+      "name": "priority",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.status": {
+      "name": "status",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.tasks": {
       "name": "tasks",
       "schema": "",
@@ -12,7 +76,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "tasks_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "name": {
           "name": "name",
@@ -44,21 +119,19 @@
           "primaryKey": false,
           "notNull": true
         },
-        "priority": {
-          "name": "priority",
-          "type": "priority",
-          "typeSchema": "public",
+        "task_priority": {
+          "name": "task_priority",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "default": "'medium'"
+          "default": 2
         },
-        "status": {
-          "name": "status",
-          "type": "status",
-          "typeSchema": "public",
+        "task_status": {
+          "name": "task_status",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "default": "'todo'"
+          "default": 3
         },
         "created_at": {
           "name": "created_at",
@@ -120,6 +193,32 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "tasks_task_priority_priority_id_fk": {
+          "name": "tasks_task_priority_priority_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "priority",
+          "columnsFrom": [
+            "task_priority"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tasks_task_status_status_id_fk": {
+          "name": "tasks_task_status_status_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "status",
+          "columnsFrom": [
+            "task_status"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -136,7 +235,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "teams_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "name": {
           "name": "name",
@@ -174,7 +284,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "users_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "name": {
           "name": "name",
@@ -194,6 +315,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "is_verified": {
           "name": "is_verified",
           "type": "boolean",
@@ -212,7 +339,7 @@
           "name": "team_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -253,26 +380,7 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {
-    "public.priority": {
-      "name": "priority",
-      "schema": "public",
-      "values": [
-        "low",
-        "medium",
-        "high"
-      ]
-    },
-    "public.status": {
-      "name": "status",
-      "schema": "public",
-      "values": [
-        "todo",
-        "in_progress",
-        "done"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "roles": {},

@@ -1,49 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DRIZZLE } from 'src/dirzzle/dirzzle.module';
-import { DrizzleDB } from 'src/dirzzle/types/drizzle';
-import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import { users } from '../dirzzle/schema';
+import { UsersRepository } from 'src/repositories/user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) { }
-  async create(createUserDto: CreateUserDto) {
-    return await this.db.insert(users).values(createUserDto);
+  constructor(private usersRepo: UsersRepository) { }
+  create(createUserDto: CreateUserDto) {
+    return this.usersRepo.create(createUserDto);
   }
 
-  async findAll() {
-    return await this.db.select().from(users);
+  findAll() {
+    return this.usersRepo.findAll();
   }
 
-  async findOne(id: number) {
-    return await this.db.query.users.findFirst({
-      where: (users) => users.id.equals(id),
-    });
+  findOne(id: number) {
+    return this.usersRepo.findById(id);
   }
 
-  async findUserByEmail(email: string) {
-    return await this.db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.email, email),
-    });
+  findUserByEmail(email: string) {
+    return this.usersRepo.findByEmail(email);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.usersRepo.update(id, updateUserDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.usersRepo.delete(id);
   }
 
-  async updateHashedRefreshToken(userId: number, hashedRefreshToken: string | null) {
-    return await this.db.query.users.update({
-      where: (users) => users.id.equals(userId),
-      data: {
-        refreshToken: hashedRefreshToken,
-      },
-    });
+  updateHashedRefreshToken(userId: number, hashedRefreshToken: string | null) {
+    // return this.db.query.users.update({
+    //   where: (users) => users.id.equals(userId),
+    //   data: {
+    //     refreshToken: hashedRefreshToken,
+    //   },
+    // });
   }
 
 }

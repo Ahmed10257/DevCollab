@@ -5,6 +5,7 @@ import { DirzzleModule } from './dirzzle/dirzzle.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { TeamModule } from './team/team.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
         ConfigModule.forRoot({
             isGlobal: true,
         }),
+        TeamModule,
 
     ],
     controllers: [AppController],

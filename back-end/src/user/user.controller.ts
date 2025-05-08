@@ -8,13 +8,12 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger/dist/decorators';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 
 @ApiTags('User')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post()
-  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
   @ApiResponse({ status: 400, description: 'Invalid input, object invalid.' })
