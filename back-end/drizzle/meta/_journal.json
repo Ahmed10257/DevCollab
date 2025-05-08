@@ -15,6 +15,20 @@
       "when": 1746695211645,
       "tag": "0001_blushing_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746699275555,
+      "tag": "0002_serious_luminals",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1746699400275,
+      "tag": "0003_mixed_butterfly",
+      "breakpoints": true
     }
   ]
 }
