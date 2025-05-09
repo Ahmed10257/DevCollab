@@ -11,6 +11,7 @@ import { ConfigType } from '@nestjs/config';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import { Inject } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
         private readonly jwtService: JwtService, // Used to create JWT tokens, it comes from the @nestjs/jwt package
         @Inject(refreshJwtConfig.KEY)
         private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
+        private readonly logger: Logger,
     ) { }
 
     async register(createUserDto: CreateUserDto) {
@@ -43,6 +45,7 @@ export class AuthService {
         const isPasswordValid = await bcrypt.compare(dto.password, user.password);
 
         if (!isPasswordValid) {
+            this.logger.error({ msg: 'Wrong Password', user }, 'AuthService');
             throw new UnauthorizedException('Invalid credentials');
         }
 
@@ -52,7 +55,7 @@ export class AuthService {
 
         // store hashed refresh token in DB
         await this.userService.updateHashedRefreshToken(user.id, refreshToken);
-        console.log("User ID: ", user.id);
+        this.logger.log({ msg: 'User logged in', user }, 'AuthService');
         return { accessToken, refreshToken };
     }
 
@@ -103,6 +106,7 @@ export class AuthService {
 
     async signOut(userId: number) {
         await this.userService.updateHashedRefreshToken(userId, null);
+        this.logger.log({ msg: 'User signed out', userId }, 'AuthService');
         return { message: 'User signed out' };
     }
 

@@ -1,12 +1,15 @@
+import { users } from './../dirzzle/schema/user.schema';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from 'src/repositories/user.repository';
+import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class UserService {
-  constructor(private usersRepo: UsersRepository) { }
+  constructor(private usersRepo: UsersRepository, private readonly logger: Logger) { }
   create(createUserDto: CreateUserDto) {
+    this.logger.log({ msg: 'Creating user: ', createUserDto }, 'UserService');
     return this.usersRepo.create(createUserDto);
   }
 
@@ -23,10 +26,12 @@ export class UserService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
+    this.logger.log({ msg: 'Updating user: ', updateUserDto }, 'UserService');
     return this.usersRepo.update(id, updateUserDto);
   }
 
   remove(id: number) {
+    this.logger.log({ msg: 'Deleting user with id: ', id }, 'UserService');
     return this.usersRepo.delete(id);
   }
 

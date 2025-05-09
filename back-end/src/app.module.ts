@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TeamModule } from './team/team.module';
 import { TaskModule } from './task/task.module';
+import { LoggerModule } from 'nestjs-pino';
 
 
 @Module({
@@ -18,6 +19,18 @@ import { TaskModule } from './task/task.module';
         }),
         TeamModule,
         TaskModule,
+        LoggerModule.forRoot({
+            pinoHttp: {
+                transport: {
+                    target: 'pino-pretty',
+                    options: {
+                        translateTime: 'SYS:standard',
+                        colorize: true,
+                        ignore: 'pid,hostname',
+                    },
+                },
+            },
+        }),
 
     ],
     controllers: [AppController],
