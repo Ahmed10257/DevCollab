@@ -7,10 +7,12 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
+import { CatchEverythingFilter } from './exception-filter/global-exception-filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
+    // Use Fastify as the HTTP adapter
     new FastifyAdapter({ logger: false }),
     { bufferLogs: true },
   );
@@ -18,6 +20,10 @@ async function bootstrap() {
   // Enable Pino logger
   app.useLogger(app.get(Logger));
 
+  // Enable Global Exception Filter
+  app.useGlobalFilters(new CatchEverythingFilter(app.get(Logger)));
+
+  // Enable Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
