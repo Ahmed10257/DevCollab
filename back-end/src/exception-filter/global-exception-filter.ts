@@ -1,24 +1,48 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
-import { Logger } from "nestjs-pino";
+import {
+    ArgumentsHost,
+    Catch,
+    ExceptionFilter,
+    HttpException,
+    HttpStatus,
+} from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
 
 @Catch()
 export class CatchEverythingFilter implements ExceptionFilter {
     constructor(private readonly logger: Logger) { }
+
     catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
-        const errorDetails = exception instanceof HttpException ? exception.getResponse() : "Not an HttpException";
-        const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        // Log the error
-        this.logger.error(`${request.method} ${request.originalUrl} ${status} error: ${exception}`);
+        const isHttpException = exception instanceof HttpException;
+        const status = isHttpException
+            ? exception.getStatus()
+            : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        const message = isHttpException
+            ? exception.getResponse()
+            : (exception as any)?.message || 'Unexpected error';
+
+        const stack =
+            typeof exception === 'object' && exception !== null
+                ? (exception as any).stack
+                : undefined;
+
+        this.logger.error({
+            msg: 'Unhandled Exception',
+            method: request.method,
+            url: request.url,
+            statusCode: status,
+            message,
+            stack,
+        });
 
         response.status(status).send({
             statusCode: status,
-            message: errorDetails,
+            message,
             timestamp: new Date().toISOString(),
-        }
-        );
+        });
     }
 }

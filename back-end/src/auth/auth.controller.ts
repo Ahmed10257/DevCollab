@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -13,12 +14,13 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   async login(@Body() loginDto: LoginDto) {
+    console.log('Login DTO from Controller:', loginDto);
     return this.authService.login(loginDto);
   }
 
   @Post('register')
   @ApiOperation({ summary: 'Register user' })
-  async register(@Body() createUserDto: any) {
+  async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
 

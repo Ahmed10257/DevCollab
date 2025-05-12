@@ -37,8 +37,10 @@ export class AuthService {
     }
 
     async login(dto: LoginDto) {
+        console.log('Login DTO:', dto);
         const user = await this.userService.findUserByEmail(dto.email);
         if (!user) {
+            this.logger.error({ msg: 'User not found', email: dto.email }, 'AuthService');
             throw new UnauthorizedException('Invalid credentials');
         }
 

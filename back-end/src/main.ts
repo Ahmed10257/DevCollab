@@ -13,9 +13,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     // Use Fastify as the HTTP adapter
-    new FastifyAdapter({ logger: false }),
-    { bufferLogs: true },
+    new FastifyAdapter({ logger: true }),
+    { bufferLogs: false },
   );
+
+  // Enable CORS
+  app.enableCors({
+    // origin: 'http://localhost:4200',
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+
+  });
 
   // Enable Pino logger
   app.useLogger(app.get(Logger));
