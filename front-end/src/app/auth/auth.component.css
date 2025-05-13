@@ -28,21 +28,57 @@
   width: 50%;
   height: 100%;
   background: linear-gradient(to top right, #6366f1, #a855f7);
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  .slow-spin {
-    animation: spin 20s linear infinite;
+/* Floating blobs */
+.pulse-circle-1 {
+  animation: fadePulse 4s ease-in-out infinite;
+}
+
+.pulse-circle-2 {
+  animation: fadePulse 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* Slow logo rotation */
+.slow-spin {
+  animation: spin 15s linear infinite;
+}
+
+/* Brand slide-in */
+.animate-slide-in-up {
+  animation: slideInUp 0.8s ease-out;
+}
+
+/* Keyframes */
+@keyframes fadePulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
   }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
 
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

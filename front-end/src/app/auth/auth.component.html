@@ -1,15 +1,17 @@
-<div class="auth-container">
-  <div class="auth-wrapper" [class.move-left]="activePanel === 'register'">
-    <!-- Login Panel -->
-    <div class="auth-panel login-panel">
-      <app-login (switchToRegister)="switchPanel('register')"></app-login>
-    </div>
-
-    <!-- Register Panel -->
-    <div class="auth-panel register-panel">
-      <app-register (switchToLogin)="switchPanel('login')"></app-register>
-    </div>
+<div
+  class="min-h-screen flex flex-col md:flex-row bg-[#f9faff] overflow-hidden relative"
+>
+  <!-- Left Side -->
+  <div
+    class="w-full md:w-1/2 flex flex-col justify-center items-start px-16 py-12 z-10"
+  >
+    @if (currentRoute == "login") {
+    <div class="w-full"><app-login></app-login></div>
+    } @else {
+    <div class="w-full"><app-register></app-register></div>
+    }
   </div>
+
   <!-- Branding Section -->
   <div class="branding-panel">
     <!-- Floating gradient blobs -->
@@ -25,8 +27,12 @@
     >
       <img src="assets/images/logo.png" alt="" class="w-sm slow-spin" />
       <div class="flex flex-col items-start ms-3">
-        <h1 class="text-8xl font-extrabold tracking-tight">DevCollab</h1>
-        <p class="text-3xl font-medium tracking-wide opacity-90 ps-3">
+        <h1 class="text-8xl font-extrabold tracking-tight text-amber-50">
+          DevCollab
+        </h1>
+        <p
+          class="text-3xl font-medium tracking-wide opacity-90 ps-3 text-amber-50"
+        >
           Unit Teams
         </p>
       </div>

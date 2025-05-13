@@ -37,24 +37,3 @@
     transform: scale(1.05);
   }
 }
-
-/* First circle */
-.pulse-circle-1 {
-  animation: fadePulse 4s ease-in-out infinite;
-}
-
-/* Second circle with delay */
-.pulse-circle-2 {
-  animation: fadePulse 4s ease-in-out infinite;
-  animation-delay: 2s;
-}
-
-.slow-spin {
-  animation: spin 15s linear infinite;
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}

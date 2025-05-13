@@ -62,6 +62,9 @@
       <span>Already have an account? </span>
       <a
         (click)="switchToLogin.emit()"
+        routerLink="/auth/login"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
         class="text-green-600 hover:underline cursor-pointer"
         >Login</a
       >

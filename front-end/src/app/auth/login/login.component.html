@@ -46,7 +46,11 @@
       <!-- Sign Up -->
       <div class="text-center text-sm mt-4">
         <span>Don't have an account? </span>
-        <a routerLink="/auth/signup" class="text-blue-600 hover:underline"
+        <a
+          routerLink="/auth/register"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-blue-600 hover:underline"
           >Sign Up</a
         >
       </div>
