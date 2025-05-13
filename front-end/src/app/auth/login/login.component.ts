@@ -1,16 +1,15 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/services/auth.service';
+
 @Component({
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  selector: 'app-login',
+  imports: [ReactiveFormsModule],
   providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

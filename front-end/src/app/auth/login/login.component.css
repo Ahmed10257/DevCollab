@@ -1,0 +1,60 @@
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+@keyframes slide-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-slide-in-up {
+  animation: slide-in-up 1.5s ease-out;
+}
+
+@keyframes fadePulse {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+/* First circle */
+.pulse-circle-1 {
+  animation: fadePulse 4s ease-in-out infinite;
+}
+
+/* Second circle with delay */
+.pulse-circle-2 {
+  animation: fadePulse 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.slow-spin {
+  animation: spin 15s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

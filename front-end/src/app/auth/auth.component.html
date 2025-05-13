@@ -1,0 +1,35 @@
+<div class="auth-container">
+  <div class="auth-wrapper" [class.move-left]="activePanel === 'register'">
+    <!-- Login Panel -->
+    <div class="auth-panel login-panel">
+      <app-login (switchToRegister)="switchPanel('register')"></app-login>
+    </div>
+
+    <!-- Register Panel -->
+    <div class="auth-panel register-panel">
+      <app-register (switchToLogin)="switchPanel('login')"></app-register>
+    </div>
+  </div>
+  <!-- Branding Section -->
+  <div class="branding-panel">
+    <!-- Floating gradient blobs -->
+    <div
+      class="absolute w-120 h-120 bg-fuchsia-300 opacity-10 rounded-full top-[-4rem] right-[-4rem] blur-3xl pulse-circle-1"
+    ></div>
+    <div
+      class="absolute w-130 h-130 bg-fuchsia-400 opacity-10 rounded-full bottom-[5%] left-[1%] blur-3xl pulse-circle-2"
+    ></div>
+
+    <div
+      class="text-center animate-slide-in-up flex flex-row items-center z-20"
+    >
+      <img src="assets/images/logo.png" alt="" class="w-sm slow-spin" />
+      <div class="flex flex-col items-start ms-3">
+        <h1 class="text-8xl font-extrabold tracking-tight">DevCollab</h1>
+        <p class="text-3xl font-medium tracking-wide opacity-90 ps-3">
+          Unit Teams
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

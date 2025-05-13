@@ -6,11 +6,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent),
+        loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent),
       },
       {
         path: 'register',
-        loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent),
+        loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent),
       }
     ]
   }
