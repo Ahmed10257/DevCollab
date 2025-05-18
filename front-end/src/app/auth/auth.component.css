@@ -1,5 +1,7 @@
 .auth-container {
   display: flex;
+  justify-content: end;
+  align-items: center;
   position: relative;
   width: 100%;
   height: 100vh;
@@ -19,6 +21,10 @@
 
 .move-left {
   transform: translateX(-50%);
+}
+
+.move-right {
+  transform: translateX(50%);
 }
 
 .branding-panel {

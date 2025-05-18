@@ -1,40 +1,48 @@
-<div
-  class="min-h-screen flex flex-col md:flex-row bg-[#f9faff] overflow-hidden relative"
->
-  <!-- Left Side -->
+<div class="auth-container">
+  <!-- Wrapper that shifts left/right -->
   <div
-    class="w-full md:w-1/2 flex flex-col justify-center items-start px-16 py-12 z-10"
+    class="auth-wrapper"
+    [ngClass]="{
+      'shift-left': currentRoute === 'register',
+      'shift-right': currentRoute === 'login'
+    }"
   >
-    @if (currentRoute == "login") {
-    <div class="w-full"><app-login></app-login></div>
-    } @else {
-    <div class="w-full"><app-register></app-register></div>
-    }
-  </div>
+    <!-- Form Panel -->
+    <div class="auth-panel form-panel">
+      <ng-container *ngIf="currentRoute === 'login'; else registerForm">
+        <app-login></app-login>
+      </ng-container>
+      <ng-template #registerForm>
+        <app-register></app-register>
+      </ng-template>
+    </div>
 
-  <!-- Branding Section -->
-  <div class="branding-panel">
-    <!-- Floating gradient blobs -->
-    <div
-      class="absolute w-120 h-120 bg-fuchsia-300 opacity-10 rounded-full top-[-4rem] right-[-4rem] blur-3xl pulse-circle-1"
-    ></div>
-    <div
-      class="absolute w-130 h-130 bg-fuchsia-400 opacity-10 rounded-full bottom-[5%] left-[1%] blur-3xl pulse-circle-2"
-    ></div>
-
-    <div
-      class="text-center animate-slide-in-up flex flex-row items-center z-20"
-    >
-      <img src="assets/images/logo.png" alt="" class="w-sm slow-spin" />
-      <div class="flex flex-col items-start ms-3">
-        <h1 class="text-8xl font-extrabold tracking-tight text-amber-50">
-          DevCollab
-        </h1>
-        <p
-          class="text-3xl font-medium tracking-wide opacity-90 ps-3 text-amber-50"
-        >
-          Unit Teams
-        </p>
+    <!-- Branding Panel -->
+    <div class="auth-panel branding-panel">
+      <div
+        class="absolute w-120 h-120 bg-fuchsia-300 opacity-10 rounded-full top-[-4rem] right-[-4rem] blur-3xl pulse-circle-1"
+      ></div>
+      <div
+        class="absolute w-130 h-130 bg-fuchsia-400 opacity-10 rounded-full bottom-[5%] left-[1%] blur-3xl pulse-circle-2"
+      ></div>
+      <div
+        class="text-center animate-slide-in-up flex flex-row items-center z-20"
+      >
+        <img
+          src="assets/images/logo.png"
+          alt="DevCollab Logo"
+          class="w-sm slow-spin"
+        />
+        <div class="flex flex-col items-start ms-3">
+          <h1 class="text-8xl font-extrabold tracking-tight text-amber-50">
+            DevCollab
+          </h1>
+          <p
+            class="text-3xl font-medium tracking-wide opacity-90 ps-3 text-amber-50"
+          >
+            Unit Teams
+          </p>
+        </div>
       </div>
     </div>
   </div>

@@ -17,22 +17,21 @@ export class AuthComponent {
   currentRoute: 'login' | 'register' = 'login';
 
   constructor(private router: Router) {
+    // Set initial route
+    this.updateCurrentRoute(this.router.url);
+
+    // Subscribe to route changes
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.updateCurrentRoute(this.router.url);
+        this.updateCurrentRoute(event.urlAfterRedirects);
       }
     });
-
-    // Also set it initially
-    this.updateCurrentRoute(this.router.url);
   }
 
   private updateCurrentRoute(url: string): void {
     this.currentRoute = url.includes('register') ? 'register' : 'login';
   }
 
-  // Optional: if you want to switch manually (e.g. with a button click)
-  switchTo(route: 'login' | 'register') {
-    this.router.navigate([`/auth/${route}`]);
-  }
+
+
 }
