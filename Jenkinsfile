@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Clone Repo') {
       steps {
-        git url: 'https://github.com/Ahmed10257/DevCollab
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git'
       }
     }
 
