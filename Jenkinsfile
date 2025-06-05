@@ -9,8 +9,7 @@ pipeline {
   stages {
     stage('Clone Repo') {
       steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git'
-      }
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'      }
     }
 
     stage('Build Docker Images') {
