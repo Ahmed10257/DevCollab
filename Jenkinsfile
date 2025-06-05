@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   environment {
-    COMPOSE_FILE = 'docker-compose.yml'
+    IMAGE_FRONTEND = 'devcollab-frontend'
+    IMAGE_BACKEND  = 'devcollab-backend'
   }
 
   stages {
@@ -12,16 +13,21 @@ pipeline {
       }
     }
 
-    stage('Build Images') {
+    stage('Build Docker Images') {
       steps {
-        sh 'docker-compose build'
+        dir('frontend') {
+          sh "docker build -t $IMAGE_FRONTEND ."
+        }
+        dir('backend') {
+          sh "docker build -t $IMAGE_BACKEND ."
+        }
       }
     }
 
-    stage('Deploy') {
+    stage('Deploy to Kubernetes') {
       steps {
-        sh 'docker-compose down || true'
-        sh 'docker-compose up -d'
+        sh 'kubectl apply -f k8s/frontend-deployment.yaml'
+        sh 'kubectl apply -f k8s/backend-deployment.yaml'
       }
     }
   }

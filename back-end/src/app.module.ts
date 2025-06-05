@@ -14,11 +14,11 @@ import { LoggerModule } from 'nestjs-pino';
     imports: [
         DirzzleModule,
         UserModule, AuthModule,
+        TeamModule,
+        TaskModule,
         ConfigModule.forRoot({
             isGlobal: true,
         }),
-        TeamModule,
-        TaskModule,
         LoggerModule.forRoot({
             pinoHttp: {
                 transport: {
