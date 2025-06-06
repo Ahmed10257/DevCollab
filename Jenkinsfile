@@ -14,11 +14,11 @@ pipeline {
 
     stage('Build Docker Images') {
       steps {
-        dir('frontend') {
-          sh "docker build -t $IMAGE_FRONTEND ./front-end"
+        dir('front-end') {
+          sh "docker build -t $IMAGE_FRONTEND ."
         }
-        dir('backend') {
-          sh "docker build -t $IMAGE_BACKEND ./back-end"
+        dir('back-end') {
+          sh "docker build -t $IMAGE_BACKEND ."
         }
       }
     }
