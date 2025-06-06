@@ -15,10 +15,10 @@ pipeline {
     stage('Build Docker Images') {
       steps {
         dir('frontend') {
-          sh "docker build -t $IMAGE_FRONTEND ."
+          sh "docker build -t $IMAGE_FRONTEND ./front-end"
         }
         dir('backend') {
-          sh "docker build -t $IMAGE_BACKEND ."
+          sh "docker build -t $IMAGE_BACKEND ./back-end"
         }
       }
     }
