@@ -12,15 +12,17 @@ pipeline {
         git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'      }
     }
 
+    stage('Debug') {
+      steps {
+        sh 'pwd && ls -l'
+        }
+    }
+
     stage('Build Docker Images') {
       steps {
-        dir('front-end') {
-          sh "docker build -t $IMAGE_FRONTEND ."
+        sh "docker build -t $IMAGE_FRONTEND ./front-end"
+        sh "docker build -t $IMAGE_BACKEND ./back-end"
         }
-        dir('back-end') {
-          sh "docker build -t $IMAGE_BACKEND ."
-        }
-      }
     }
 
     stage('Deploy to Kubernetes') {
