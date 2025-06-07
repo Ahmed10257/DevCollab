@@ -15,6 +15,7 @@ pipeline {
     stage('Debug') {
       steps {
         sh 'pwd && ls -l'
+        sh 'ls -l ./front-end'
         }
     }
 
