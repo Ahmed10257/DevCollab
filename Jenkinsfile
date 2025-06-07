@@ -21,7 +21,7 @@ pipeline {
     stage('Start BuildKit Daemon') {
       steps {
         sh 'mkdir -p /run/buildkit && buildkitd --oci-worker=false --containerd-worker=true --addr=unix:///run/buildkit/buildkitd.sock &'
-         sh 'sleep 5'
+        sh 'sleep 5'
         }
     }
 
