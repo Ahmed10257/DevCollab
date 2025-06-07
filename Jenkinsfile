@@ -29,9 +29,9 @@ pipeline {
 
     stage('Build ContainerD Images') {
       steps {
-        sh "nerdctl build  -t devcollab-frontend:latest ./front-end"
-        sh "nerdctl build  -t devcollab-backend:latest ./back-end"
-        }
+        sh 'BUILDKIT_HOST=unix:///run/buildkit/buildkitd.sock nerdctl --namespace k8s.io build -t devcollab-frontend:latest ./front-end'
+        sh 'BUILDKIT_HOST=unix:///run/buildkit/buildkitd.sock nerdctl --namespace k8s.io build -t devcollab-backend:latest ./back-end'
+      }
     }
 
     stage('Deploy to Kubernetes') {
