@@ -15,6 +15,7 @@ spec:
       containers:
         - name: backend
           image: devcollab-backend:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
 ---
