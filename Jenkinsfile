@@ -20,8 +20,8 @@ pipeline {
 
     stage('Build Docker Images') {
       steps {
-        sh "docker build -t $IMAGE_FRONTEND ./front-end"
-        sh "docker build -t $IMAGE_BACKEND ./back-end"
+        sh "nerdctl build -t devcollab-frontend:latest ./front-end"
+        sh "nerdctl build -t devcollab-backend:latest ./back-end"
         }
     }
 
