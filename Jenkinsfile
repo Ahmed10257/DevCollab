@@ -18,7 +18,15 @@ pipeline {
         }
     }
 
-    stage('Build Docker Images') {
+    stage('Start BuildKit Daemon') {
+      steps {
+        sh 'mkdir -p /run/buildkit && buildkitd --oci-worker=false --containerd-worker=true --addr=unix:///run/buildkit/buildkitd.sock &'
+         sh 'sleep 5'
+        }
+    }
+
+
+    stage('Build ContainerD Images') {
       steps {
         sh "nerdctl build -t devcollab-frontend:latest ./front-end"
         sh "nerdctl build -t devcollab-backend:latest ./back-end"
