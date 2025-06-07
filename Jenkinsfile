@@ -29,8 +29,8 @@ pipeline {
 
     stage('Build ContainerD Images') {
       steps {
-        sh "nerdctl build --address /run/containerd/containerd.sock build -t devcollab-frontend:latest ./front-end"
-        sh "nerdctl build --address /run/containerd/containerd.sock build -t devcollab-backend:latest ./back-end"
+        sh "nerdctl build --address /run/containerd/containerd.sock -t devcollab-frontend:latest ./front-end"
+        sh "nerdctl build --address /run/containerd/containerd.sock -t devcollab-backend:latest ./back-end"
         }
     }
 
