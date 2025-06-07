@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: devcollab-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: devcollab-frontend
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
 ---
