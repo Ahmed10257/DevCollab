@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: devcollab-backend:latest
+          image: docker.io/ahmed10257/devcollab-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
