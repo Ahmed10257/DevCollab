@@ -23,8 +23,8 @@ pipeline {
       steps {
           script {
             def builds = [
-              [name: 'frontend', dir: './front-end'],
-              [name: 'backend', dir: './back-end']
+              [name: 'frontend', dir: './front-end', subdir: 'frontend'],
+              [name: 'backend', dir: './back-end', subdir: 'backend']
             ]
 
             for (def build : builds) {
@@ -38,7 +38,7 @@ pipeline {
                       "name": "kaniko",
                       "image": "gcr.io/kaniko-project/executor:latest",
                       "args": [
-                        "--context=git://github.com/ahmed10257/DevCollab.git#main",
+                        "--context=git://github.com/ahmed10257/DevCollab.git#main:${build.subdir}",
                         "--dockerfile=${build.dir}/Dockerfile",
                         "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
                         "--verbosity=info"
