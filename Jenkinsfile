@@ -21,7 +21,6 @@ pipeline {
 
     stage('Build and Push Images with Kaniko') {
       steps {
-        // container(name: 'jnlp') { // Optional depending on how your Jenkinsfile is configured
           script {
             def builds = [
               [name: 'frontend', dir: './front-end'],
