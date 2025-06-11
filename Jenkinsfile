@@ -19,19 +19,12 @@ pipeline {
         }
     }
 
-    stage('Check Git Subdirs') {
-      steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
-        sh 'ls -l && ls -l front-end && ls -l back-end'
-      }
-}
-
     stage('Build and Push Images with Kaniko') {
       steps {
           script {
             def builds = [
-              [name: 'frontend', dir: 'front-end'],
-              [name: 'backend', dir: 'back-end']
+              [name: 'frontend', dir: './front-end'],
+              [name: 'backend', dir: './back-end']
             ]
 
             for (def build : builds) {
@@ -45,8 +38,8 @@ pipeline {
                       "name": "kaniko",
                       "image": "gcr.io/kaniko-project/executor:latest",
                       "args": [
-                        "--context=git://github.com/ahmed10257/DevCollab.git#main:${build.dir}",
-                        "--dockerfile=Dockerfile",
+                        "--context=git://github.com/ahmed10257/DevCollab.git#main",
+                        "--dockerfile=${build.dir}/Dockerfile",
                         "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
                         "--verbosity=info"
                       ],
