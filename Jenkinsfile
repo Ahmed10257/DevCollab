@@ -1,5 +1,26 @@
 pipeline {
-  agent any
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: regcred
+"""
+    }
+  }
 
   environment {
     IMAGE_FRONTEND = 'devcollab-frontend'
@@ -9,22 +30,17 @@ pipeline {
   stages {
     stage('Clone Repo') {
       steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'      }
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
+      }
     }
 
     stage('Debug') {
       steps {
         sh 'pwd && ls -l'
         sh 'ls -l ./front-end'
-        }
-    }
-
-    stage('Check Git Subdirs') {
-      steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
-        sh 'ls -l && ls -l front-end && ls -l back-end'
+        sh 'ls -l ./back-end'
       }
-}
+    }
 
     stage('Build Images with Kaniko') {
       steps {
@@ -41,7 +57,8 @@ pipeline {
                 --context=/workspace/${build.dir} \
                 --dockerfile=/workspace/${build.dir}/Dockerfile \
                 --destination=docker.io/ahmed10257/devcollab-${build.name}:latest \
-                --verbosity=info
+                --verbosity=info \
+                --skip-tls-verify
               """
             }
           }
