@@ -39,7 +39,7 @@ pipeline {
                       "image": "gcr.io/kaniko-project/executor:latest",
                       "args": [
                         "--context=git://github.com/ahmed10257/DevCollab.git#main",
-                        "--dockerfile=${build.subdir}/Dockerfile",
+                        "--dockerfile=Dockerfile",
                         "--context-sub-path=${build.dir}",
                         "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
                         "--verbosity=info"
