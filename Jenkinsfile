@@ -26,52 +26,28 @@ pipeline {
       }
 }
 
-    stage('Build and Push Images with Kaniko') {
+    stage('Build Images with Kaniko') {
       steps {
+        container('kaniko') {
           script {
             def builds = [
-              [name: 'frontend', dir: './front-end'],
-              [name: 'backend', dir: './back-end']
+              [name: 'frontend', dir: 'front-end'],
+              [name: 'backend', dir: 'back-end']
             ]
 
             for (def build : builds) {
               sh """
-              kubectl run kaniko-${build.name} --rm -i --restart=Never --namespace=default \
-                --image=gcr.io/kaniko-project/executor:latest \
-                --overrides='{
-                  "apiVersion": "v1",
-                  "spec": {
-                    "containers": [{
-                      "name": "kaniko",
-                      "image": "gcr.io/kaniko-project/executor:latest",
-                      "args": [
-                        "--context=git://github.com/ahmed10257/DevCollab.git#main",
-                        "--dockerfile=${build.dir}Dockerfile",
-                        "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
-                        "--verbosity=info"
-                      ],
-                      "volumeMounts": [{
-                        "name": "kaniko-secret",
-                        "mountPath": "/kaniko/.docker"
-                      }]
-                    }],
-                    "volumes": [{
-                      "name": "kaniko-secret",
-                      "secret": {
-                        "secretName": "regcred",
-                        "items": [{
-                          "key": ".dockerconfigjson",
-                          "path": "config.json"
-                        }]
-                      }
-                    }]
-                  }
-                }'
+              /kaniko/executor \
+                --context=/workspace/${build.dir} \
+                --dockerfile=/workspace/${build.dir}/Dockerfile \
+                --destination=docker.io/ahmed10257/devcollab-${build.name}:latest \
+                --verbosity=info
               """
             }
           }
-  }
-}
+        }
+      }
+    }
 
     stage('Deploy to Kubernetes') {
       steps {
