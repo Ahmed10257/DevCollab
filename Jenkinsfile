@@ -19,20 +19,54 @@ pipeline {
         }
     }
 
-    stage('Start BuildKit Daemon') {
+    stage('Build and Push Images with Kaniko') {
       steps {
-        sh 'mkdir -p /run/buildkit && buildkitd --oci-worker=false --containerd-worker=true --addr=unix:///run/buildkit/buildkitd.sock &'
-        sh 'sleep 5'
+        container(name: 'jnlp') { // Optional depending on how your Jenkinsfile is configured
+          script {
+            def builds = [
+              [name: 'frontend', dir: './front-end'],
+              [name: 'backend', dir: './back-end']
+            ]
+
+            for (def build : builds) {
+              sh """
+              kubectl run kaniko-${build.name} --rm -i --restart=Never --namespace=default \
+                --image=gcr.io/kaniko-project/executor:latest \
+                --overrides='{
+                  "apiVersion": "v1",
+                  "spec": {
+                    "containers": [{
+                      "name": "kaniko",
+                      "image": "gcr.io/kaniko-project/executor:latest",
+                      "args": [
+                        "--context=dir://${build.dir}",
+                        "--dockerfile=${build.dir}/Dockerfile",
+                        "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
+                        "--verbosity=info"
+                      ],
+                      "volumeMounts": [{
+                        "name": "kaniko-secret",
+                        "mountPath": "/kaniko/.docker"
+                      }]
+                    }],
+                    "volumes": [{
+                      "name": "kaniko-secret",
+                      "secret": {
+                        "secretName": "regcred",
+                        "items": [{
+                          "key": ".dockerconfigjson",
+                          "path": "config.json"
+                        }]
+                      }
+                    }]
+                  }
+                }'
+              """
+            }
+          }
         }
-    }
-
-
-    stage('Build ContainerD Images') {
-      steps {
-        sh 'BUILDKIT_HOST=unix:///run/buildkit/buildkitd.sock nerdctl --namespace k8s.io build -t devcollab-frontend:latest ./front-end'
-        sh 'BUILDKIT_HOST=unix:///run/buildkit/buildkitd.sock nerdctl --namespace k8s.io build -t devcollab-backend:latest ./back-end'
-      }
-    }
+  }
+}
 
     stage('Deploy to Kubernetes') {
       steps {
