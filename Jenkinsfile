@@ -28,7 +28,7 @@ pipeline {
 
     stage('Build Images with Kaniko') {
       steps {
-        container('kaniko') {
+        // container('kaniko') {
           script {
             def builds = [
               [name: 'frontend', dir: 'front-end'],
@@ -45,7 +45,7 @@ pipeline {
               """
             }
           }
-        }
+        // }
       }
     }
 
