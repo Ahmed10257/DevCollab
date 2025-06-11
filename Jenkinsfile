@@ -40,7 +40,7 @@ pipeline {
                       "args": [
                         "--context=git://github.com/ahmed10257/DevCollab.git#main",
                         "--dockerfile=${build.subdir}/Dockerfile",
-                        "--context-sub-path="${build.subdir}",
+                        "--context-sub-path=${build.subdir}",
                         "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
                         "--verbosity=info"
                       ],
