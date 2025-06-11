@@ -19,6 +19,13 @@ pipeline {
         }
     }
 
+    stage('Check Git Subdirs') {
+      steps {
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
+        sh 'ls -l && ls -l front-end && ls -l back-end'
+      }
+}
+
     stage('Build and Push Images with Kaniko') {
       steps {
           script {
