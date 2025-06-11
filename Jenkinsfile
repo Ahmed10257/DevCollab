@@ -1,26 +1,5 @@
 pipeline {
-  agent {
-    kubernetes {
-      yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: kaniko
-      image: gcr.io/kaniko-project/executor:latest
-      command:
-        - cat
-      tty: true
-      volumeMounts:
-        - name: docker-config
-          mountPath: /kaniko/.docker
-  volumes:
-    - name: docker-config
-      secret:
-        secretName: regcred
-"""
-    }
-  }
+  agent any
 
   environment {
     IMAGE_FRONTEND = 'devcollab-frontend'
@@ -30,21 +9,25 @@ spec:
   stages {
     stage('Clone Repo') {
       steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
-      }
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'      }
     }
 
     stage('Debug') {
       steps {
         sh 'pwd && ls -l'
         sh 'ls -l ./front-end'
-        sh 'ls -l ./back-end'
-      }
+        }
     }
 
-    stage('Build Images with Kaniko') {
+    stage('Check Git Subdirs') {
       steps {
-        container('kaniko') {
+        git credentialsId: 'github-creds', url: 'https://github.com/Ahmed10257/DevCollab.git', branch: 'main'
+        sh 'ls -l && ls -l front-end && ls -l back-end'
+      }
+}
+
+    stage('Build and Push Images with Kaniko') {
+      steps {
           script {
             def builds = [
               [name: 'frontend', dir: 'front-end'],
@@ -53,18 +36,42 @@ spec:
 
             for (def build : builds) {
               sh """
-              /kaniko/executor \
-                --context=/workspace/${build.dir} \
-                --dockerfile=/workspace/${build.dir}/Dockerfile \
-                --destination=docker.io/ahmed10257/devcollab-${build.name}:latest \
-                --verbosity=info \
-                --skip-tls-verify
+              kubectl run kaniko-${build.name} --rm -i --restart=Never --namespace=default \
+                --image=gcr.io/kaniko-project/executor:latest \
+                --overrides='{
+                  "apiVersion": "v1",
+                  "spec": {
+                    "containers": [{
+                      "name": "kaniko",
+                      "image": "gcr.io/kaniko-project/executor:latest",
+                      "args": [
+                        "--context=git://github.com/ahmed10257/DevCollab.git#main:${build.dir}",
+                        "--dockerfile=Dockerfile",
+                        "--destination=docker.io/ahmed10257/devcollab-${build.name}:latest",
+                        "--verbosity=info"
+                      ],
+                      "volumeMounts": [{
+                        "name": "kaniko-secret",
+                        "mountPath": "/kaniko/.docker"
+                      }]
+                    }],
+                    "volumes": [{
+                      "name": "kaniko-secret",
+                      "secret": {
+                        "secretName": "regcred",
+                        "items": [{
+                          "key": ".dockerconfigjson",
+                          "path": "config.json"
+                        }]
+                      }
+                    }]
+                  }
+                }'
               """
             }
           }
-        }
-      }
-    }
+  }
+}
 
     stage('Deploy to Kubernetes') {
       steps {
