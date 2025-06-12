@@ -21,4 +21,5 @@ RUN npm install --omit=dev
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "npx drizzle-kit push && npm run start:prod"]
+
