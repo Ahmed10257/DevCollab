@@ -1,23 +1,24 @@
-# Stage 1: Build
-FROM node:18 AS build
+# Stage 1: Build the NestJS app
+FROM node:18 AS builder
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Expose the application port
+# Stage 2: Run the app
+FROM node:18-slim
+
+WORKDIR /app
+
+# Only copy what's needed for production
+COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm install --omit=dev
+
 EXPOSE 3000
 
-# Start the atd service and the application
-CMD ["sh", "-c", "npm run start:prod"]
+CMD ["node", "dist/main"]
