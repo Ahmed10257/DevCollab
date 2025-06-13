@@ -14,7 +14,7 @@ FROM node:18-slim
 
 WORKDIR /app
 # Debugging step
-RUN echo "=== DEBUG FILE STRUCTURE ===" && find /app
+RUN echo "=== DEBUG FILE STRUCTURE ===" && ls /app
 
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
