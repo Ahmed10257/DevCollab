@@ -16,7 +16,7 @@ WORKDIR /app
 
 # Only copy what's needed for production
 COPY --from=builder /app/dist ./dist
-COPY ./dist/drizzle.config.json ./drizzle.config.json
+COPY ./dist/drizzle.config.js ./drizzle.config.js
 COPY migrations ./migrations
 COPY package*.json ./
 RUN npm install --omit=dev
