@@ -33,5 +33,5 @@ RUN npm install --omit=dev
 EXPOSE 3000
 
 # Run migration and start the app
-CMD ["sh", "-c", "npx drizzle-kit push && npm run start:prod"]
+CMD ["npm", "run", "start:prod"]
         
