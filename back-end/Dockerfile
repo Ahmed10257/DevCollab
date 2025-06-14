@@ -16,11 +16,11 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
+# Debug step
+RUN echo "=== FILES IN /app ===" && find /app
 COPY --from=builder /app/dist/drizzle.config.js ./drizzle.config.js
 COPY migrations ./migrations
 
-# Debug step
-RUN echo "=== FILES IN /app ===" && find /app
 
 RUN npm install --omit=dev
 
