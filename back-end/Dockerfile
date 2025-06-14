@@ -16,9 +16,10 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
+COPY drizzle.config.js ./
 # Debug step
 RUN echo "=== FILES IN /app ===" && find /app
-COPY --from=builder /app/dist/drizzle.config.js ./drizzle.config.js
+# COPY --from=builder /app/dist/drizzle.config.js ./drizzle.config.js
 COPY migrations ./migrations
 
 
