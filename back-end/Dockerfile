@@ -30,8 +30,6 @@ COPY --from=builder /app/drizzle.config.js ./drizzle.config.js
 # Install only production dependencies
 RUN npm install --omit=dev
 
-RUN ls -l ./src/drizzle/schema
-
 EXPOSE 3000
 
 # Run migration and start the app
