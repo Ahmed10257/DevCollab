@@ -19,6 +19,15 @@ pipeline {
         }
     }
 
+    stage('Drizzle Push') {
+      steps {
+        dir('back-end') {
+          sh 'npm ci'
+          sh 'npx drizzle-kit push'
+        }
+      }
+    }
+
     stage('Build and Push Images with Kaniko') {
       steps {
           script {
