@@ -4,7 +4,7 @@ import 'dotenv/config';
 // and types. It is not used in the production code.
 
 export default defineConfig({
-    schema: './src/drizzle/schema/**.ts',
+    schema: './dist/drizzle/schema/**.ts',
     out: './drizzle',
     dialect: 'postgresql',
     dbCredentials: {
