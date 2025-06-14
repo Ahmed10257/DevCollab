@@ -13,18 +13,16 @@ RUN npm run build
 FROM node:18-slim
 
 WORKDIR /app
-# Debugging step
-RUN echo "=== DEBUG FILE STRUCTURE ===" && ls /app
 
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
-RUN npm install --omit=dev
-
-
-# Copy drizzle config and migrations
-COPY drizzle.config.json ./drizzle.config.json
+COPY --from=builder /app/dist/drizzle.config.js ./drizzle.config.js
 COPY migrations ./migrations
 
+# Debug step
+RUN echo "=== FILES IN /app ===" && find /app
+
+RUN npm install --omit=dev
 
 EXPOSE 3000
 
