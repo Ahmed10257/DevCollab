@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { DrizzleDB } from "src/dirzzle/types/drizzle";
-import { tasks } from "src/dirzzle/schema/task.schema";
+import { DrizzleDB } from "src/drizzle/types/drizzle";
+import { tasks } from "src/drizzle/schema/task.schema";
 import { eq } from "drizzle-orm";
-import { DRIZZLE } from "src/dirzzle/dirzzle.module";
+import { DRIZZLE } from "src/drizzle/drizzle.module";
 import { Inject } from "@nestjs/common/decorators/core/inject.decorator";
 import { CreateTaskDto } from "src/task/dto/create-task.dto";
 import { UpdateTaskDto } from "src/task/dto/update-task.dto";

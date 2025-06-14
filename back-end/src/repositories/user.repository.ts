@@ -1,10 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { users } from '../dirzzle/schema/user.schema';
-import { DrizzleDB } from 'src/dirzzle/types/drizzle';
+import { users } from '../drizzle/schema/user.schema';
+import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
-import { DRIZZLE } from 'src/dirzzle/dirzzle.module';
+import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 
 

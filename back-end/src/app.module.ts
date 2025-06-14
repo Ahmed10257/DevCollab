@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DirzzleModule } from './dirzzle/dirzzle.module';
+import { DrizzleModule } from './drizzle/drizzle.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
@@ -12,7 +12,7 @@ import { LoggerModule } from 'nestjs-pino';
 
 @Module({
     imports: [
-        DirzzleModule,
+        DrizzleModule,
         UserModule, AuthModule,
         TeamModule,
         TaskModule,

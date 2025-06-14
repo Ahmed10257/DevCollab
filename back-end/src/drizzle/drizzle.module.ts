@@ -23,4 +23,4 @@ export const DRIZZLE = Symbol('drizzle-connection');
   ],
   exports: [DRIZZLE],
 })
-export class DirzzleModule { }
+export class DrizzleModule { }

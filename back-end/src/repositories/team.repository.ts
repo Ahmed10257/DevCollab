@@ -1,9 +1,9 @@
-import { teams } from '../dirzzle/schema/team.schema';
+import { teams } from '../drizzle/schema/team.schema';
 import { Injectable } from "@nestjs/common";
-import { DrizzleDB } from "src/dirzzle/types/drizzle";
+import { DrizzleDB } from "src/drizzle/types/drizzle";
 import { CreateTeamDto } from "src/team/dto/create-team.dto";
 import { eq } from "drizzle-orm";
-import { DRIZZLE } from "src/dirzzle/dirzzle.module";
+import { DRIZZLE } from "src/drizzle/drizzle.module";
 import { Inject } from "@nestjs/common/decorators/core/inject.decorator";
 
 

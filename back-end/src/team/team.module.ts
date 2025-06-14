@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { TeamService } from './team.service';
 import { TeamController } from './team.controller';
 import { TeamRepository } from 'src/repositories/team.repository';
-import { DirzzleModule } from 'src/dirzzle/dirzzle.module';
+import { DrizzleModule } from 'src/drizzle/drizzle.module';
 
 @Module({
   controllers: [TeamController],
   providers: [TeamService, TeamRepository],
-  imports: [DirzzleModule]
+  imports: [DrizzleModule]
 })
 export class TeamModule { }
