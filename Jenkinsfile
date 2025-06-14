@@ -23,8 +23,8 @@ pipeline {
       steps {
           script {
             def builds = [
-              [name: 'frontend', dir: './front-end', subdir: 'front-end'],
-              [name: 'backend', dir: './back-end', subdir: 'back-end']
+              [name: 'backend', dir: './back-end', subdir: 'back-end'],
+              [name: 'frontend', dir: './front-end', subdir: 'front-end']
             ]
 
             for (def build : builds) {
