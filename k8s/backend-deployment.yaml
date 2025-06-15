@@ -21,6 +21,10 @@ spec:
         envFrom:
         - secretRef:
             name: devcollab-backend-secret
+        lifecycle:
+          postStart:
+            exec:
+              command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts" ]
 ---
 apiVersion: v1
 kind: Service
