@@ -1,9 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:20-alpine'
-    }
-  }
+  agent  any
 
   environment {
     IMAGE_FRONTEND = 'devcollab-frontend'
