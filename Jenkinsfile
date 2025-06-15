@@ -22,7 +22,7 @@ pipeline {
     stage('Drizzle Push') {
       steps {
         dir('back-end') {
-          sh 'npm ci'
+          // sh 'npm ci'
           sh 'npx drizzle-kit push'
         }
       }
