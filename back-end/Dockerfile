@@ -15,8 +15,6 @@ RUN npm run build
 
 # Migrations and config handled here using tsx (no need to compile .ts)
 RUN npm install --save-dev tsx
-RUN npx drizzle-kit generate --config drizzle.config.ts
-RUN npx drizzle-kit push --config drizzle.config.ts
 
 # -------- Stage 2: Final Runtime Image --------
 FROM node:18-slim AS runner
