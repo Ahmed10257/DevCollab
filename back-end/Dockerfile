@@ -13,8 +13,10 @@ COPY . .
 # Build the app
 RUN npm run build
 
-# Transpile drizzle.config.ts to drizzle.config.js
-RUN npx esbuild drizzle.config.ts --bundle --platform=node --outfile=drizzle.config.js
+# Migrations and config handled here using tsx (no need to compile .ts)
+RUN npm install --save-dev tsx
+RUN npx drizzle-kit generate --config drizzle.config.ts
+RUN npx drizzle-kit push --config drizzle.config.ts
 
 # -------- Stage 2: Final Runtime Image --------
 FROM node:18-slim AS runner
