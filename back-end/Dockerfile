@@ -30,6 +30,9 @@ COPY --from=builder /app/drizzle.config.js ./drizzle.config.js
 # Install only production dependencies
 RUN npm install --omit=dev
 
+RUN npx drizzle-kit generate --config drizzle.config.js
+RUN npx drizzle-kit push --config drizzle.config.js
+
 EXPOSE 3000
 
 # Run migration and start the app
