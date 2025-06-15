@@ -24,7 +24,7 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts" ]
+              command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts || echo 'drizzle push failed'" ]
 ---
 apiVersion: v1
 kind: Service
