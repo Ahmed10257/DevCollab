@@ -13,14 +13,14 @@ spec:
         app: devcollab-backend
     spec:
       containers:
-        - name: backend
-          image: docker.io/ahmed10257/devcollab-backend:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-          envFrom:
-            - secretRef:
-                name: devcollab-backend-secret
+      - name: backend
+        image: docker.io/ahmed10257/devcollab-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: devcollab-backend-secret
 ---
 apiVersion: v1
 kind: Service
@@ -30,7 +30,7 @@ spec:
   selector:
     app: devcollab-backend
   ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
   type: NodePort
