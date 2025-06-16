@@ -14,7 +14,7 @@ spec:
     spec:
       initContainers:
       - name: migrate
-        image: docker.io/ahmed10257/devcollab-backend-init
+        image: docker.io/ahmed10257/devcollab-backend-init:latest
         command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts || echo 'drizzle push failed'" ]
         envFrom:
         - secretRef:

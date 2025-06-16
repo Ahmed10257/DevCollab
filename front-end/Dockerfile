@@ -11,7 +11,7 @@ RUN npm run build --configuration=production
 # Serve with Nginx
 FROM nginx:stable-alpine
 
-COPY --from=build /app/* /usr/share/nginx/html
+COPY --from=build /app/dist/devcollab /usr/share/nginx/html
 
 EXPOSE 80
 
