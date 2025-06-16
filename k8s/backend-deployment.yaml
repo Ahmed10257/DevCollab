@@ -12,6 +12,14 @@ spec:
       labels:
         app: devcollab-backend
     spec:
+      initContainers:
+      - name: migrate
+        image: docker.io/ahmed10257/devcollab-backend-init
+        command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts || echo 'drizzle push failed'" ]
+        envFrom:
+        - secretRef:
+            name: devcollab-backend-secret
+        workingDir: /app
       containers:
       - name: backend
         image: docker.io/ahmed10257/devcollab-backend:latest
@@ -21,10 +29,6 @@ spec:
         envFrom:
         - secretRef:
             name: devcollab-backend-secret
-        lifecycle:
-          postStart:
-            exec:
-              command: [ "sh", "-c", "npx drizzle-kit push --config drizzle.config.ts || echo 'drizzle push failed'" ]
 ---
 apiVersion: v1
 kind: Service
