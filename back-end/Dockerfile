@@ -24,7 +24,7 @@ WORKDIR /app
 # Copy only the necessary runtime files
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/drizzle.config.ts ./
+COPY --from=builder /app/drizzle.config.ts ./dist
 # COPY --from=builder /app/migrations ./migrations
 
 # Install only production dependencies
@@ -34,4 +34,3 @@ EXPOSE 3000
 
 # Run migration and start the app
 CMD ["npm", "run", "start:prod"]
-        
