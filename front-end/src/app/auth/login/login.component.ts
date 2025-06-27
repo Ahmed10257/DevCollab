@@ -36,7 +36,7 @@ export class LoginComponent {
     try {
       const { email, password } = this.form.getRawValue() as { email: string; password: string };
       await firstValueFrom(this.auth.login({ email, password }));
-      // this.router.navigate(['/dashboard']);
+      this.router.navigate(['/home']);
     } catch (err: any) {
       this.error.set(err?.error?.message || 'Login failed.');
     } finally {

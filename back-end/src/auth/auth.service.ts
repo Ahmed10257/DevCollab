@@ -40,6 +40,7 @@ export class AuthService {
         console.log('Login DTO:', dto);
         const user = await this.userService.findUserByEmail(dto.email);
         if (!user) {
+            console.log('User not found:', dto.email);
             this.logger.error({ msg: 'User not found', email: dto.email }, 'AuthService');
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -47,6 +48,7 @@ export class AuthService {
         const isPasswordValid = await bcrypt.compare(dto.password, user.password);
 
         if (!isPasswordValid) {
+            console.log('Wrong password for user:', user.email);
             this.logger.error({ msg: 'Wrong Password', user }, 'AuthService');
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -58,6 +60,7 @@ export class AuthService {
         // store hashed refresh token in DB
         await this.userService.updateHashedRefreshToken(user.id, refreshToken);
         this.logger.log({ msg: 'User logged in', user }, 'AuthService');
+        console.log('Access is Done');
         return { accessToken, refreshToken };
     }
 
