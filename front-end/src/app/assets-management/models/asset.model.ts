@@ -14,7 +14,7 @@ export interface Asset {
 }
 
 export interface AssetFilter {
-  category?: string;
+  type?: string;
   ownedBy?: string;
   location?: string;
 }

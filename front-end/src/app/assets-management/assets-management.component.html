@@ -17,7 +17,7 @@
           >
           <a
             routerLink="/assets"
-            class="text-gray-900 font-semibold border-b-2 border-indigo-600"
+            class="text-gray-900 font-semibold border-b-2 border-indigo-600 pb-1"
             >Assets</a
           >
         </nav>
@@ -30,7 +30,7 @@
     <!-- Search and Filter Section -->
     <div class="mb-6 space-y-4">
       <!-- Basic Search -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-end space-x-4">
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1"
             >Search</label
@@ -45,16 +45,16 @@
         </div>
         <div class="w-64">
           <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Category Filter</label
+            >Type Filter</label
           >
           <select
-            [(ngModel)]="categoryFilter"
+            [(ngModel)]="typeFilter"
             (change)="onSearch()"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
-            <option value="">All Categories</option>
-            <option *ngFor="let category of categories" [value]="category">
-              {{ category }}
+            <option value="">All Types</option>
+            <option *ngFor="let type of types" [value]="type">
+              {{ type }}
             </option>
           </select>
         </div>
@@ -76,15 +76,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Category</label
+              >Type</label
             >
             <select
-              [(ngModel)]="advancedFilter.category"
+              [(ngModel)]="advancedFilter.type"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="">Select Category</option>
-              <option *ngFor="let category of categories" [value]="category">
-                {{ category }}
+              <option value="">Select Type</option>
+              <option *ngFor="let type of types" [value]="type">
+                {{ type }}
               </option>
             </select>
           </div>
@@ -137,7 +137,7 @@
     <!-- Action Buttons -->
     <div class="mb-6 flex space-x-3">
       <button
-        routerLink="/assets/add"
+        (click)="openAddModal()"
         class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center"
       >
         <svg
@@ -156,7 +156,7 @@
         Add Asset
       </button>
       <button
-        routerLink="/assets/add-quantity"
+        (click)="openAddQuantityModal()"
         class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center"
       >
         <svg
@@ -197,6 +197,9 @@
               Location
             </th>
             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+              Quantity
+            </th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
               Created At
             </th>
             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
@@ -221,6 +224,9 @@
             <td class="px-4 py-3 text-sm text-gray-700">
               {{ asset.location }}
             </td>
+            <td class="px-4 py-3 text-sm text-gray-700">
+              {{ asset.quantity }}
+            </td>
             <td class="px-4 py-3 text-sm text-gray-600">
               {{ asset.createdAt | date : "short" }}
             </td>
@@ -230,13 +236,13 @@
             <td class="px-4 py-3">
               <div class="flex space-x-2">
                 <button
-                  (click)="viewAsset(asset)"
+                  (click)="openViewModal(asset)"
                   class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
                 >
                   View
                 </button>
                 <button
-                  (click)="editAsset(asset)"
+                  (click)="openEditModal(asset)"
                   class="px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition"
                 >
                   Edit
@@ -251,7 +257,7 @@
             </td>
           </tr>
           <tr *ngIf="filteredAssets.length === 0">
-            <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+            <td colspan="9" class="px-4 py-8 text-center text-gray-500">
               No assets found. Try adjusting your search criteria.
             </td>
           </tr>
@@ -260,3 +266,36 @@
     </div>
   </div>
 </div>
+
+<!-- Modals -->
+<app-view-asset
+  *ngIf="showViewModal && selectedAsset"
+  [asset]="selectedAsset"
+  (close)="closeModals()"
+  (edit)="openEditModal($event)"
+  (delete)="deleteAsset($event)"
+></app-view-asset>
+
+<app-add-asset
+  *ngIf="showAddModal"
+  [types]="types"
+  [locations]="locations"
+  (close)="closeModals()"
+  (save)="onAssetAdded($event)"
+></app-add-asset>
+
+<app-edit-asset
+  *ngIf="showEditModal && selectedAsset"
+  [asset]="selectedAsset"
+  [types]="types"
+  [locations]="locations"
+  (close)="closeModals()"
+  (save)="onAssetUpdated($event)"
+></app-edit-asset>
+
+<app-add-quantity-modal
+  *ngIf="showAddQuantityModal"
+  [assets]="assets"
+  (close)="closeModals()"
+  (save)="onQuantityAdded($event)"
+></app-add-quantity-modal>

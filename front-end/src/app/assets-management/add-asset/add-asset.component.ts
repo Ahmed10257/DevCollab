@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Asset } from '../models/asset.model';
 
 @Component({
@@ -12,17 +11,23 @@ import { Asset } from '../models/asset.model';
   styleUrls: ['./add-asset.component.css'],
 })
 export class AddAssetComponent {
+  @Input() types: string[] = [];
+  @Input() locations: string[] = [];
+  @Output() close = new EventEmitter<void>();
+  @Output() save = new EventEmitter<Asset>();
+
   asset: Asset = {
     serial: '',
     type: '',
     name: '',
     owner: '',
     location: '',
-    category: '',
+    category: 'Hardware',
     quantity: 1,
     status: 'Active',
   };
 
+  statuses: string[] = ['Active', 'Inactive', 'Maintenance', 'Retired'];
   categories: string[] = [
     'Hardware',
     'Software',
@@ -30,18 +35,18 @@ export class AddAssetComponent {
     'Equipment',
     'Other',
   ];
-  locations: string[] = ['Office A', 'Office B', 'Warehouse', 'Remote'];
-  statuses: string[] = ['Active', 'Inactive', 'Maintenance', 'Retired'];
 
-  constructor(private router: Router) {}
-
-  onSubmit(): void {
-    // Add API call here to save the asset
-    console.log('Adding asset:', this.asset);
-    this.router.navigate(['/assets']);
+  onClose(): void {
+    this.close.emit();
   }
 
-  onCancel(): void {
-    this.router.navigate(['/assets']);
+  onSubmit(): void {
+    this.save.emit(this.asset);
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
+      this.onClose();
+    }
   }
 }

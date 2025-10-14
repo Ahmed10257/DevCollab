@@ -1,12 +1,25 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Asset, AssetFilter } from './models/asset.model';
+import Swal from 'sweetalert2';
+import { ViewAssetComponent } from './view-asset/view-asset.component';
+import { AddAssetComponent } from './add-asset/add-asset.component';
+import { EditAssetComponent } from './edit-asset/edit-asset.component';
+import { AddQuantityComponent } from './add-quantity/add-quantity.component';
 
 @Component({
   selector: 'app-assets-management',
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    ViewAssetComponent,
+    AddAssetComponent,
+    EditAssetComponent,
+    AddQuantityComponent,
+  ],
   templateUrl: './assets-management.component.html',
   styleUrl: './assets-management.component.css',
 })
@@ -16,18 +29,29 @@ export class AssetsManagementComponent {
 
   // Search and filter
   searchTerm: string = '';
-  categoryFilter: string = '';
+  typeFilter: string = '';
 
   // Advanced search
   showAdvancedSearch: boolean = false;
   advancedFilter: AssetFilter = {};
 
-  // Categories for dropdown
-  categories: string[] = [
-    'Hardware',
-    'Software',
-    'Furniture',
-    'Equipment',
+  // Modal states
+  showViewModal: boolean = false;
+  showAddModal: boolean = false;
+  showEditModal: boolean = false;
+  showAddQuantityModal: boolean = false;
+  selectedAsset: Asset | null = null;
+
+  // Types for dropdown
+  types: string[] = [
+    'Laptop',
+    'Monitor',
+    'Keyboard',
+    'Mouse',
+    'Switch',
+    'Router',
+    'Server',
+    'Printer',
     'Other',
   ];
   locations: string[] = ['Office A', 'Office B', 'Warehouse', 'Remote'];
@@ -37,6 +61,8 @@ export class AssetsManagementComponent {
     'Finance',
     'Operations',
   ];
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadAssets();
@@ -53,6 +79,8 @@ export class AssetsManagementComponent {
         owner: 'John Doe',
         location: 'Office A',
         category: 'Hardware',
+        quantity: 5,
+        status: 'Active',
         createdAt: new Date('2024-01-15'),
         updatedAt: new Date('2024-02-10'),
       },
@@ -64,8 +92,23 @@ export class AssetsManagementComponent {
         owner: 'Jane Smith',
         location: 'Office B',
         category: 'Hardware',
+        quantity: 10,
+        status: 'Active',
         createdAt: new Date('2024-01-20'),
         updatedAt: new Date('2024-02-15'),
+      },
+      {
+        id: 3,
+        serial: 'SWT001',
+        type: 'Switch',
+        name: 'Cisco Catalyst 2960',
+        owner: 'IT Department',
+        location: 'Office A',
+        category: 'Hardware',
+        quantity: 3,
+        status: 'Active',
+        createdAt: new Date('2024-02-01'),
+        updatedAt: new Date('2024-02-20'),
       },
     ];
     this.filteredAssets = [...this.assets];
@@ -79,10 +122,9 @@ export class AssetsManagementComponent {
         asset.serial.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         asset.owner.toLowerCase().includes(this.searchTerm.toLowerCase());
 
-      const matchesCategory =
-        !this.categoryFilter || asset.category === this.categoryFilter;
+      const matchesType = !this.typeFilter || asset.type === this.typeFilter;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesType;
     });
   }
 
@@ -92,9 +134,8 @@ export class AssetsManagementComponent {
 
   onAdvancedSearch(): void {
     this.filteredAssets = this.assets.filter((asset) => {
-      const matchesCategory =
-        !this.advancedFilter.category ||
-        asset.category === this.advancedFilter.category;
+      const matchesType =
+        !this.advancedFilter.type || asset.type === this.advancedFilter.type;
       const matchesOwner =
         !this.advancedFilter.ownedBy ||
         asset.owner === this.advancedFilter.ownedBy;
@@ -102,7 +143,7 @@ export class AssetsManagementComponent {
         !this.advancedFilter.location ||
         asset.location === this.advancedFilter.location;
 
-      return matchesCategory && matchesOwner && matchesLocation;
+      return matchesType && matchesOwner && matchesLocation;
     });
   }
 
@@ -111,20 +152,115 @@ export class AssetsManagementComponent {
     this.filteredAssets = [...this.assets];
   }
 
-  viewAsset(asset: Asset): void {
-    // Navigate to view asset page or open modal
-    console.log('View asset:', asset);
+  // Modal actions
+  openAddModal(): void {
+    this.showAddModal = true;
   }
 
-  editAsset(asset: Asset): void {
-    // Navigate to edit asset page or open modal
-    console.log('Edit asset:', asset);
+  openViewModal(asset: Asset): void {
+    this.selectedAsset = asset;
+    this.showViewModal = true;
+  }
+
+  openEditModal(asset: Asset): void {
+    this.selectedAsset = asset;
+    this.showEditModal = true;
+  }
+
+  openAddQuantityModal(): void {
+    this.showAddQuantityModal = true;
+  }
+
+  closeModals(): void {
+    this.showViewModal = false;
+    this.showAddModal = false;
+    this.showEditModal = false;
+    this.showAddQuantityModal = false;
+    this.selectedAsset = null;
+  }
+
+  onAssetAdded(asset: Asset): void {
+    // Add API call here
+    const newAsset = {
+      ...asset,
+      id: this.assets.length + 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.assets.push(newAsset);
+    this.onSearch();
+    this.closeModals();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Asset Added!',
+      text: `${asset.name} has been successfully added.`,
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  }
+
+  onAssetUpdated(asset: Asset): void {
+    // Add API call here
+    const index = this.assets.findIndex((a) => a.id === asset.id);
+    if (index !== -1) {
+      this.assets[index] = { ...asset, updatedAt: new Date() };
+      this.onSearch();
+    }
+    this.closeModals();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Asset Updated!',
+      text: `${asset.name} has been successfully updated.`,
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  }
+
+  onQuantityAdded(data: { assetId: number; quantity: number }): void {
+    // Add API call here
+    const asset = this.assets.find((a) => a.id === data.assetId);
+    if (asset) {
+      asset.quantity = (asset.quantity || 0) + data.quantity;
+      asset.updatedAt = new Date();
+      this.onSearch();
+    }
+    this.closeModals();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Quantity Added!',
+      text: `${data.quantity} units have been added successfully.`,
+      timer: 2000,
+      showConfirmButton: false,
+    });
   }
 
   deleteAsset(asset: Asset): void {
-    if (confirm(`Are you sure you want to delete ${asset.name}?`)) {
-      this.assets = this.assets.filter((a) => a.id !== asset.id);
-      this.onSearch();
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete ${asset.name}? This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Add API call here
+        this.assets = this.assets.filter((a) => a.id !== asset.id);
+        this.onSearch();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: `${asset.name} has been deleted.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    });
   }
 }
