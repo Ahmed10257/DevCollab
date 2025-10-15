@@ -293,9 +293,9 @@
   (save)="onAssetUpdated($event)"
 ></app-edit-asset>
 
-<app-add-quantity-modal
+<app-add-quantity
   *ngIf="showAddQuantityModal"
   [assets]="assets"
   (close)="closeModals()"
   (save)="onQuantityAdded($event)"
-></app-add-quantity-modal>
+></app-add-quantity>
