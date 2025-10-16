@@ -149,6 +149,7 @@
                   <button
                     type="button"
                     class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium flex items-center justify-center"
+                    (click)="openLocationModal()"
                   >
                     <svg
                       class="w-4 h-4 mr-2"
@@ -165,6 +166,11 @@
                     </svg>
                     Add New Location
                   </button>
+                  <app-location-modal
+                    [showModal]="showLocationModal"
+                    (close)="onLocationModalClose()"
+                    (save)="onLocationSaved($event)"
+                  ></app-location-modal>
                 </div>
               </div>
             </div>

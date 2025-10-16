@@ -1,0 +1,282 @@
+<!-- Modal Backdrop -->
+<div
+  *ngIf="showModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  (click)="closeModal()"
+>
+  <!-- Modal Container -->
+  <div
+    class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Modal Header -->
+    <div
+      class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4 rounded-t-lg"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-white flex items-center">
+          <svg
+            class="w-6 h-6 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+          Adding New Location
+        </h2>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-white hover:text-gray-200 transition-colors"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6">
+      <form (ngSubmit)="onSubmit()">
+        <!-- Location Type Dropdown -->
+        <div class="mb-6">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Choose location type
+          </label>
+          <select
+            [(ngModel)]="locationType"
+            name="locationType"
+            (ngModelChange)="onLocationTypeChange()"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            required
+          >
+            <option value="" disabled>Select location type</option>
+            <option value="branch">Branch</option>
+            <option value="building">Building</option>
+            <option value="floor">Floor</option>
+            <option value="room">Room</option>
+          </select>
+        </div>
+
+        <!-- Dynamic Fields Based on Location Type -->
+
+        <!-- Branch Name (only shown when adding Branch) -->
+        <div *ngIf="locationType === 'branch'" class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Branch
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="newBranchName"
+            name="newBranchName"
+            placeholder="Enter branch name"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            required
+          />
+        </div>
+
+        <!-- Building Fields (Branch dropdown + Building name input) -->
+        <ng-container *ngIf="locationType === 'building'">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Branch
+            </label>
+            <select
+              [(ngModel)]="selectedBranch"
+              name="selectedBranch"
+              (ngModelChange)="onBranchChange()"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            >
+              <option value="" disabled>Select branch</option>
+              <option *ngFor="let branch of branches" [value]="branch">
+                {{ branch }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Building
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="newBuildingName"
+              name="newBuildingName"
+              placeholder="Enter building name"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            />
+          </div>
+        </ng-container>
+
+        <!-- Floor Fields (Branch + Building dropdowns + Floor name input) -->
+        <ng-container *ngIf="locationType === 'floor'">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Branch
+            </label>
+            <select
+              [(ngModel)]="selectedBranch"
+              name="selectedBranch"
+              (ngModelChange)="onBranchChange()"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            >
+              <option value="" disabled>Select branch</option>
+              <option *ngFor="let branch of branches" [value]="branch">
+                {{ branch }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Building
+            </label>
+            <select
+              [(ngModel)]="selectedBuilding"
+              name="selectedBuilding"
+              (ngModelChange)="onBuildingChange()"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+              [disabled]="!selectedBranch"
+            >
+              <option value="" disabled>Select building</option>
+              <option
+                *ngFor="let building of availableBuildings"
+                [value]="building"
+              >
+                {{ building }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Floor
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="newFloorName"
+              name="newFloorName"
+              placeholder="Enter floor name"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            />
+          </div>
+        </ng-container>
+
+        <!-- Room Fields (Branch + Building + Floor dropdowns + Room name input) -->
+        <ng-container *ngIf="locationType === 'room'">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Branch
+            </label>
+            <select
+              [(ngModel)]="selectedBranch"
+              name="selectedBranch"
+              (ngModelChange)="onBranchChange()"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            >
+              <option value="" disabled>Select branch</option>
+              <option *ngFor="let branch of branches" [value]="branch">
+                {{ branch }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Building
+            </label>
+            <select
+              [(ngModel)]="selectedBuilding"
+              name="selectedBuilding"
+              (ngModelChange)="onBuildingChange()"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+              [disabled]="!selectedBranch"
+            >
+              <option value="" disabled>Select building</option>
+              <option
+                *ngFor="let building of availableBuildings"
+                [value]="building"
+              >
+                {{ building }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Floor
+            </label>
+            <select
+              [(ngModel)]="selectedFloor"
+              name="selectedFloor"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+              [disabled]="!selectedBuilding"
+            >
+              <option value="" disabled>Select floor</option>
+              <option *ngFor="let floor of availableFloors" [value]="floor">
+                {{ floor }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Room
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="newRoomName"
+              name="newRoomName"
+              placeholder="Enter room name"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              required
+            />
+          </div>
+        </ng-container>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all font-medium shadow-md hover:shadow-lg"
+            [disabled]="!locationType"
+          >
+            Add Location
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Asset } from '../models/asset.model';
+import { LocationModalComponent } from '../location-modal/location-modal.component';
+import { LocationData } from '../location-modal/location-modal.component';
 
 interface AssetForm {
   // General Data
@@ -29,7 +31,7 @@ interface AssetForm {
 @Component({
   selector: 'app-add-asset',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LocationModalComponent],
   templateUrl: './add-asset.component.html',
   styleUrls: ['./add-asset.component.css'],
 })
@@ -99,6 +101,8 @@ export class AddAssetComponent implements OnInit {
     'Company D',
     'Other',
   ];
+
+  showLocationModal: boolean = false;
 
   ngOnInit(): void {
     // Initialize with one empty asset form
@@ -225,5 +229,20 @@ export class AddAssetComponent implements OnInit {
     if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
       this.onClose();
     }
+  }
+  // Location Modal Handlers
+  // Add methods
+  openLocationModal() {
+    this.showLocationModal = true;
+  }
+
+  onLocationSaved(locationData: LocationData) {
+    console.log('New location added:', locationData);
+    // Handle the new location (e.g., add to your branches/buildings/floors/rooms arrays)
+    this.showLocationModal = false;
+  }
+
+  onLocationModalClose() {
+    this.showLocationModal = false;
   }
 }
