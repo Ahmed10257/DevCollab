@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddQuantityComponent } from './add-quantity.component';
+import { AssetsHomeComponent } from './assets-home.component';
 
-describe('AddQuantityComponent', () => {
-  let component: AddQuantityComponent;
-  let fixture: ComponentFixture<AddQuantityComponent>;
+describe('AssetsHomeComponent', () => {
+  let component: AssetsHomeComponent;
+  let fixture: ComponentFixture<AssetsHomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddQuantityComponent]
+      imports: [AssetsHomeComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddQuantityComponent);
+    fixture = TestBed.createComponent(AssetsHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,0 +1,196 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900">Assets Home</h1>
+        </div>
+        <button
+          routerLink="/assets/list"
+          class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center shadow-lg"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 10h16M4 14h16M4 18h16"
+            />
+          </svg>
+          View All Assets
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <!-- Welcome Section -->
+    <div
+      class="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-200"
+    >
+      <div class="text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+          Welcome to Assets Manager
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Select a category below to view and manage your organization's assets.
+          Click on any card to filter assets by that specific category.
+        </p>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let category of categories"
+        (click)="navigateToCategory(category.id)"
+        class="group cursor-pointer transform transition-all duration-300 hover:scale-105"
+      >
+        <div
+          class="bg-white rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-gray-200"
+        >
+          <!-- Gradient Header -->
+          <div
+            [class]="
+              'bg-gradient-to-r ' +
+              category.color +
+              ' p-6 flex items-center justify-center'
+            "
+          >
+            <lucide-icon
+              [name]="category.icon"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              stroke-width="2"
+            />
+          </div>
+
+          <!-- Card Content -->
+          <div class="p-6">
+            <h3
+              class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors"
+            >
+              {{ category.name }}
+            </h3>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600 text-sm">Total Assets</span>
+              <span class="text-2xl font-bold text-indigo-600">{{
+                category.count
+              }}</span>
+            </div>
+
+            <!-- View Button -->
+            <button
+              class="mt-4 w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white"
+            >
+              <span class="mr-2">View Assets</span>
+              <svg
+                class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">Total Assets</p>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ totalAssets }}
+            </p>
+          </div>
+          <div class="bg-blue-100 p-4 rounded-lg">
+            <svg
+              class="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">Categories</p>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ categories.length }}
+            </p>
+          </div>
+          <div class="bg-green-100 p-4 rounded-lg">
+            <svg
+              class="w-8 h-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">Quick Actions</p>
+            <button
+              routerLink="/assets/add"
+              class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
+            >
+              Add New Asset
+            </button>
+          </div>
+          <div class="bg-purple-100 p-4 rounded-lg">
+            <svg
+              class="w-8 h-8 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

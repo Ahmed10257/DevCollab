@@ -1,24 +1,31 @@
 <!-- Modal Backdrop -->
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop animate-fade-in"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop animate-fade-in bg-black bg-opacity-50"
   (click)="onBackdropClick($event)"
 >
   <!-- Modal Container -->
   <div
-    class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-slide-up"
+    class="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden animate-slide-up flex flex-col"
     (click)="$event.stopPropagation()"
   >
     <!-- Header -->
     <div
-      class="border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 bg-white z-10"
+      class="border-b border-gray-200 px-8 py-6 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50"
     >
       <div>
-        <h2 class="text-2xl font-bold text-gray-800">Add New Asset</h2>
+        <h2 class="text-3xl font-bold text-gray-900">Add Asset Module</h2>
         <p class="text-gray-600 text-sm mt-1">
-          Fill in the details below to add a new asset
+          Adding New
+          {{
+            currentCategory
+              ? categoryMappings[currentCategory]?.name
+              : "Network"
+          }}
+          Asset
         </p>
       </div>
       <button
+        type="button"
         (click)="onClose()"
         class="text-gray-400 hover:text-gray-600 transition"
       >
@@ -38,155 +45,429 @@
       </button>
     </div>
 
-    <!-- Content -->
-    <form (ngSubmit)="onSubmit()" #assetForm="ngForm" class="px-6 py-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Serial -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Serial Number <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            [(ngModel)]="asset.serial"
-            name="serial"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="e.g., LAP001"
-          />
+    <!-- Scrollable Content -->
+    <div class="overflow-y-auto flex-1 px-8 py-6">
+      <form (ngSubmit)="onSubmit()" #assetForm="ngForm">
+        <!-- Loop through multiple assets -->
+        <div *ngFor="let asset of assets; let i = index" class="mb-8 last:mb-0">
+          <!-- Asset Card -->
+          <div class="border-2 border-gray-200 rounded-xl p-6 relative">
+            <!-- Remove button (show only if more than one asset) -->
+            <button
+              *ngIf="assets.length > 1"
+              type="button"
+              (click)="removeAssetForm(i)"
+              class="absolute top-4 right-4 text-red-500 hover:text-red-700 transition"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            <!-- General Data Section -->
+            <div class="mb-6">
+              <h3
+                class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                General Data
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Type (Network/Category) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Type <span class="text-red-500">*</span>
+                  </label>
+                  <select
+                    [(ngModel)]="asset.network"
+                    [name]="'network_' + i"
+                    (change)="onNetworkChange(i)"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  >
+                    <option value="" disabled>Select Network</option>
+                    <option *ngFor="let network of networks" [value]="network">
+                      {{ network }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Brand -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Brand <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="asset.brand"
+                    [name]="'brand_' + i"
+                    placeholder="Enter brand"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <!-- Model -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Model <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="asset.model"
+                    [name]="'model_' + i"
+                    placeholder="Enter model"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <!-- Location Button -->
+                <div class="flex items-end">
+                  <button
+                    type="button"
+                    class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium flex items-center justify-center"
+                  >
+                    <svg
+                      class="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Add New Location
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Location Section -->
+            <div class="mb-6 bg-gray-50 rounded-lg p-4">
+              <h3
+                class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                Location
+                <span class="text-xs text-gray-500"
+                  >(4 elements hierarchy)</span
+                >
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Branch -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Branch
+                  </label>
+                  <select
+                    [(ngModel)]="asset.branch"
+                    [name]="'branch_' + i"
+                    (change)="onBranchChange(i)"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  >
+                    <option value="">Select Branch</option>
+                    <option *ngFor="let branch of branches" [value]="branch">
+                      {{ branch }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Building -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Building
+                  </label>
+                  <select
+                    [(ngModel)]="asset.building"
+                    [name]="'building_' + i"
+                    (change)="onBuildingChange(i)"
+                    [disabled]="!asset.branch"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Building</option>
+                    <option
+                      *ngFor="let building of buildings"
+                      [value]="building"
+                    >
+                      {{ building }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Floor -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Floor
+                  </label>
+                  <select
+                    [(ngModel)]="asset.floor"
+                    [name]="'floor_' + i"
+                    (change)="onFloorChange(i)"
+                    [disabled]="!asset.building"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Floor</option>
+                    <option *ngFor="let floor of floors" [value]="floor">
+                      {{ floor }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Room -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Room
+                  </label>
+                  <select
+                    [(ngModel)]="asset.room"
+                    [name]="'room_' + i"
+                    [disabled]="!asset.floor"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Room</option>
+                    <option *ngFor="let room of rooms" [value]="room">
+                      {{ room }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delivering Info Section -->
+            <div class="mb-6">
+              <h3
+                class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Delivering Information
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Today's Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Today's Date
+                  </label>
+                  <input
+                    type="date"
+                    [(ngModel)]="asset.todaysDate"
+                    [name]="'todaysDate_' + i"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-gray-100"
+                    readonly
+                  />
+                </div>
+
+                <!-- Delivering Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Delivering Date <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    [(ngModel)]="asset.deliveringDate"
+                    [name]="'deliveringDate_' + i"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <!-- Delivering Company -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Delivering Company <span class="text-red-500">*</span>
+                  </label>
+                  <select
+                    [(ngModel)]="asset.deliveringCompany"
+                    [name]="'deliveringCompany_' + i"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  >
+                    <option value="" disabled>Select Company</option>
+                    <option
+                      *ngFor="let company of deliveringCompanies"
+                      [value]="company"
+                    >
+                      {{ company }}
+                    </option>
+                  </select>
+                  <button
+                    type="button"
+                    class="mt-2 text-sm text-indigo-600 hover:text-indigo-700 flex items-center"
+                  >
+                    <svg
+                      class="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Add Company
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Specific Data Section -->
+            <div class="mb-4 bg-indigo-50 rounded-lg p-4">
+              <h3
+                class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
+                </svg>
+                Specific Data
+                <span class="ml-2 text-xs text-gray-500"
+                  >(Will change based on category)</span
+                >
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Serial -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Serial <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="asset.serial"
+                    [name]="'serial_' + i"
+                    placeholder="Enter serial number"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <!-- Note -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Note
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="asset.note"
+                    [name]="'note_' + i"
+                    placeholder="Add a note (optional)"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Type -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Type <span class="text-red-500">*</span>
-          </label>
-          <select
-            [(ngModel)]="asset.type"
-            name="type"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        <!-- Add Another Button -->
+        <div class="mt-6">
+          <button
+            type="button"
+            (click)="addNewAssetForm()"
+            class="w-full py-3 border-2 border-dashed border-indigo-300 text-indigo-600 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition flex items-center justify-center font-medium"
           >
-            <option value="">Select Type</option>
-            <option *ngFor="let type of types" [value]="type">
-              {{ type }}
-            </option>
-          </select>
+            <svg
+              class="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Add another
+          </button>
         </div>
-
-        <!-- Name -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Name <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            [(ngModel)]="asset.name"
-            name="name"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="e.g., Dell XPS 15"
-          />
-        </div>
-
-        <!-- Owner -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Owner <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            [(ngModel)]="asset.owner"
-            name="owner"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="e.g., John Doe"
-          />
-        </div>
-
-        <!-- Category -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Category <span class="text-red-500">*</span>
-          </label>
-          <select
-            [(ngModel)]="asset.category"
-            name="category"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          >
-            <option *ngFor="let category of categories" [value]="category">
-              {{ category }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Location -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Location <span class="text-red-500">*</span>
-          </label>
-          <select
-            [(ngModel)]="asset.location"
-            name="location"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          >
-            <option value="">Select Location</option>
-            <option *ngFor="let location of locations" [value]="location">
-              {{ location }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Quantity -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
-            >Quantity</label
-          >
-          <input
-            type="number"
-            [(ngModel)]="asset.quantity"
-            name="quantity"
-            min="1"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        </div>
-
-        <!-- Status -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
-            >Status</label
-          >
-          <select
-            [(ngModel)]="asset.status"
-            name="status"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          >
-            <option *ngFor="let status of statuses" [value]="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
 
     <!-- Footer -->
     <div
-      class="border-t border-gray-200 px-6 py-4 flex justify-end space-x-3 sticky bottom-0 bg-white"
+      class="border-t border-gray-200 px-8 py-4 bg-gray-50 flex items-center justify-end space-x-4"
     >
       <button
         type="button"
         (click)="onClose()"
-        class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+        class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
       >
         Cancel
       </button>
       <button
         type="submit"
         (click)="onSubmit()"
-        [disabled]="!assetForm.valid"
-        class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+        [disabled]="!assetForm.form.valid"
+        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed font-medium flex items-center"
       >
         <svg
           class="w-5 h-5 mr-2"
@@ -198,10 +479,10 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M12 4v16m8-8H4"
+            d="M5 13l4 4L19 7"
           />
         </svg>
-        Add Asset
+        Add {{ assets.length }} Asset{{ assets.length > 1 ? "s" : "" }}
       </button>
     </div>
   </div>

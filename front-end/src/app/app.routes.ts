@@ -3,22 +3,32 @@ import { AuthComponent } from './auth/auth.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AssetsManagementComponent } from './assets-management/assets-management.component';
+import { AssetsHomeComponent } from './assets-management/assets-home/assets-home.component';
 import { AddAssetComponent } from './assets-management/add-asset/add-asset.component';
 import { ViewAssetComponent } from './assets-management/view-asset/view-asset.component';
 import { EditAssetComponent } from './assets-management/edit-asset/edit-asset.component';
-import { AddQuantityComponent } from './assets-management/add-quantity/add-quantity.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/assets/home',
+    pathMatch: 'full',
+  },
   {
     path: 'auth',
     component: AuthComponent,
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],
   },
   {
-    path: 'assets',
+    path: 'assets/home',
+    component: AssetsHomeComponent,
+  },
+  {
+    path: 'assets/list',
     component: AssetsManagementComponent,
   },
   {
@@ -34,7 +44,7 @@ export const routes: Routes = [
     component: EditAssetComponent,
   },
   {
-    path: 'assets/add-quantity',
-    component: AddQuantityComponent,
+    path: '**',
+    redirectTo: '/assets/home',
   },
 ];

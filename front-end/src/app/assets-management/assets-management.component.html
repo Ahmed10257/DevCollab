@@ -16,13 +16,93 @@
             >Tasks</a
           >
           <a
-            routerLink="/assets"
+            routerLink="/assets/home"
             class="text-gray-900 font-semibold border-b-2 border-indigo-600 pb-1"
             >Assets</a
           >
         </nav>
       </div>
     </div>
+  </div>
+
+  <!-- Breadcrumb and Category Header -->
+  <div class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <!-- Breadcrumb -->
+        <nav class="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+          <a
+            routerLink="/assets/home"
+            class="hover:text-indigo-600 transition flex items-center"
+          >
+            <svg
+              class="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+            Assets Home
+          </a>
+          <span>/</span>
+          <span class="text-gray-900 font-medium">{{
+            currentCategoryName
+          }}</span>
+        </nav>
+
+        <!-- Category Title -->
+        <div class="flex items-center space-x-3">
+          <h2 class="text-3xl font-bold text-gray-900">
+            {{ currentCategoryName }}
+          </h2>
+          <span
+            *ngIf="currentCategory"
+            class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium"
+          >
+            {{ filteredAssets.length }} assets
+          </span>
+        </div>
+      </div>
+
+      <!-- Back to Home Button -->
+      <button
+        (click)="goBackToHome()"
+        class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center shadow-sm"
+      >
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Back to Home
+      </button>
+    </div>
+
+    <!-- Category Description (optional) -->
+    <p *ngIf="currentCategory" class="text-gray-600 mt-2">
+      Viewing all assets in the {{ currentCategoryName }} category.
+      <button
+        *ngIf="currentCategory"
+        (click)="clearCategoryFilter()"
+        class="text-indigo-600 hover:text-indigo-700 underline ml-2"
+      >
+        View all categories
+      </button>
+    </p>
   </div>
 
   <!-- Main Content -->
@@ -155,25 +235,6 @@
         </svg>
         Add Asset
       </button>
-      <button
-        (click)="openAddQuantityModal()"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center"
-      >
-        <svg
-          class="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-        Add Quantity
-      </button>
     </div>
 
     <!-- Assets Table -->
@@ -278,8 +339,8 @@
 
 <app-add-asset
   *ngIf="showAddModal"
-  [types]="types"
-  [locations]="locations"
+  [currentCategory]="currentCategory"
+  [categoryMappings]="categoryMappings"
   (close)="closeModals()"
   (save)="onAssetAdded($event)"
 ></app-add-asset>
@@ -292,10 +353,3 @@
   (close)="closeModals()"
   (save)="onAssetUpdated($event)"
 ></app-edit-asset>
-
-<app-add-quantity
-  *ngIf="showAddQuantityModal"
-  [assets]="assets"
-  (close)="closeModals()"
-  (save)="onQuantityAdded($event)"
-></app-add-quantity>
