@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { FloorService } from './floor.service';
 import { FloorController } from './floor.controller';
 import { FloorsRepository } from '../repositories/floor.repository';
+import { DrizzleModule } from '../drizzle/drizzle.module';
 
 @Module({
+    imports: [DrizzleModule],
     controllers: [FloorController],
     providers: [FloorService, FloorsRepository],
     exports: [FloorService, FloorsRepository],

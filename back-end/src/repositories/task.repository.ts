@@ -1,11 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { DrizzleDB } from "src/drizzle/types/drizzle";
-import { tasks } from "src/drizzle/schema/task.schema";
+import { Injectable, Inject } from "@nestjs/common";
 import { eq } from "drizzle-orm";
-import { DRIZZLE } from "src/drizzle/drizzle.module";
-import { Inject } from "@nestjs/common/decorators/core/inject.decorator";
-import { CreateTaskDto } from "src/task/dto/create-task.dto";
-import { UpdateTaskDto } from "src/task/dto/update-task.dto";
+import { DrizzleDB } from "../drizzle/types/drizzle";
+import { tasks } from "../drizzle/schema/task.schema";
+import { DRIZZLE } from "../drizzle/drizzle.module";
+import { CreateTaskDto } from "../task/dto/create-task.dto";
+import { UpdateTaskDto } from "../task/dto/update-task.dto";
 
 @Injectable()
 export class TaskRepository {
