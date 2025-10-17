@@ -1,9 +1,17 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Asset } from '../models/asset.model';
 import { LocationModalComponent } from '../location-modal/location-modal.component';
 import { LocationData } from '../location-modal/location-modal.component';
+import { BranchService } from '../services/branch.service';
+import { BuildingService } from '../services/building.service';
+import { FloorService } from '../services/floor.service';
+import { RoomService } from '../services/room.service';
+import { Branch } from '../models/branch.model';
+import { Building } from '../models/building.model';
+import { Floor } from '../models/floor.model';
+import { Room } from '../models/room.model';
 
 interface GeneralData {
   // General Data
@@ -12,11 +20,11 @@ interface GeneralData {
   brand: string;
   model: string;
 
-  // Location (hierarchical)
-  branch: string;
-  building: string;
-  floor: string;
-  room: string;
+  // Location (hierarchical) - now using IDs
+  branchId: number | null;
+  buildingId: number | null;
+  floorId: number | null;
+  roomId: number | null;
 
   // Delivering Info
   todaysDate: Date;
@@ -43,16 +51,22 @@ export class AddAssetComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<Asset[]>();
 
+  // Inject location services
+  private branchService = inject(BranchService);
+  private buildingService = inject(BuildingService);
+  private floorService = inject(FloorService);
+  private roomService = inject(RoomService);
+
   // General data (shared across all assets)
   generalData: GeneralData = {
     network: '',
     type: '',
     brand: '',
     model: '',
-    branch: '',
-    building: '',
-    floor: '',
-    room: '',
+    branchId: null,
+    buildingId: null,
+    floorId: null,
+    roomId: null,
     todaysDate: new Date(),
     deliveringDate: new Date(),
     deliveringCompany: '',
@@ -76,39 +90,13 @@ export class AddAssetComponent implements OnInit {
   // Types based on selected network
   availableTypes: string[] = [];
 
-  // Location hierarchies
-  branches: string[] = ['Main Branch', 'Branch A', 'Branch B', 'Branch C'];
-  buildings: string[] = [];
-  floors: string[] = [];
-  rooms: string[] = [];
+  // Location data from API
+  branches: Branch[] = [];
+  buildings: Building[] = [];
+  floors: Floor[] = [];
+  rooms: Room[] = [];
 
-  // Building options for each branch
-  buildingsMap: { [key: string]: string[] } = {
-    'Main Branch': ['Building 1', 'Building 2', 'Building 3'],
-    'Branch A': ['Building A1', 'Building A2'],
-    'Branch B': ['Building B1'],
-    'Branch C': ['Building C1', 'Building C2'],
-  };
-
-  // Floor options (dynamic based on building)
-  floorsMap: { [key: string]: string[] } = {
-    'Building 1': ['Ground Floor', 'Floor 1', 'Floor 2', 'Floor 3'],
-    'Building 2': ['Ground Floor', 'Floor 1', 'Floor 2'],
-    'Building 3': ['Ground Floor', 'Floor 1'],
-    'Building A1': ['Ground Floor', 'Floor 1', 'Floor 2'],
-    'Building A2': ['Ground Floor', 'Floor 1'],
-    'Building B1': ['Ground Floor'],
-    'Building C1': ['Ground Floor', 'Floor 1'],
-    'Building C2': ['Ground Floor'],
-  };
-
-  // Room options (dynamic based on floor)
-  roomsMap: { [key: string]: string[] } = {
-    'Ground Floor': ['Room 101', 'Room 102', 'Room 103', 'Room 104'],
-    'Floor 1': ['Room 201', 'Room 202', 'Room 203', 'Room 204'],
-    'Floor 2': ['Room 301', 'Room 302', 'Room 303', 'Room 304'],
-    'Floor 3': ['Room 401', 'Room 402', 'Room 403', 'Room 404'],
-  };
+  isLoading = false;
 
   // Delivering companies
   deliveringCompanies: string[] = [
@@ -125,12 +113,29 @@ export class AddAssetComponent implements OnInit {
     // Initialize with one empty specific data form
     this.addNewSpecificData();
 
+    // Load branches from API
+    this.loadBranches();
+
     // Set default network if category is provided
     if (this.currentCategory && this.categoryMappings[this.currentCategory]) {
       const categoryName = this.categoryMappings[this.currentCategory].name;
       this.generalData.network = categoryName;
       this.onNetworkChange();
     }
+  }
+
+  loadBranches(): void {
+    this.isLoading = true;
+    this.branchService.getAll().subscribe({
+      next: (data) => {
+        this.branches = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading branches:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   addNewSpecificData(): void {
@@ -170,27 +175,69 @@ export class AddAssetComponent implements OnInit {
   }
 
   onBranchChange(): void {
-    this.generalData.building = '';
-    this.generalData.floor = '';
-    this.generalData.room = '';
+    this.generalData.buildingId = null;
+    this.generalData.floorId = null;
+    this.generalData.roomId = null;
 
-    this.buildings = this.buildingsMap[this.generalData.branch] || [];
+    this.buildings = [];
     this.floors = [];
     this.rooms = [];
+
+    if (this.generalData.branchId) {
+      this.isLoading = true;
+      this.buildingService.getByBranchId(this.generalData.branchId).subscribe({
+        next: (data) => {
+          this.buildings = data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading buildings:', error);
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   onBuildingChange(): void {
-    this.generalData.floor = '';
-    this.generalData.room = '';
+    this.generalData.floorId = null;
+    this.generalData.roomId = null;
 
-    this.floors = this.floorsMap[this.generalData.building] || [];
+    this.floors = [];
     this.rooms = [];
+
+    if (this.generalData.buildingId) {
+      this.isLoading = true;
+      this.floorService.getByBuildingId(this.generalData.buildingId).subscribe({
+        next: (data) => {
+          this.floors = data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading floors:', error);
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   onFloorChange(): void {
-    this.generalData.room = '';
+    this.generalData.roomId = null;
 
-    this.rooms = this.roomsMap[this.generalData.floor] || [];
+    this.rooms = [];
+
+    if (this.generalData.floorId) {
+      this.isLoading = true;
+      this.roomService.getByFloorId(this.generalData.floorId).subscribe({
+        next: (data) => {
+          this.rooms = data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading rooms:', error);
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   onClose(): void {
@@ -198,13 +245,19 @@ export class AddAssetComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Get location names from IDs
+    const branchName = this.branches.find(b => b.id === this.generalData.branchId)?.name || '';
+    const buildingName = this.buildings.find(b => b.id === this.generalData.buildingId)?.name || '';
+    const floorName = this.floors.find(f => f.id === this.generalData.floorId)?.name || '';
+    const roomName = this.rooms.find(r => r.id === this.generalData.roomId)?.name || '';
+
     // Convert to Asset format - combine general data with each specific data
     const convertedAssets: Asset[] = this.specificDataList.map((specificData) => ({
       serial: specificData.serial,
       type: this.generalData.type,
       name: `${this.generalData.brand} ${this.generalData.model}`.trim(),
       owner: this.generalData.deliveringCompany,
-      location: `${this.generalData.branch} - ${this.generalData.building} - ${this.generalData.floor} - ${this.generalData.room}`,
+      location: `${branchName} - ${buildingName} - ${floorName} - ${roomName}`,
       category: this.generalData.network,
       quantity: 1,
       status: 'Active',

@@ -187,14 +187,14 @@
                   Branch
                 </label>
                 <select
-                  [(ngModel)]="generalData.branch"
+                  [(ngModel)]="generalData.branchId"
                   name="branch"
                   (change)="onBranchChange()"
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                 >
-                  <option value="">Select Branch</option>
-                  <option *ngFor="let branch of branches" [value]="branch">
-                    {{ branch }}
+                  <option [ngValue]="null">Select Branch</option>
+                  <option *ngFor="let branch of branches" [ngValue]="branch.id">
+                    {{ branch.name }}
                   </option>
                 </select>
               </div>
@@ -205,18 +205,18 @@
                   Building
                 </label>
                 <select
-                  [(ngModel)]="generalData.building"
+                  [(ngModel)]="generalData.buildingId"
                   name="building"
                   (change)="onBuildingChange()"
-                  [disabled]="!generalData.branch"
+                  [disabled]="!generalData.branchId"
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  <option value="">Select Building</option>
+                  <option [ngValue]="null">Select Building</option>
                   <option
                     *ngFor="let building of buildings"
-                    [value]="building"
+                    [ngValue]="building.id"
                   >
-                    {{ building }}
+                    {{ building.name }}
                   </option>
                 </select>
               </div>
@@ -227,15 +227,15 @@
                   Floor
                 </label>
                 <select
-                  [(ngModel)]="generalData.floor"
+                  [(ngModel)]="generalData.floorId"
                   name="floor"
                   (change)="onFloorChange()"
-                  [disabled]="!generalData.building"
+                  [disabled]="!generalData.buildingId"
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  <option value="">Select Floor</option>
-                  <option *ngFor="let floor of floors" [value]="floor">
-                    {{ floor }}
+                  <option [ngValue]="null">Select Floor</option>
+                  <option *ngFor="let floor of floors" [ngValue]="floor.id">
+                    {{ floor.name }}
                   </option>
                 </select>
               </div>
@@ -246,14 +246,14 @@
                   Room
                 </label>
                 <select
-                  [(ngModel)]="generalData.room"
+                  [(ngModel)]="generalData.roomId"
                   name="room"
-                  [disabled]="!generalData.floor"
+                  [disabled]="!generalData.floorId"
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  <option value="">Select Room</option>
-                  <option *ngFor="let room of rooms" [value]="room">
-                    {{ room }}
+                  <option [ngValue]="null">Select Room</option>
+                  <option *ngFor="let room of rooms" [ngValue]="room.id">
+                    {{ room.name }}
                   </option>
                 </select>
               </div>
