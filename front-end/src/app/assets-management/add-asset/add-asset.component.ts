@@ -5,7 +5,7 @@ import { Asset } from '../models/asset.model';
 import { LocationModalComponent } from '../location-modal/location-modal.component';
 import { LocationData } from '../location-modal/location-modal.component';
 
-interface AssetForm {
+interface GeneralData {
   // General Data
   network: string;
   type: string;
@@ -22,8 +22,10 @@ interface AssetForm {
   todaysDate: Date;
   deliveringDate: Date;
   deliveringCompany: string;
+}
 
-  // Specific Data
+interface SpecificData {
+  // Specific Data (per asset)
   serial: string;
   note: string;
 }
@@ -41,8 +43,23 @@ export class AddAssetComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<Asset[]>();
 
-  // Multiple assets support
-  assets: AssetForm[] = [];
+  // General data (shared across all assets)
+  generalData: GeneralData = {
+    network: '',
+    type: '',
+    brand: '',
+    model: '',
+    branch: '',
+    building: '',
+    floor: '',
+    room: '',
+    todaysDate: new Date(),
+    deliveringDate: new Date(),
+    deliveringCompany: '',
+  };
+
+  // Multiple specific data (one per asset)
+  specificDataList: SpecificData[] = [];
 
   // Categories (Networks)
   networks: string[] = [
@@ -105,58 +122,36 @@ export class AddAssetComponent implements OnInit {
   showLocationModal: boolean = false;
 
   ngOnInit(): void {
-    // Initialize with one empty asset form
-    this.addNewAssetForm();
+    // Initialize with one empty specific data form
+    this.addNewSpecificData();
 
     // Set default network if category is provided
     if (this.currentCategory && this.categoryMappings[this.currentCategory]) {
       const categoryName = this.categoryMappings[this.currentCategory].name;
-      this.assets[0].network = categoryName;
-      this.onNetworkChange(0);
+      this.generalData.network = categoryName;
+      this.onNetworkChange();
     }
   }
 
-  addNewAssetForm(): void {
-    const newAsset: AssetForm = {
-      network: this.currentCategory
-        ? this.categoryMappings[this.currentCategory]?.name || ''
-        : '',
-      type: '',
-      brand: '',
-      model: '',
-      branch: '',
-      building: '',
-      floor: '',
-      room: '',
-      todaysDate: new Date(),
-      deliveringDate: new Date(),
-      deliveringCompany: '',
+  addNewSpecificData(): void {
+    const newSpecificData: SpecificData = {
       serial: '',
       note: '',
     };
-    this.assets.push(newAsset);
+    this.specificDataList.push(newSpecificData);
+  }
 
-    // Set available types if network is already selected
-    if (newAsset.network) {
-      const categoryKey = this.getCategoryKeyFromName(newAsset.network);
-      if (categoryKey && this.categoryMappings[categoryKey]) {
-        this.availableTypes = this.categoryMappings[categoryKey].types || [];
-      }
+  removeSpecificData(index: number): void {
+    if (this.specificDataList.length > 1) {
+      this.specificDataList.splice(index, 1);
     }
   }
 
-  removeAssetForm(index: number): void {
-    if (this.assets.length > 1) {
-      this.assets.splice(index, 1);
-    }
-  }
-
-  onNetworkChange(index: number): void {
-    const asset = this.assets[index];
-    asset.type = ''; // Reset type when network changes
+  onNetworkChange(): void {
+    this.generalData.type = ''; // Reset type when network changes
 
     // Find the category key from the network name
-    const categoryKey = this.getCategoryKeyFromName(asset.network);
+    const categoryKey = this.getCategoryKeyFromName(this.generalData.network);
 
     if (categoryKey && this.categoryMappings[categoryKey]) {
       this.availableTypes = this.categoryMappings[categoryKey].types || [];
@@ -174,31 +169,28 @@ export class AddAssetComponent implements OnInit {
     return null;
   }
 
-  onBranchChange(index: number): void {
-    const asset = this.assets[index];
-    asset.building = '';
-    asset.floor = '';
-    asset.room = '';
+  onBranchChange(): void {
+    this.generalData.building = '';
+    this.generalData.floor = '';
+    this.generalData.room = '';
 
-    this.buildings = this.buildingsMap[asset.branch] || [];
+    this.buildings = this.buildingsMap[this.generalData.branch] || [];
     this.floors = [];
     this.rooms = [];
   }
 
-  onBuildingChange(index: number): void {
-    const asset = this.assets[index];
-    asset.floor = '';
-    asset.room = '';
+  onBuildingChange(): void {
+    this.generalData.floor = '';
+    this.generalData.room = '';
 
-    this.floors = this.floorsMap[asset.building] || [];
+    this.floors = this.floorsMap[this.generalData.building] || [];
     this.rooms = [];
   }
 
-  onFloorChange(index: number): void {
-    const asset = this.assets[index];
-    asset.room = '';
+  onFloorChange(): void {
+    this.generalData.room = '';
 
-    this.rooms = this.roomsMap[asset.floor] || [];
+    this.rooms = this.roomsMap[this.generalData.floor] || [];
   }
 
   onClose(): void {
@@ -206,20 +198,20 @@ export class AddAssetComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Convert AssetForm to Asset format
-    const convertedAssets: Asset[] = this.assets.map((assetForm) => ({
-      serial: assetForm.serial,
-      type: assetForm.type,
-      name: `${assetForm.brand} ${assetForm.model}`.trim(),
-      owner: assetForm.deliveringCompany,
-      location: `${assetForm.branch} - ${assetForm.building} - ${assetForm.floor} - ${assetForm.room}`,
-      category: assetForm.network,
+    // Convert to Asset format - combine general data with each specific data
+    const convertedAssets: Asset[] = this.specificDataList.map((specificData) => ({
+      serial: specificData.serial,
+      type: this.generalData.type,
+      name: `${this.generalData.brand} ${this.generalData.model}`.trim(),
+      owner: this.generalData.deliveringCompany,
+      location: `${this.generalData.branch} - ${this.generalData.building} - ${this.generalData.floor} - ${this.generalData.room}`,
+      category: this.generalData.network,
       quantity: 1,
       status: 'Active',
-      note: assetForm.note,
-      brand: assetForm.brand,
-      model: assetForm.model,
-      deliveringDate: assetForm.deliveringDate,
+      note: specificData.note,
+      brand: this.generalData.brand,
+      model: this.generalData.model,
+      deliveringDate: this.generalData.deliveringDate,
     }));
 
     this.save.emit(convertedAssets);

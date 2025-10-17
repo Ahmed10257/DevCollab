@@ -3,3 +3,7 @@ export * from './team.schema';
 export * from './task.schema';
 export * from './priority.schema';
 export * from './status.schema';
+export * from './branch.schema';
+export * from './building.schema';
+export * from './floor.schema';
+export * from './room.schema';

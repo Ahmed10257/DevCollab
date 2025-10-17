@@ -7,6 +7,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TeamModule } from './team/team.module';
 import { TaskModule } from './task/task.module';
+import { BranchModule } from './branch/branch.module';
+import { BuildingModule } from './building/building.module';
+import { FloorModule } from './floor/floor.module';
+import { RoomModule } from './room/room.module';
 import { LoggerModule } from 'nestjs-pino';
 
 
@@ -16,6 +20,10 @@ import { LoggerModule } from 'nestjs-pino';
         UserModule, AuthModule,
         TeamModule,
         TaskModule,
+        BranchModule,
+        BuildingModule,
+        FloorModule,
+        RoomModule,
         ConfigModule.forRoot({
             isGlobal: true,
         }),
