@@ -23,7 +23,7 @@ export class BuildingController {
     }
 
     @Get()
-    findAll(@Query('branchId', ParseIntPipe) branchId?: number) {
+    findAll(@Query('branchId', new ParseIntPipe({ optional: true })) branchId?: number) {
         if (branchId) {
             return this.buildingService.findByBranch(branchId);
         }

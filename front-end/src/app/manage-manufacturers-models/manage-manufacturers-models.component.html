@@ -1,0 +1,440 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900">Manage Manufacturers & Models</h1>
+          <p class="text-gray-600 mt-2">View and manage manufacturers and their product models</p>
+        </div>
+        <button
+          routerLink="/assets/home"
+          class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center shadow-lg"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <!-- Tabs -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px">
+          <button
+            (click)="setActiveTab('manufacturers')"
+            [class.border-purple-600]="activeTab === 'manufacturers'"
+            [class.text-purple-600]="activeTab === 'manufacturers'"
+            [class.border-transparent]="activeTab !== 'manufacturers'"
+            [class.text-gray-600]="activeTab !== 'manufacturers'"
+            class="flex-1 py-4 px-6 text-center border-b-2 font-medium text-sm hover:text-purple-600 transition"
+          >
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            Manufacturers
+          </button>
+          <button
+            (click)="setActiveTab('models')"
+            [class.border-purple-600]="activeTab === 'models'"
+            [class.text-purple-600]="activeTab === 'models'"
+            [class.border-transparent]="activeTab !== 'models'"
+            [class.text-gray-600]="activeTab !== 'models'"
+            class="flex-1 py-4 px-6 text-center border-b-2 font-medium text-sm hover:text-purple-600 transition"
+          >
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+            </svg>
+            Models
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Manufacturers Tab -->
+        <div *ngIf="activeTab === 'manufacturers'">
+          <div class="mb-4">
+            <button
+              *ngIf="!addingManufacturer"
+              (click)="startAddManufacturer()"
+              class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+            >
+              + Add Manufacturer
+            </button>
+          </div>
+
+          <!-- Add New Manufacturer Form -->
+          <div *ngIf="addingManufacturer" class="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+            <h3 class="text-lg font-semibold mb-3 text-purple-900">New Manufacturer</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <input
+                  [(ngModel)]="newManufacturer.name"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Enter manufacturer name"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                <input
+                  [(ngModel)]="newManufacturer.website"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Support Email</label>
+                <input
+                  [(ngModel)]="newManufacturer.supportEmail"
+                  type="email"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="support@example.com"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Support Phone</label>
+                <input
+                  [(ngModel)]="newManufacturer.supportPhone"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  [(ngModel)]="newManufacturer.description"
+                  rows="2"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Enter description"
+                ></textarea>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button
+                (click)="saveNewManufacturer()"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Save
+              </button>
+              <button
+                (click)="cancelAddManufacturer()"
+                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Manufacturers Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Support Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Support Phone</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let manufacturer of manufacturers" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ manufacturer.id }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id">
+                      {{ manufacturer.name }}
+                    </span>
+                    <input
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      [(ngModel)]="editingManufacturer!.name"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id">
+                      {{ manufacturer.website || '-' }}
+                    </span>
+                    <input
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      [(ngModel)]="editingManufacturer!.website"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id">
+                      {{ manufacturer.supportEmail || '-' }}
+                    </span>
+                    <input
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      [(ngModel)]="editingManufacturer!.supportEmail"
+                      type="email"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id">
+                      {{ manufacturer.supportPhone || '-' }}
+                    </span>
+                    <input
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      [(ngModel)]="editingManufacturer!.supportPhone"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id"
+                      (click)="editManufacturer(manufacturer)"
+                      class="text-purple-600 hover:text-purple-900 mr-3"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      *ngIf="!isEditingManufacturer || editingManufacturerId !== manufacturer.id"
+                      (click)="deleteManufacturer(manufacturer.id)"
+                      class="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      (click)="saveEditManufacturer()"
+                      class="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      Save
+                    </button>
+                    <button
+                      *ngIf="isEditingManufacturer && editingManufacturerId === manufacturer.id"
+                      (click)="cancelEditManufacturer()"
+                      class="text-gray-600 hover:text-gray-900"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Models Tab -->
+        <div *ngIf="activeTab === 'models'">
+          <!-- Manufacturer Filter -->
+          <div class="mb-4 flex items-center gap-4">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Manufacturer</label>
+              <select
+                [(ngModel)]="selectedManufacturerId"
+                (change)="onManufacturerFilterChange()"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+              >
+                <option [ngValue]="null">All Manufacturers</option>
+                <option *ngFor="let manufacturer of manufacturers" [ngValue]="manufacturer.id">
+                  {{ manufacturer.name }}
+                </option>
+              </select>
+            </div>
+            <div class="pt-6">
+              <button
+                *ngIf="!addingModel"
+                (click)="startAddModel()"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              >
+                + Add Model
+              </button>
+            </div>
+          </div>
+
+          <!-- Add New Model Form -->
+          <div *ngIf="addingModel" class="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+            <h3 class="text-lg font-semibold mb-3 text-purple-900">New Model</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <input
+                  [(ngModel)]="newModel.name"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Enter model name"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Manufacturer *</label>
+                <select
+                  [(ngModel)]="newModel.manufacturerId"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                >
+                  <option [ngValue]="0">Select manufacturer</option>
+                  <option *ngFor="let manufacturer of manufacturers" [ngValue]="manufacturer.id">
+                    {{ manufacturer.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Model Number</label>
+                <input
+                  [(ngModel)]="newModel.modelNumber"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="e.g., XYZ-1000"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <input
+                  [(ngModel)]="newModel.description"
+                  type="text"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Brief description"
+                />
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Specifications</label>
+                <textarea
+                  [(ngModel)]="newModel.specifications"
+                  rows="2"
+                  class="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Technical specifications"
+                ></textarea>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button
+                (click)="saveNewModel()"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Save
+              </button>
+              <button
+                (click)="cancelAddModel()"
+                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Models Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manufacturer</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model Number</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let model of models" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ model.id }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span *ngIf="!isEditingModel || editingModelId !== model.id">{{ model.name }}</span>
+                    <input
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      [(ngModel)]="editingModel!.name"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span *ngIf="!isEditingModel || editingModelId !== model.id">
+                      {{ getManufacturerName(model.manufacturerId) }}
+                    </span>
+                    <select
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      [(ngModel)]="editingModel!.manufacturerId"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    >
+                      <option *ngFor="let manufacturer of manufacturers" [ngValue]="manufacturer.id">
+                        {{ manufacturer.name }}
+                      </option>
+                    </select>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span *ngIf="!isEditingModel || editingModelId !== model.id">
+                      {{ model.modelNumber || '-' }}
+                    </span>
+                    <input
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      [(ngModel)]="editingModel!.modelNumber"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500">
+                    <span *ngIf="!isEditingModel || editingModelId !== model.id">
+                      {{ model.description || '-' }}
+                    </span>
+                    <input
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      [(ngModel)]="editingModel!.description"
+                      type="text"
+                      class="border border-gray-300 rounded px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      *ngIf="!isEditingModel || editingModelId !== model.id"
+                      (click)="editModel(model)"
+                      class="text-purple-600 hover:text-purple-900 mr-3"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      *ngIf="!isEditingModel || editingModelId !== model.id"
+                      (click)="deleteModel(model.id)"
+                      class="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      (click)="saveEditModel()"
+                      class="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      Save
+                    </button>
+                    <button
+                      *ngIf="isEditingModel && editingModelId === model.id"
+                      (click)="cancelEditModel()"
+                      class="text-gray-600 hover:text-gray-900"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

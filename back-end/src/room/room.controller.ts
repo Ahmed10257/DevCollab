@@ -23,7 +23,7 @@ export class RoomController {
     }
 
     @Get()
-    findAll(@Query('floorId', ParseIntPipe) floorId?: number) {
+    findAll(@Query('floorId', new ParseIntPipe({ optional: true })) floorId?: number) {
         if (floorId) {
             return this.roomService.findByFloor(floorId);
         }

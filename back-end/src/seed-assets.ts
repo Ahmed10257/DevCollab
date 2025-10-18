@@ -44,6 +44,25 @@ async function seedAssets() {
       throw new Error('Required categories not found. Please run seed:categories first.');
     }
 
+    // Load manufacturers and models
+    console.log('📦 Loading manufacturers and models...');
+    const manufacturers = await db.query.manufacturers.findMany();
+    const models = await db.query.models.findMany();
+
+    const ciscoManf = manufacturers.find(m => m.name === 'Cisco');
+    const hpManf = manufacturers.find(m => m.name === 'HP (Hewlett-Packard)');
+    const dellManf = manufacturers.find(m => m.name === 'Dell');
+    const lenovoManf = manufacturers.find(m => m.name === 'Lenovo');
+
+    const catalyst2960Model = models.find(m => m.name === 'Catalyst 2960-X Series');
+    const aruba2930Model = models.find(m => m.name === 'Aruba 2930F Series');
+    const isr4000Model = models.find(m => m.name === 'ISR 4000 Series Router');
+    const arubaAP515Model = models.find(m => m.name === 'Aruba AP-515');
+    const optiplex7090Model = models.find(m => m.name === 'OptiPlex 7090');
+    const thinkcentreM90aModel = models.find(m => m.name === 'ThinkCentre M90a');
+    const latitude5420Model = models.find(m => m.name === 'Latitude 5420');
+    const thinkpadX1Model = models.find(m => m.name === 'ThinkPad X1 Carbon');
+
     // Insert Networking Assets
     console.log('🔌 Inserting networking assets...');
     
@@ -53,8 +72,8 @@ async function seedAssets() {
       categoryId: networkingCategory.id,
       typeId: switchType!.id,
       serialNumber: 'SW-2960X-001',
-      brand: 'Cisco',
-      model: '2960-X',
+      manufacturerId: ciscoManf?.id,
+      modelId: catalyst2960Model?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[0]?.id,
       floorId: floors[0]?.id,
@@ -80,8 +99,8 @@ async function seedAssets() {
       categoryId: networkingCategory.id,
       typeId: switchType!.id,
       serialNumber: 'SW-2930F-002',
-      brand: 'HP Aruba',
-      model: '2930F-48G',
+      manufacturerId: hpManf?.id,
+      modelId: aruba2930Model?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[1]?.id,
       floorId: floors[1]?.id,
@@ -104,12 +123,12 @@ async function seedAssets() {
 
     // Routers
     const router1 = await db.insert(assets).values({
-      name: 'Cisco ISR 4331',
+      name: 'Cisco ISR 4000 Series Router',
       categoryId: networkingCategory.id,
       typeId: routerType!.id,
-      serialNumber: 'RTR-ISR4331-001',
-      brand: 'Cisco',
-      model: 'ISR 4331',
+      serialNumber: 'RTR-ISR4000-001',
+      manufacturerId: ciscoManf?.id,
+      modelId: isr4000Model?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[0]?.id,
       floorId: floors[2]?.id,
@@ -132,12 +151,12 @@ async function seedAssets() {
 
     // Access Points
     const ap1 = await db.insert(assets).values({
-      name: 'Ubiquiti UniFi AP AC Pro',
+      name: 'HP Aruba AP-515',
       categoryId: networkingCategory.id,
       typeId: accessPointType!.id,
-      serialNumber: 'AP-UACPRO-001',
-      brand: 'Ubiquiti',
-      model: 'UAP-AC-PRO',
+      serialNumber: 'AP-515-001',
+      manufacturerId: hpManf?.id,
+      modelId: arubaAP515Model?.id,
       branchId: branches[1]?.id,
       buildingId: buildings[2]?.id,
       floorId: floors[2]?.id,
@@ -167,9 +186,9 @@ async function seedAssets() {
       name: 'Dell OptiPlex 7090',
       categoryId: computersCategory.id,
       typeId: desktopType!.id,
-      serialNumber: 'DT-OPTIPLEX-001',
-      brand: 'Dell',
-      model: 'OptiPlex 7090',
+      serialNumber: 'DT-OPT7090-001',
+      manufacturerId: dellManf?.id,
+      modelId: optiplex7090Model?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[0]?.id,
       floorId: floors[0]?.id,
@@ -196,12 +215,12 @@ async function seedAssets() {
     });
 
     const desktop2 = await db.insert(assets).values({
-      name: 'HP EliteDesk 800 G8',
+      name: 'Lenovo ThinkCentre M90a',
       categoryId: computersCategory.id,
       typeId: desktopType!.id,
-      serialNumber: 'DT-ELITEDESK-002',
-      brand: 'HP',
-      model: 'EliteDesk 800 G8',
+      serialNumber: 'DT-M90A-002',
+      manufacturerId: lenovoManf?.id,
+      modelId: thinkcentreM90aModel?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[1]?.id,
       floorId: floors[1]?.id,
@@ -232,9 +251,9 @@ async function seedAssets() {
       name: 'Dell Latitude 5420',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
-      serialNumber: 'LP-LATITUDE-001',
-      brand: 'Dell',
-      model: 'Latitude 5420',
+      serialNumber: 'LT-LAT5420-001',
+      manufacturerId: dellManf?.id,
+      modelId: latitude5420Model?.id,
       branchId: branches[1]?.id,
       buildingId: buildings[2]?.id,
       floorId: floors[3]?.id,
@@ -260,12 +279,12 @@ async function seedAssets() {
     });
 
     const laptop2 = await db.insert(assets).values({
-      name: 'Lenovo ThinkPad X1 Carbon Gen 9',
+      name: 'Lenovo ThinkPad X1 Carbon',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
-      serialNumber: 'LP-X1CARBON-002',
-      brand: 'Lenovo',
-      model: 'ThinkPad X1 Carbon Gen 9',
+      serialNumber: 'LT-X1C-002',
+      manufacturerId: lenovoManf?.id,
+      modelId: thinkpadX1Model?.id,
       branchId: branches[0]?.id,
       buildingId: buildings[0]?.id,
       floorId: floors[2]?.id,
@@ -291,12 +310,12 @@ async function seedAssets() {
     });
 
     const laptop3 = await db.insert(assets).values({
-      name: 'HP ProBook 450 G8',
+      name: 'Dell Latitude 5420',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
-      serialNumber: 'LP-PROBOOK-003',
-      brand: 'HP',
-      model: 'ProBook 450 G8',
+      serialNumber: 'LT-LAT5420-003',
+      manufacturerId: dellManf?.id,
+      modelId: latitude5420Model?.id,
       branchId: branches[1]?.id,
       buildingId: buildings[3]?.id,
       floorId: floors[4]?.id,

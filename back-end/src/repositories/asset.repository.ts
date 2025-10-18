@@ -7,6 +7,8 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 export interface AssetFilters {
   categoryId?: number;
   typeId?: number;
+  manufacturerId?: number;
+  modelId?: number;
   branchId?: number;
   buildingId?: number;
   floorId?: number;
@@ -29,6 +31,12 @@ export class AssetRepository {
     }
     if (filters?.typeId) {
       conditions.push(eq(assets.typeId, filters.typeId));
+    }
+    if (filters?.manufacturerId) {
+      conditions.push(eq(assets.manufacturerId, filters.manufacturerId));
+    }
+    if (filters?.modelId) {
+      conditions.push(eq(assets.modelId, filters.modelId));
     }
     if (filters?.branchId) {
       conditions.push(eq(assets.branchId, filters.branchId));
@@ -55,8 +63,7 @@ export class AssetRepository {
       const searchCondition = or(
         like(assets.name, `%${filters.searchTerm}%`),
         like(assets.serialNumber, `%${filters.searchTerm}%`),
-        like(assets.brand, `%${filters.searchTerm}%`),
-        like(assets.model, `%${filters.searchTerm}%`),
+        like(assets.notes, `%${filters.searchTerm}%`),
       );
       if (searchCondition) {
         conditions.push(searchCondition);

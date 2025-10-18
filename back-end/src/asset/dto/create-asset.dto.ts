@@ -27,14 +27,12 @@ export class CreateAssetDto {
   serialNumber!: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  model?: string;
+  @IsNumber()
+  manufacturerId?: number;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  brand?: string;
+  @IsNumber()
+  modelId?: number;
 
   // Location hierarchy - all optional
   @IsOptional()

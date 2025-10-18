@@ -14,6 +14,8 @@ import { RoomModule } from './room/room.module';
 import { CategoryModule } from './category/category.module';
 import { TypeModule } from './type/type.module';
 import { AssetModule } from './asset/asset.module';
+import { ManufacturerModule } from './manufacturer/manufacturer.module';
+import { ModelModule } from './model/model.module';
 import { LoggerModule } from 'nestjs-pino';
 
 
@@ -29,6 +31,8 @@ import { LoggerModule } from 'nestjs-pino';
         RoomModule,
         CategoryModule,
         TypeModule,
+        ManufacturerModule,
+        ModelModule,
         AssetModule,
         ConfigModule.forRoot({
             isGlobal: true,

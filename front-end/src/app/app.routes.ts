@@ -7,6 +7,8 @@ import { AssetsHomeComponent } from './assets-management/assets-home/assets-home
 import { AddAssetComponent } from './assets-management/add-asset/add-asset.component';
 import { ViewAssetComponent } from './assets-management/view-asset/view-asset.component';
 import { EditAssetComponent } from './assets-management/edit-asset/edit-asset.component';
+import { ManageLocationsComponent } from './manage-locations/manage-locations.component';
+import { ManageManufacturersModelsComponent } from './manage-manufacturers-models/manage-manufacturers-models.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +44,14 @@ export const routes: Routes = [
   {
     path: 'assets/edit/:id',
     component: EditAssetComponent,
+  },
+  {
+    path: 'assets/manage-locations',
+    component: ManageLocationsComponent,
+  },
+  {
+    path: 'assets/manage-manufacturers-models',
+    component: ManageManufacturersModelsComponent,
   },
   {
     path: '**',

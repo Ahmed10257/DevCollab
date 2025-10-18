@@ -1,6 +1,8 @@
 import { pgTable, serial, varchar, timestamp, integer, date } from 'drizzle-orm/pg-core';
 import { categories } from './category.schema';
 import { types } from './type.schema';
+import { manufacturers } from './manufacturer.schema';
+import { models } from './model.schema';
 import { branches } from './branch.schema';
 import { buildings } from './building.schema';
 import { floors } from './floor.schema';
@@ -17,8 +19,10 @@ export const assets = pgTable('assets', {
     .notNull()
     .references(() => types.id, { onDelete: 'restrict' }),
   serialNumber: varchar('serial_number', { length: 255 }).notNull().unique(),
-  model: varchar('model', { length: 255 }),
-  brand: varchar('brand', { length: 255 }),
+  manufacturerId: integer('manufacturer_id')
+    .references(() => manufacturers.id, { onDelete: 'set null' }),
+  modelId: integer('model_id')
+    .references(() => models.id, { onDelete: 'set null' }),
   // Location hierarchy - all optional for flexibility
   branchId: integer('branch_id')
     .references(() => branches.id, { onDelete: 'set null' }),

@@ -23,7 +23,7 @@ export class FloorController {
     }
 
     @Get()
-    findAll(@Query('buildingId', ParseIntPipe) buildingId?: number) {
+    findAll(@Query('buildingId', new ParseIntPipe({ optional: true })) buildingId?: number) {
         if (buildingId) {
             return this.floorService.findByBuilding(buildingId);
         }
