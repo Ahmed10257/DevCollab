@@ -46,8 +46,13 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+    </div>
+
     <!-- Categories Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div
         *ngFor="let category of categories"
         (click)="navigateToCategory(category.id)"
@@ -64,11 +69,77 @@
               ' p-6 flex items-center justify-center'
             "
           >
-            <lucide-icon
-              [name]="category.icon"
+            <!-- Network Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'network'"
+              [img]="Network"
               class="w-16 h-16 text-white drop-shadow-lg"
-              stroke-width="2"
-            />
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Monitor Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'monitor'"
+              [img]="Monitor"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Server Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'server'"
+              [img]="Server"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Printer Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'printer'"
+              [img]="Printer"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Projector Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'projector'"
+              [img]="Projector"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Camera Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'camera'"
+              [img]="Camera"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Phone Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'phone'"
+              [img]="Phone"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Box Icon -->
+            <lucide-angular
+              *ngIf="category.icon === 'box'"
+              [img]="Box"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
+
+            <!-- Default Package Icon -->
+            <lucide-angular
+              *ngIf="!category.icon || (category.icon !== 'network' && category.icon !== 'monitor' && category.icon !== 'server' && category.icon !== 'printer' && category.icon !== 'projector' && category.icon !== 'camera' && category.icon !== 'phone' && category.icon !== 'box')"
+              [img]="Package"
+              class="w-16 h-16 text-white drop-shadow-lg"
+              [strokeWidth]="2"
+            ></lucide-angular>
           </div>
 
           <!-- Card Content -->

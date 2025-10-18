@@ -45,39 +45,6 @@
       class="px-6 py-6 space-y-6"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Serial -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Serial Number <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            [(ngModel)]="editedAsset.serial"
-            name="serial"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="e.g., LAP001"
-          />
-        </div>
-
-        <!-- Type -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Type <span class="text-red-500">*</span>
-          </label>
-          <select
-            [(ngModel)]="editedAsset.type"
-            name="type"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          >
-            <option value="">Select Type</option>
-            <option *ngFor="let type of types" [value]="type">
-              {{ type }}
-            </option>
-          </select>
-        </div>
-
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -93,18 +60,18 @@
           />
         </div>
 
-        <!-- Owner -->
+        <!-- Serial Number -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Owner <span class="text-red-500">*</span>
+            Serial Number <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
-            [(ngModel)]="editedAsset.owner"
-            name="owner"
+            [(ngModel)]="editedAsset.serialNumber"
+            name="serialNumber"
             required
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="e.g., John Doe"
+            placeholder="e.g., LAP001"
           />
         </div>
 
@@ -114,63 +81,223 @@
             Category <span class="text-red-500">*</span>
           </label>
           <select
-            [(ngModel)]="editedAsset.category"
-            name="category"
+            [(ngModel)]="editedAsset.categoryId"
+            name="categoryId"
+            (change)="onCategoryChange()"
             required
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
-            <option *ngFor="let category of categories" [value]="category">
-              {{ category }}
+            <option [ngValue]="undefined">Select Category</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
             </option>
           </select>
         </div>
 
-        <!-- Location -->
+        <!-- Type -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Location <span class="text-red-500">*</span>
+            Type <span class="text-red-500">*</span>
           </label>
           <select
-            [(ngModel)]="editedAsset.location"
-            name="location"
+            [(ngModel)]="editedAsset.typeId"
+            name="typeId"
             required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            [disabled]="!editedAsset.categoryId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
           >
-            <option value="">Select Location</option>
-            <option *ngFor="let location of locations" [value]="location">
-              {{ location }}
+            <option [ngValue]="undefined">Select Type</option>
+            <option *ngFor="let type of availableTypes" [ngValue]="type.id">
+              {{ type.name }}
             </option>
           </select>
         </div>
 
-        <!-- Quantity -->
+        <!-- Brand -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
-            >Quantity</label
-          >
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Brand
+          </label>
           <input
-            type="number"
-            [(ngModel)]="editedAsset.quantity"
-            name="quantity"
-            min="1"
+            type="text"
+            [(ngModel)]="editedAsset.brand"
+            name="brand"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="e.g., Dell"
           />
+        </div>
+
+        <!-- Model -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Model
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="editedAsset.model"
+            name="model"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="e.g., XPS 15"
+          />
+        </div>
+
+        <!-- Branch -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Branch
+          </label>
+          <select
+            [(ngModel)]="editedAsset.branchId"
+            name="branchId"
+            (change)="onBranchChange()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option [ngValue]="undefined">Select Branch</option>
+            <option *ngFor="let branch of branches" [ngValue]="branch.id">
+              {{ branch.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Building -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Building
+          </label>
+          <select
+            [(ngModel)]="editedAsset.buildingId"
+            name="buildingId"
+            (change)="onBuildingChange()"
+            [disabled]="!editedAsset.branchId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+          >
+            <option [ngValue]="undefined">Select Building</option>
+            <option *ngFor="let building of buildings" [ngValue]="building.id">
+              {{ building.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Floor -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Floor
+          </label>
+          <select
+            [(ngModel)]="editedAsset.floorId"
+            name="floorId"
+            (change)="onFloorChange()"
+            [disabled]="!editedAsset.buildingId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+          >
+            <option [ngValue]="undefined">Select Floor</option>
+            <option *ngFor="let floor of floors" [ngValue]="floor.id">
+              {{ floor.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Room -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Room
+          </label>
+          <select
+            [(ngModel)]="editedAsset.roomId"
+            name="roomId"
+            [disabled]="!editedAsset.floorId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+          >
+            <option [ngValue]="undefined">Select Room</option>
+            <option *ngFor="let room of rooms" [ngValue]="room.id">
+              {{ room.name }}
+            </option>
+          </select>
         </div>
 
         <!-- Status -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
-            >Status</label
-          >
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Status <span class="text-red-500">*</span>
+          </label>
           <select
             [(ngModel)]="editedAsset.status"
             name="status"
+            required
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option *ngFor="let status of statuses" [value]="status">
               {{ status }}
             </option>
           </select>
+        </div>
+
+        <!-- Purchase Date -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Purchase Date
+          </label>
+          <input
+            type="date"
+            [(ngModel)]="editedAsset.purchaseDate"
+            name="purchaseDate"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+
+        <!-- Warranty Expiry -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Warranty Expiry
+          </label>
+          <input
+            type="date"
+            [(ngModel)]="editedAsset.warrantyExpiry"
+            name="warrantyExpiry"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+
+        <!-- Responsible User ID -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Responsible User ID
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="editedAsset.responsibleUserId"
+            name="responsibleUserId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="User ID"
+          />
+        </div>
+
+        <!-- Assigned User ID -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Assigned User ID
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="editedAsset.assignedUserId"
+            name="assignedUserId"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="User ID"
+          />
+        </div>
+
+        <!-- Notes (Full Width) -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Notes
+          </label>
+          <textarea
+            [(ngModel)]="editedAsset.notes"
+            name="notes"
+            rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Additional notes about this asset..."
+          ></textarea>
         </div>
       </div>
 

@@ -11,6 +11,8 @@ import { Asset } from '../models/asset.model';
 })
 export class ViewAssetComponent {
   @Input() asset!: Asset;
+  @Input() categoryName?: string;
+  @Input() typeName?: string;
   @Output() close = new EventEmitter<void>();
   @Output() edit = new EventEmitter<Asset>();
   @Output() delete = new EventEmitter<Asset>();

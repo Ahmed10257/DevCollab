@@ -7,3 +7,8 @@ export * from './branch.schema';
 export * from './building.schema';
 export * from './floor.schema';
 export * from './room.schema';
+export * from './category.schema';
+export * from './type.schema';
+export * from './asset.schema';
+export * from './networking-device.schema';
+export * from './computer.schema';

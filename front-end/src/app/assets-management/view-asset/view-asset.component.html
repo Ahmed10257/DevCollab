@@ -14,16 +14,16 @@
     >
       <div>
         <h2 class="text-2xl font-bold text-gray-800">{{ asset.name }}</h2>
-        <p class="text-gray-600 text-sm mt-1">Serial: {{ asset.serial }}</p>
+        <p class="text-gray-600 text-sm mt-1">Serial: {{ asset.serialNumber }}</p>
       </div>
       <div class="flex items-center space-x-3">
         <span
           class="px-3 py-1 rounded-full text-sm font-medium"
           [ngClass]="{
             'bg-green-100 text-green-800': asset.status === 'Active',
-            'bg-yellow-100 text-yellow-800': asset.status === 'Maintenance',
+            'bg-yellow-100 text-yellow-800': asset.status === 'Maintenance' || asset.status === 'In Use',
             'bg-red-100 text-red-800': asset.status === 'Inactive',
-            'bg-gray-100 text-gray-800': asset.status === 'Retired'
+            'bg-gray-100 text-gray-800': asset.status === 'Retired' || asset.status === 'Storage'
           }"
         >
           {{ asset.status }}
@@ -52,44 +52,68 @@
     <!-- Content -->
     <div class="px-6 py-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Type -->
-        <div>
+        <!-- Brand -->
+        <div *ngIf="asset.brand">
           <label class="block text-sm font-medium text-gray-500 mb-1"
-            >Type</label
+            >Brand</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.type }}</p>
+          <p class="text-gray-900 text-lg">{{ asset.brand }}</p>
         </div>
 
-        <!-- Category -->
+        <!-- Model -->
+        <div *ngIf="asset.model">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Model</label
+          >
+          <p class="text-gray-900 text-lg">{{ asset.model }}</p>
+        </div>
+
+        <!-- Category ID -->
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1"
             >Category</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.category }}</p>
+          <p class="text-gray-900 text-lg">{{ categoryName || 'Category #' + asset.categoryId }}</p>
         </div>
 
-        <!-- Owner -->
+        <!-- Type ID -->
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1"
-            >Owner</label
+            >Type</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.owner }}</p>
+          <p class="text-gray-900 text-lg">{{ typeName || 'Type #' + asset.typeId }}</p>
         </div>
 
-        <!-- Location -->
-        <div>
+        <!-- Branch -->
+        <div *ngIf="asset.branchId">
           <label class="block text-sm font-medium text-gray-500 mb-1"
-            >Location</label
+            >Branch</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.location }}</p>
+          <p class="text-gray-900 text-lg">Branch #{{ asset.branchId }}</p>
         </div>
 
-        <!-- Quantity -->
-        <div *ngIf="asset.quantity">
+        <!-- Building -->
+        <div *ngIf="asset.buildingId">
           <label class="block text-sm font-medium text-gray-500 mb-1"
-            >Quantity</label
+            >Building</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.quantity }}</p>
+          <p class="text-gray-900 text-lg">Building #{{ asset.buildingId }}</p>
+        </div>
+
+        <!-- Floor -->
+        <div *ngIf="asset.floorId">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Floor</label
+          >
+          <p class="text-gray-900 text-lg">Floor #{{ asset.floorId }}</p>
+        </div>
+
+        <!-- Room -->
+        <div *ngIf="asset.roomId">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Room</label
+          >
+          <p class="text-gray-900 text-lg">Room #{{ asset.roomId }}</p>
         </div>
 
         <!-- Status -->
@@ -98,6 +122,50 @@
             >Status</label
           >
           <p class="text-gray-900 text-lg">{{ asset.status }}</p>
+        </div>
+
+        <!-- Purchase Date -->
+        <div *ngIf="asset.purchaseDate">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Purchase Date</label
+          >
+          <p class="text-gray-900 text-lg">
+            {{ asset.purchaseDate | date : "mediumDate" }}
+          </p>
+        </div>
+
+        <!-- Warranty Expiry -->
+        <div *ngIf="asset.warrantyExpiry">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Warranty Expiry</label
+          >
+          <p class="text-gray-900 text-lg">
+            {{ asset.warrantyExpiry | date : "mediumDate" }}
+          </p>
+        </div>
+
+        <!-- Responsible User -->
+        <div *ngIf="asset.responsibleUserId">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Responsible User</label
+          >
+          <p class="text-gray-900 text-lg">User #{{ asset.responsibleUserId }}</p>
+        </div>
+
+        <!-- Assigned User -->
+        <div *ngIf="asset.assignedUserId">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Assigned User</label
+          >
+          <p class="text-gray-900 text-lg">User #{{ asset.assignedUserId }}</p>
+        </div>
+
+        <!-- Notes -->
+        <div *ngIf="asset.notes" class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-500 mb-1"
+            >Notes</label
+          >
+          <p class="text-gray-900 text-lg">{{ asset.notes }}</p>
         </div>
 
         <!-- Created At -->

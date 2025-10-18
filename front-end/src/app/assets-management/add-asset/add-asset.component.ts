@@ -1,9 +1,15 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Asset } from '../models/asset.model';
+import { forkJoin } from 'rxjs';
+import { Asset, CreateAssetDto } from '../models/asset.model';
+import { Category } from '../models/category.model';
+import { Type } from '../models/type.model';
 import { LocationModalComponent } from '../location-modal/location-modal.component';
 import { LocationData } from '../location-modal/location-modal.component';
+import { AssetService } from '../services/asset.service';
+import { CategoryService } from '../services/category.service';
+import { TypeService } from '../services/type.service';
 import { BranchService } from '../services/branch.service';
 import { BuildingService } from '../services/building.service';
 import { FloorService } from '../services/floor.service';
@@ -12,11 +18,12 @@ import { Branch } from '../models/branch.model';
 import { Building } from '../models/building.model';
 import { Floor } from '../models/floor.model';
 import { Room } from '../models/room.model';
+import Swal from 'sweetalert2';
 
 interface GeneralData {
   // General Data
-  network: string;
-  type: string;
+  categoryId: number | null;
+  typeId: number | null;
   brand: string;
   model: string;
 
@@ -26,16 +33,19 @@ interface GeneralData {
   floorId: number | null;
   roomId: number | null;
 
-  // Delivering Info
-  todaysDate: Date;
-  deliveringDate: Date;
-  deliveringCompany: string;
+  // Asset Info
+  status: string;
+  purchaseDate: string;
+  warrantyExpiry: string;
+  responsibleUserId: number | null;
+  assignedUserId: number | null;
 }
 
 interface SpecificData {
   // Specific Data (per asset)
-  serial: string;
-  note: string;
+  serialNumber: string;
+  notes: string;
+  name: string;
 }
 
 @Component({
@@ -46,12 +56,13 @@ interface SpecificData {
   styleUrls: ['./add-asset.component.css'],
 })
 export class AddAssetComponent implements OnInit {
-  @Input() currentCategory: string = '';
-  @Input() categoryMappings: any = {};
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<Asset[]>();
+  @Output() save = new EventEmitter<Asset>();
 
-  // Inject location services
+  // Inject services
+  private assetService = inject(AssetService);
+  private categoryService = inject(CategoryService);
+  private typeService = inject(TypeService);
   private branchService = inject(BranchService);
   private buildingService = inject(BuildingService);
   private floorService = inject(FloorService);
@@ -59,42 +70,40 @@ export class AddAssetComponent implements OnInit {
 
   // General data (shared across all assets)
   generalData: GeneralData = {
-    network: '',
-    type: '',
+    categoryId: null,
+    typeId: null,
     brand: '',
     model: '',
     branchId: null,
     buildingId: null,
     floorId: null,
     roomId: null,
-    todaysDate: new Date(),
-    deliveringDate: new Date(),
-    deliveringCompany: '',
+    status: 'Active',
+    purchaseDate: new Date().toISOString().split('T')[0],
+    warrantyExpiry: '',
+    responsibleUserId: null,
+    assignedUserId: null,
   };
 
-  // Multiple specific data (one per asset)
-  specificDataList: SpecificData[] = [];
+  // Specific data for single asset
+  specificData: SpecificData = {
+    serialNumber: '',
+    notes: '',
+    name: '',
+  };
 
-  // Categories (Networks)
-  networks: string[] = [
-    'Networking',
-    'Computers',
-    'Servers',
-    'Storage',
-    'Printers',
-    'Phones',
-    'Accessories',
-    'Others',
-  ];
-
-  // Types based on selected network
-  availableTypes: string[] = [];
+  // Categories and Types from API
+  categories: Category[] = [];
+  availableTypes: Type[] = [];
 
   // Location data from API
   branches: Branch[] = [];
   buildings: Building[] = [];
   floors: Floor[] = [];
   rooms: Room[] = [];
+
+  // Status options
+  statusOptions: string[] = ['Active', 'In Use', 'Maintenance', 'Retired', 'Storage'];
 
   isLoading = false;
 
@@ -110,18 +119,28 @@ export class AddAssetComponent implements OnInit {
   showLocationModal: boolean = false;
 
   ngOnInit(): void {
-    // Initialize with one empty specific data form
-    this.addNewSpecificData();
+    this.loadData();
+  }
 
-    // Load branches from API
-    this.loadBranches();
-
-    // Set default network if category is provided
-    if (this.currentCategory && this.categoryMappings[this.currentCategory]) {
-      const categoryName = this.categoryMappings[this.currentCategory].name;
-      this.generalData.network = categoryName;
-      this.onNetworkChange();
-    }
+  loadData(): void {
+    this.isLoading = true;
+    forkJoin({
+      categories: this.categoryService.getAll(),
+      types: this.typeService.getAll(),
+      branches: this.branchService.getAll(),
+    }).subscribe({
+      next: ({ categories, types, branches }) => {
+        this.categories = categories;
+        this.availableTypes = types;
+        this.branches = branches;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading data:', error);
+        Swal.fire('Error', 'Failed to load form data', 'error');
+        this.isLoading = false;
+      },
+    });
   }
 
   loadBranches(): void {
@@ -138,40 +157,23 @@ export class AddAssetComponent implements OnInit {
     });
   }
 
-  addNewSpecificData(): void {
-    const newSpecificData: SpecificData = {
-      serial: '',
-      note: '',
-    };
-    this.specificDataList.push(newSpecificData);
-  }
-
-  removeSpecificData(index: number): void {
-    if (this.specificDataList.length > 1) {
-      this.specificDataList.splice(index, 1);
-    }
-  }
-
-  onNetworkChange(): void {
-    this.generalData.type = ''; // Reset type when network changes
-
-    // Find the category key from the network name
-    const categoryKey = this.getCategoryKeyFromName(this.generalData.network);
-
-    if (categoryKey && this.categoryMappings[categoryKey]) {
-      this.availableTypes = this.categoryMappings[categoryKey].types || [];
+  // When category changes, update available types
+  onCategoryChange(): void {
+    this.generalData.typeId = null; // Reset type when category changes
+    
+    if (this.generalData.categoryId) {
+      this.typeService.getAll(this.generalData.categoryId).subscribe({
+        next: (types) => {
+          this.availableTypes = types;
+        },
+        error: (error) => {
+          console.error('Error loading types:', error);
+          this.availableTypes = [];
+        },
+      });
     } else {
       this.availableTypes = [];
     }
-  }
-
-  getCategoryKeyFromName(networkName: string): string | null {
-    for (const [key, value] of Object.entries(this.categoryMappings)) {
-      if ((value as any).name === networkName) {
-        return key;
-      }
-    }
-    return null;
   }
 
   onBranchChange(): void {
@@ -245,29 +247,51 @@ export class AddAssetComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Get location names from IDs
-    const branchName = this.branches.find(b => b.id === this.generalData.branchId)?.name || '';
-    const buildingName = this.buildings.find(b => b.id === this.generalData.buildingId)?.name || '';
-    const floorName = this.floors.find(f => f.id === this.generalData.floorId)?.name || '';
-    const roomName = this.rooms.find(r => r.id === this.generalData.roomId)?.name || '';
+    // Validate required fields
+    if (!this.generalData.categoryId || !this.generalData.typeId) {
+      Swal.fire('Validation Error', 'Please select category and type', 'error');
+      return;
+    }
 
-    // Convert to Asset format - combine general data with each specific data
-    const convertedAssets: Asset[] = this.specificDataList.map((specificData) => ({
-      serial: specificData.serial,
-      type: this.generalData.type,
-      name: `${this.generalData.brand} ${this.generalData.model}`.trim(),
-      owner: this.generalData.deliveringCompany,
-      location: `${branchName} - ${buildingName} - ${floorName} - ${roomName}`,
-      category: this.generalData.network,
-      quantity: 1,
-      status: 'Active',
-      note: specificData.note,
-      brand: this.generalData.brand,
-      model: this.generalData.model,
-      deliveringDate: this.generalData.deliveringDate,
-    }));
+    if (!this.specificData.name || !this.specificData.serialNumber) {
+      Swal.fire('Validation Error', 'Please enter asset name and serial number', 'error');
+      return;
+    }
 
-    this.save.emit(convertedAssets);
+    // Create asset DTO
+    const createDto: CreateAssetDto = {
+      name: this.specificData.name,
+      categoryId: this.generalData.categoryId,
+      typeId: this.generalData.typeId,
+      serialNumber: this.specificData.serialNumber,
+      brand: this.generalData.brand || undefined,
+      model: this.generalData.model || undefined,
+      branchId: this.generalData.branchId || undefined,
+      buildingId: this.generalData.buildingId || undefined,
+      floorId: this.generalData.floorId || undefined,
+      roomId: this.generalData.roomId || undefined,
+      status: this.generalData.status,
+      purchaseDate: this.generalData.purchaseDate || undefined,
+      warrantyExpiry: this.generalData.warrantyExpiry || undefined,
+      responsibleUserId: this.generalData.responsibleUserId || undefined,
+      assignedUserId: this.generalData.assignedUserId || undefined,
+      notes: this.specificData.notes || undefined,
+    };
+
+    // Call API to create asset
+    this.isLoading = true;
+    this.assetService.create(createDto).subscribe({
+      next: (asset) => {
+        this.isLoading = false;
+        Swal.fire('Success', 'Asset created successfully', 'success');
+        this.save.emit(asset);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error creating asset:', error);
+        Swal.fire('Error', 'Failed to create asset', 'error');
+      },
+    });
   }
 
   onBackdropClick(event: MouseEvent): void {
