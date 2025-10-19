@@ -18,7 +18,7 @@
           Adding New
           {{
             currentCategory
-              ? categoryMappings[currentCategory]?.name
+              ? categoryMappings[currentCategory].name
               : "Network"
           }}
           Asset
@@ -414,7 +414,7 @@
                   </label>
                   <input
                     type="text"
-                    [(ngModel)]="specificData.serial"
+                    [(ngModel)]="specificData.serialNumber"
                     [name]="'serial_' + i"
                     placeholder="Enter serial number"
                     required
@@ -429,7 +429,7 @@
                   </label>
                   <input
                     type="text"
-                    [(ngModel)]="specificData.note"
+                    [(ngModel)]="specificData.notes"
                     [name]="'note_' + i"
                     placeholder="Add a note (optional)"
                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"

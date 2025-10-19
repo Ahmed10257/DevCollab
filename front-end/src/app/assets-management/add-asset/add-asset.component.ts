@@ -39,6 +39,12 @@ interface GeneralData {
   warrantyExpiry: string;
   responsibleUserId: number | null;
   assignedUserId: number | null;
+
+  // Optional fields used in template
+  network?: string;
+  todaysDate?: string;
+  deliveringDate?: string;
+  deliveringCompany?: string;
 }
 
 interface SpecificData {
@@ -92,9 +98,25 @@ export class AddAssetComponent implements OnInit {
     name: '',
   };
 
+  // Array for managing multiple assets
+  specificDataList: SpecificData[] = [
+    {
+      serialNumber: '',
+      notes: '',
+      name: '',
+    }
+  ];
+
   // Categories and Types from API
   categories: Category[] = [];
   availableTypes: Type[] = [];
+
+  // Category tracking
+  currentCategory: string = '';
+  categoryMappings: { [key: string]: Category } = {};
+
+  // Networks (if needed for network assets)
+  networks: string[] = ['Network 1', 'Network 2', 'Network 3'];
 
   // Location data from API
   branches: Branch[] = [];
@@ -133,6 +155,13 @@ export class AddAssetComponent implements OnInit {
         this.categories = categories;
         this.availableTypes = types;
         this.branches = branches;
+        
+        // Build category mappings
+        this.categoryMappings = {};
+        categories.forEach(cat => {
+          this.categoryMappings[cat.name] = cat;
+        });
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -162,6 +191,11 @@ export class AddAssetComponent implements OnInit {
     this.generalData.typeId = null; // Reset type when category changes
     
     if (this.generalData.categoryId) {
+      const category = this.categories.find(c => c.id === this.generalData.categoryId);
+      if (category) {
+        this.currentCategory = category.name;
+      }
+      
       this.typeService.getAll(this.generalData.categoryId).subscribe({
         next: (types) => {
           this.availableTypes = types;
@@ -173,6 +207,26 @@ export class AddAssetComponent implements OnInit {
       });
     } else {
       this.availableTypes = [];
+      this.currentCategory = '';
+    }
+  }
+
+  onNetworkChange(): void {
+    // Handle network change if needed
+    console.log('Network changed:', this.generalData.network);
+  }
+
+  addNewSpecificData(): void {
+    this.specificDataList.push({
+      serialNumber: '',
+      notes: '',
+      name: '',
+    });
+  }
+
+  removeSpecificData(index: number): void {
+    if (this.specificDataList.length > 1) {
+      this.specificDataList.splice(index, 1);
     }
   }
 

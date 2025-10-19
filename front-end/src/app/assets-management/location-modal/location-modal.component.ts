@@ -9,6 +9,7 @@ import { Branch } from '../models/branch.model';
 import { Building } from '../models/building.model';
 import { Floor } from '../models/floor.model';
 import { Room } from '../models/room.model';
+import Swal from 'sweetalert2';
 
 export interface LocationData {
   type: 'branch' | 'building' | 'floor' | 'room';
@@ -85,6 +86,11 @@ export class LocationModalComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading branches:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Loading Branches',
+          text: 'Failed to load branches. Please refresh and try again.'
+        });
         this.isLoading = false;
       }
     });
@@ -118,6 +124,11 @@ export class LocationModalComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading buildings:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error Loading Buildings',
+            text: 'Failed to load buildings for this branch.'
+          });
           this.isLoading = false;
         }
       });
@@ -137,6 +148,11 @@ export class LocationModalComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading floors:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error Loading Floors',
+            text: 'Failed to load floors for this building.'
+          });
           this.isLoading = false;
         }
       });
@@ -145,6 +161,11 @@ export class LocationModalComponent implements OnInit {
 
   onSubmit() {
     if (!this.locationType) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Information',
+        text: 'Please select a location type'
+      });
       return;
     }
 
@@ -152,7 +173,15 @@ export class LocationModalComponent implements OnInit {
 
     switch (this.locationType) {
       case 'branch':
-        if (!this.newBranchName.trim()) return;
+        if (!this.newBranchName.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please enter a branch name'
+          });
+          this.isLoading = false;
+          return;
+        }
         this.branchService.create({ name: this.newBranchName.trim() }).subscribe({
           next: (branch: Branch) => {
             const locationData: LocationData = {
@@ -160,19 +189,38 @@ export class LocationModalComponent implements OnInit {
               branchId: branch.id,
               branchName: branch.name
             };
+            Swal.fire({
+              icon: 'success',
+              title: 'Branch Created!',
+              text: `${branch.name} has been successfully created.`,
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.save.emit(locationData);
             this.closeModal();
           },
           error: (error: any) => {
             console.error('Error creating branch:', error);
-            alert('Failed to create branch. Please try again.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to create branch. Please try again.'
+            });
             this.isLoading = false;
           }
         });
         break;
 
       case 'building':
-        if (!this.selectedBranchId || !this.newBuildingName.trim()) return;
+        if (!this.selectedBranchId || !this.newBuildingName.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select a branch and enter a building name'
+          });
+          this.isLoading = false;
+          return;
+        }
         this.buildingService.create({ 
           name: this.newBuildingName.trim(),
           branchId: this.selectedBranchId
@@ -186,19 +234,38 @@ export class LocationModalComponent implements OnInit {
               buildingId: building.id,
               buildingName: building.name
             };
+            Swal.fire({
+              icon: 'success',
+              title: 'Building Created!',
+              text: `${building.name} has been successfully created.`,
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.save.emit(locationData);
             this.closeModal();
           },
           error: (error: any) => {
             console.error('Error creating building:', error);
-            alert('Failed to create building. Please try again.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to create building. Please try again.'
+            });
             this.isLoading = false;
           }
         });
         break;
 
       case 'floor':
-        if (!this.selectedBranchId || !this.selectedBuildingId || !this.newFloorName.trim()) return;
+        if (!this.selectedBranchId || !this.selectedBuildingId || !this.newFloorName.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select a branch, building, and enter a floor name'
+          });
+          this.isLoading = false;
+          return;
+        }
         this.floorService.create({
           name: this.newFloorName.trim(),
           buildingId: this.selectedBuildingId
@@ -215,19 +282,38 @@ export class LocationModalComponent implements OnInit {
               floorId: floor.id,
               floorName: floor.name
             };
+            Swal.fire({
+              icon: 'success',
+              title: 'Floor Created!',
+              text: `${floor.name} has been successfully created.`,
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.save.emit(locationData);
             this.closeModal();
           },
           error: (error: any) => {
             console.error('Error creating floor:', error);
-            alert('Failed to create floor. Please try again.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to create floor. Please try again.'
+            });
             this.isLoading = false;
           }
         });
         break;
 
       case 'room':
-        if (!this.selectedBranchId || !this.selectedBuildingId || !this.selectedFloorId || !this.newRoomName.trim()) return;
+        if (!this.selectedBranchId || !this.selectedBuildingId || !this.selectedFloorId || !this.newRoomName.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select a branch, building, floor, and enter a room name'
+          });
+          this.isLoading = false;
+          return;
+        }
         this.roomService.create({
           name: this.newRoomName.trim(),
           floorId: this.selectedFloorId
@@ -247,12 +333,23 @@ export class LocationModalComponent implements OnInit {
               roomId: room.id,
               roomName: room.name
             };
+            Swal.fire({
+              icon: 'success',
+              title: 'Room Created!',
+              text: `${room.name} has been successfully created.`,
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.save.emit(locationData);
             this.closeModal();
           },
           error: (error: any) => {
             console.error('Error creating room:', error);
-            alert('Failed to create room. Please try again.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to create room. Please try again.'
+            });
             this.isLoading = false;
           }
         });

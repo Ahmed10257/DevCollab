@@ -58,6 +58,12 @@ export class AssetsManagementComponent implements OnInit {
   searchTerm: string = '';
   selectedTypeId: number | null = null;
   selectedStatus: string = '';
+  typeFilter: string = '';
+
+  // Filter data
+  types: string[] = [];
+  owners: string[] = [];
+  locations: string[] = [];
 
   // Advanced search
   showAdvancedSearch: boolean = false;
@@ -114,6 +120,12 @@ export class AssetsManagementComponent implements OnInit {
         this.categories = categories;
         this.allTypes = types;
         this.currentTypes = types;
+        
+        // Populate filter arrays
+        this.types = types.map(t => t.name);
+        // You can populate owners and locations from backend services if available
+        this.owners = []; // Populate from user service if needed
+        this.locations = []; // Populate from location service if needed
       },
       error: (error) => {
         console.error('Error loading initial data:', error);
