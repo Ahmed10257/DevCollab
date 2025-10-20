@@ -3,9 +3,9 @@ export interface Asset {
   name: string;
   categoryId: number;
   typeId: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber: string;
-  brand?: string;
-  model?: string;
   branchId?: number;
   buildingId?: number;
   floorId?: number;
@@ -24,9 +24,9 @@ export interface CreateAssetDto {
   name: string;
   categoryId: number;
   typeId: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber: string;
-  brand?: string;
-  model?: string;
   branchId?: number;
   buildingId?: number;
   floorId?: number;
@@ -43,9 +43,9 @@ export interface UpdateAssetDto {
   name?: string;
   categoryId?: number;
   typeId?: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber?: string;
-  brand?: string;
-  model?: string;
   branchId?: number;
   buildingId?: number;
   floorId?: number;

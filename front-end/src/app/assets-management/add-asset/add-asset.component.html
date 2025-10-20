@@ -13,21 +13,16 @@
       class="border-b border-gray-200 px-8 py-6 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50"
     >
       <div>
-        <h2 class="text-3xl font-bold text-gray-900">Add Asset Module</h2>
+        <h2 class="text-3xl font-bold text-gray-900">Add Asset</h2>
         <p class="text-gray-600 text-sm mt-1">
-          Adding New
-          {{
-            currentCategory
-              ? categoryMappings[currentCategory].name
-              : "Network"
-          }}
-          Asset
+          Add a new asset to your inventory system
         </p>
       </div>
       <button
         type="button"
         (click)="onClose()"
         class="text-gray-400 hover:text-gray-600 transition"
+        title="Close"
       >
         <svg
           class="w-6 h-6"
@@ -48,318 +43,15 @@
     <!-- Scrollable Content -->
     <div class="overflow-y-auto flex-1 px-8 py-6">
       <form (ngSubmit)="onSubmit()" #assetForm="ngForm">
-        <!-- General Data Section (Shared) -->
-        <div class="mb-8 border-2 border-indigo-300 rounded-xl p-6 bg-indigo-50/30">
-          <!-- General Data Section -->
-          <div class="mb-6">
-            <h3
-              class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-            >
-              <svg
-                class="w-5 h-5 mr-2 text-indigo-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              General Data
-              <span class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">Shared</span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <!-- Type (Network/Category) -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Type <span class="text-red-500">*</span>
-                </label>
-                <select
-                  [(ngModel)]="generalData.network"
-                  name="network"
-                  (change)="onNetworkChange()"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                >
-                  <option value="" disabled>Select Network</option>
-                  <option *ngFor="let network of networks" [value]="network">
-                    {{ network }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Brand -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Brand <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  [(ngModel)]="generalData.brand"
-                  name="brand"
-                  placeholder="Enter brand"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                />
-              </div>
-
-              <!-- Model -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Model <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  [(ngModel)]="generalData.model"
-                  name="model"
-                  placeholder="Enter model"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                />
-              </div>
-
-              <!-- Location Button -->
-              <div class="flex items-end">
-                <button
-                  type="button"
-                  class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium flex items-center justify-center"
-                  (click)="openLocationModal()"
-                >
-                  <svg
-                    class="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Add New Location
-                </button>
-                <app-location-modal
-                  [showModal]="showLocationModal"
-                  (close)="onLocationModalClose()"
-                  (save)="onLocationSaved($event)"
-                ></app-location-modal>
-              </div>
-            </div>
-          </div>          <!-- Location Section -->
-          <div class="mb-6 bg-gray-50 rounded-lg p-4">
-            <h3
-              class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-            >
-              <svg
-                class="w-5 h-5 mr-2 text-indigo-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              Location
-              <span class="text-xs text-gray-500 ml-2"
-                >(4 elements hierarchy)</span
-              >
-              <span class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">Shared</span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <!-- Branch -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Branch
-                </label>
-                <select
-                  [(ngModel)]="generalData.branchId"
-                  name="branch"
-                  (change)="onBranchChange()"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                >
-                  <option [ngValue]="null">Select Branch</option>
-                  <option *ngFor="let branch of branches" [ngValue]="branch.id">
-                    {{ branch.name }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Building -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Building
-                </label>
-                <select
-                  [(ngModel)]="generalData.buildingId"
-                  name="building"
-                  (change)="onBuildingChange()"
-                  [disabled]="!generalData.branchId"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option [ngValue]="null">Select Building</option>
-                  <option
-                    *ngFor="let building of buildings"
-                    [ngValue]="building.id"
-                  >
-                    {{ building.name }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Floor -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Floor
-                </label>
-                <select
-                  [(ngModel)]="generalData.floorId"
-                  name="floor"
-                  (change)="onFloorChange()"
-                  [disabled]="!generalData.buildingId"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option [ngValue]="null">Select Floor</option>
-                  <option *ngFor="let floor of floors" [ngValue]="floor.id">
-                    {{ floor.name }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Room -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Room
-                </label>
-                <select
-                  [(ngModel)]="generalData.roomId"
-                  name="room"
-                  [disabled]="!generalData.floorId"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option [ngValue]="null">Select Room</option>
-                  <option *ngFor="let room of rooms" [ngValue]="room.id">
-                    {{ room.name }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Delivering Info Section -->
-          <div class="mb-6">
-            <h3
-              class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-            >
-              <svg
-                class="w-5 h-5 mr-2 text-indigo-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              Delivering Information
-              <span class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">Shared</span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <!-- Today's Date -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Today's Date
-                </label>
-                <input
-                  type="date"
-                  [(ngModel)]="generalData.todaysDate"
-                  name="todaysDate"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-gray-100"
-                  readonly
-                />
-              </div>
-
-              <!-- Delivering Date -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Delivering Date <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  [(ngModel)]="generalData.deliveringDate"
-                  name="deliveringDate"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                />
-              </div>
-
-              <!-- Delivering Company -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Delivering Company <span class="text-red-500">*</span>
-                </label>
-                <select
-                  [(ngModel)]="generalData.deliveringCompany"
-                  name="deliveringCompany"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                >
-                  <option value="" disabled>Select Company</option>
-                  <option
-                    *ngFor="let company of deliveringCompanies"
-                    [value]="company"
-                  >
-                    {{ company }}
-                  </option>
-                </select>
-                <button
-                  type="button"
-                  class="mt-2 text-sm text-indigo-600 hover:text-indigo-700 flex items-center"
-                >
-                  <svg
-                    class="w-4 h-4 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Add Company
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Specific Data Section (Multiple) -->
-        <div class="mb-6">
+        <!-- ASSET CLASSIFICATION SECTION -->
+        <div
+          class="mb-8 border-2 border-indigo-300 rounded-xl p-6 bg-indigo-50/30"
+        >
           <h3
-            class="text-2xl font-bold text-gray-900 mb-4 flex items-center"
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
           >
             <svg
-              class="w-6 h-6 mr-2 text-purple-600"
+              class="w-5 h-5 mr-2 text-indigo-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -368,87 +60,106 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            Specific Data
-            <span class="ml-2 text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">Individual Assets</span>
+            Asset Classification
+            <span
+              class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full"
+              >Required</span
+            >
           </h3>
 
-          <!-- Loop through multiple specific data -->
-          <div *ngFor="let specificData of specificDataList; let i = index" class="mb-4 last:mb-0">
-            <!-- Specific Data Card -->
-            <div class="border-2 border-purple-200 rounded-xl p-6 relative bg-purple-50/30">
-              <!-- Remove button (show only if more than one specific data) -->
-              <button
-                *ngIf="specificDataList.length > 1"
-                type="button"
-                (click)="removeSpecificData(i)"
-                class="absolute top-4 right-4 text-red-500 hover:text-red-700 transition"
-                title="Remove this asset"
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Category -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Category <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="generalData.categoryId"
+                name="category"
+                (change)="onCategoryChange()"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                title="Select asset category"
               >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                <option [ngValue]="null" disabled>Select Category</option>
+                <option *ngFor="let cat of categories" [ngValue]="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
 
-              <div class="flex items-center mb-4">
-                <span class="text-lg font-semibold text-gray-800">Asset #{{ i + 1 }}</span>
-              </div>
+            <!-- Type -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Type <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="generalData.typeId"
+                name="type"
+                [disabled]="!generalData.categoryId"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                title="Select asset type"
+              >
+                <option [ngValue]="null" disabled>Select Type</option>
+                <option *ngFor="let type of availableTypes" [ngValue]="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Serial -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Serial <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    [(ngModel)]="specificData.serialNumber"
-                    [name]="'serial_' + i"
-                    placeholder="Enter serial number"
-                    required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  />
-                </div>
+            <!-- Manufacturer -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Manufacturer <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="generalData.manufacturerId"
+                name="manufacturer"
+                (change)="onManufacturerChange()"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                title="Select manufacturer"
+              >
+                <option [ngValue]="null" disabled>Select Manufacturer</option>
+                <option *ngFor="let mfr of manufacturers" [ngValue]="mfr.id">
+                  {{ mfr.name }}
+                </option>
+              </select>
+            </div>
 
-                <!-- Note -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Note
-                  </label>
-                  <input
-                    type="text"
-                    [(ngModel)]="specificData.notes"
-                    [name]="'note_' + i"
-                    placeholder="Add a note (optional)"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  />
-                </div>
-              </div>
+            <!-- Model -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Model <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="generalData.modelId"
+                name="model"
+                [disabled]="!generalData.manufacturerId"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                title="Select model"
+              >
+                <option [ngValue]="null" disabled>Select Model</option>
+                <option *ngFor="let mdl of availableModels" [ngValue]="mdl.id">
+                  {{ mdl.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
 
-        <!-- Add Another Button -->
-        <div class="mt-6">
-          <button
-            type="button"
-            (click)="addNewSpecificData()"
-            class="w-full py-3 border-2 border-dashed border-purple-300 text-purple-600 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition flex items-center justify-center font-medium"
+        <!-- BASIC INFORMATION SECTION -->
+        <div class="mb-8 border-2 border-blue-300 rounded-xl p-6 bg-blue-50/30">
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
           >
             <svg
-              class="w-5 h-5 mr-2"
+              class="w-5 h-5 mr-2 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -457,18 +168,339 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 4v16m8-8H4"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            Add Another Asset (Same Type)
-          </button>
+            Basic Information
+            <span
+              class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full"
+              >Required</span
+            >
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Asset Name -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Asset Name <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="specificData.name"
+                name="name"
+                placeholder="e.g., Web Server 01"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                title="Enter asset name"
+              />
+            </div>
+
+            <!-- Serial Number -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Serial Number <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="specificData.serialNumber"
+                name="serialNumber"
+                placeholder="e.g., SN-2025-001"
+                required
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                title="Enter serial number"
+              />
+            </div>
+
+            <!-- Status -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                [(ngModel)]="generalData.status"
+                name="status"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                title="Select asset status"
+              >
+                <option *ngFor="let status of statusOptions" [value]="status">
+                  {{ status }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Notes
+            </label>
+            <textarea
+              [(ngModel)]="specificData.notes"
+              name="notes"
+              placeholder="Add any additional notes..."
+              rows="3"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              title="Enter notes"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- CATEGORY-SPECIFIC DETAILS SECTION -->
+        <div
+          *ngIf="getSpecificFields().length > 0"
+          class="mb-8 border-2 border-green-300 rounded-xl p-6 bg-green-50/30"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+          >
+            <svg
+              class="w-5 h-5 mr-2 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            {{ currentCategory }} Specifications
+            <span
+              class="ml-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full"
+              >Category-Specific</span
+            >
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ng-container *ngFor="let field of getSpecificFields()">
+              <div *ngIf="getFieldType(field) !== 'checkbox'">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ getFieldLabel(field) }}
+                </label>
+                <input
+                  [type]="getFieldType(field)"
+                  [(ngModel)]="specificData.categorySpecificData[field]"
+                  [name]="field"
+                  [placeholder]="getFieldLabel(field)"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                  [title]="getFieldLabel(field)"
+                />
+              </div>
+              <div
+                *ngIf="getFieldType(field) === 'checkbox'"
+                class="flex items-center mt-7"
+              >
+                <input
+                  type="checkbox"
+                  [(ngModel)]="specificData.categorySpecificData[field]"
+                  [name]="field"
+                  class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                  [title]="getFieldLabel(field)"
+                />
+                <label class="ml-2 text-sm font-medium text-gray-700">
+                  {{ getFieldLabel(field) }}
+                </label>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- LOCATION SECTION -->
+        <div
+          class="mb-8 border-2 border-purple-300 rounded-xl p-6 bg-purple-50/30"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+          >
+            <svg
+              class="w-5 h-5 mr-2 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            Location
+            <span class="text-xs text-gray-500 ml-2"
+              >(Branch → Building → Floor → Room)</span
+            >
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Branch -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Branch
+              </label>
+              <select
+                [(ngModel)]="generalData.branchId"
+                name="branch"
+                (change)="onBranchChange()"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                title="Select branch"
+              >
+                <option [ngValue]="null">Select Branch</option>
+                <option *ngFor="let branch of branches" [ngValue]="branch.id">
+                  {{ branch.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Building -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Building
+              </label>
+              <select
+                [(ngModel)]="generalData.buildingId"
+                name="building"
+                (change)="onBuildingChange()"
+                [disabled]="!generalData.branchId"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                title="Select building"
+              >
+                <option [ngValue]="null">Select Building</option>
+                <option
+                  *ngFor="let building of buildings"
+                  [ngValue]="building.id"
+                >
+                  {{ building.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Floor -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Floor
+              </label>
+              <select
+                [(ngModel)]="generalData.floorId"
+                name="floor"
+                (change)="onFloorChange()"
+                [disabled]="!generalData.buildingId"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                title="Select floor"
+              >
+                <option [ngValue]="null">Select Floor</option>
+                <option *ngFor="let floor of floors" [ngValue]="floor.id">
+                  {{ floor.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Room -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Room
+              </label>
+              <select
+                [(ngModel)]="generalData.roomId"
+                name="room"
+                [disabled]="!generalData.floorId"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                title="Select room"
+              >
+                <option [ngValue]="null">Select Room</option>
+                <option *ngFor="let room of rooms" [ngValue]="room.id">
+                  {{ room.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PURCHASE & WARRANTY SECTION -->
+        <div
+          class="mb-8 border-2 border-orange-300 rounded-xl p-6 bg-orange-50/30"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
+          >
+            <svg
+              class="w-5 h-5 mr-2 text-orange-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Purchase & Warranty
+            <span
+              class="ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full"
+              >Optional</span
+            >
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Purchase Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Purchase Date
+              </label>
+              <input
+                type="date"
+                [(ngModel)]="generalData.purchaseDate"
+                name="purchaseDate"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                title="Select purchase date"
+              />
+            </div>
+
+            <!-- Warranty Expiry -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Warranty Expiry
+              </label>
+              <input
+                type="date"
+                [(ngModel)]="generalData.warrantyExpiry"
+                name="warrantyExpiry"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                title="Select warranty expiry date"
+              />
+            </div>
+
+            <!-- Responsible User -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Responsible User
+              </label>
+              <input
+                type="number"
+                [(ngModel)]="generalData.responsibleUserId"
+                name="responsibleUserId"
+                placeholder="User ID"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                title="Enter responsible user ID"
+              />
+            </div>
+          </div>
         </div>
       </form>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer with Actions -->
     <div
-      class="border-t border-gray-200 px-8 py-4 bg-gray-50 flex items-center justify-end space-x-4"
+      class="border-t border-gray-200 px-8 py-4 flex justify-end space-x-3 bg-gray-50"
     >
       <button
         type="button"
@@ -480,23 +512,48 @@
       <button
         type="submit"
         (click)="onSubmit()"
-        [disabled]="!assetForm.form.valid"
-        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed font-medium flex items-center"
+        [disabled]="isLoading"
+        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
       >
-        <svg
-          class="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-        Add {{ specificDataList.length }} Asset{{ specificDataList.length > 1 ? "s" : "" }}
+        <span *ngIf="!isLoading">
+          <svg
+            class="w-4 h-4 mr-2 inline"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Create Asset
+        </span>
+        <span *ngIf="isLoading">
+          <svg
+            class="animate-spin w-4 h-4 mr-2 inline"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Creating...
+        </span>
       </button>
     </div>
   </div>
