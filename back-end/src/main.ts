@@ -20,7 +20,7 @@ new FastifyAdapter({ logger: true }),
 // Enable CORS
 app.enableCors({
 // origin: 'http://localhost:4200',
-origin: '*',
+origin: ['*','172.20.5.123:4200'],
 methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 credentials: true,
 });
