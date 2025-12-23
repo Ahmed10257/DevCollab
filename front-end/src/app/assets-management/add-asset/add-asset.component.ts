@@ -5,11 +5,15 @@ import { forkJoin } from 'rxjs';
 import { Asset, CreateAssetDto } from '../models/asset.model';
 import { Category } from '../models/category.model';
 import { Type } from '../models/type.model';
+import { Manufacturer } from '../models/manufacturer.model';
+import { Model } from '../models/model.model';
 import { LocationModalComponent } from '../location-modal/location-modal.component';
 import { LocationData } from '../location-modal/location-modal.component';
 import { AssetService } from '../services/asset.service';
 import { CategoryService } from '../services/category.service';
 import { TypeService } from '../services/type.service';
+import { ManufacturerService } from '../services/manufacturer.service';
+import { ModelService } from '../services/model.service';
 import { BranchService } from '../services/branch.service';
 import { BuildingService } from '../services/building.service';
 import { FloorService } from '../services/floor.service';
@@ -24,8 +28,8 @@ interface GeneralData {
   // General Data
   categoryId: number | null;
   typeId: number | null;
-  brand: string;
-  model: string;
+  manufacturerId: number | null;
+  modelId: number | null;
 
   // Location (hierarchical) - now using IDs
   branchId: number | null;
@@ -41,7 +45,6 @@ interface GeneralData {
   assignedUserId: number | null;
 
   // Optional fields used in template
-  network?: string;
   todaysDate?: string;
   deliveringDate?: string;
   deliveringCompany?: string;
@@ -52,6 +55,22 @@ interface SpecificData {
   serialNumber: string;
   notes: string;
   name: string;
+  // Type-specific fields
+  [key: string]: any;
+}
+
+// Type-specific field configurations
+interface TypeFieldConfig {
+  typeId?: number;
+  typeName?: string;
+  fields: {
+    name: string;
+    label: string;
+    type: 'text' | 'number' | 'date' | 'textarea' | 'select';
+    required: boolean;
+    options?: { value: string; label: string }[];
+    placeholder?: string;
+  }[];
 }
 
 @Component({
@@ -69,6 +88,8 @@ export class AddAssetComponent implements OnInit {
   private assetService = inject(AssetService);
   private categoryService = inject(CategoryService);
   private typeService = inject(TypeService);
+  private manufacturerService = inject(ManufacturerService);
+  private modelService = inject(ModelService);
   private branchService = inject(BranchService);
   private buildingService = inject(BuildingService);
   private floorService = inject(FloorService);
@@ -78,8 +99,8 @@ export class AddAssetComponent implements OnInit {
   generalData: GeneralData = {
     categoryId: null,
     typeId: null,
-    brand: '',
-    model: '',
+    manufacturerId: null,
+    modelId: null,
     branchId: null,
     buildingId: null,
     floorId: null,
@@ -110,13 +131,14 @@ export class AddAssetComponent implements OnInit {
   // Categories and Types from API
   categories: Category[] = [];
   availableTypes: Type[] = [];
+  allManufacturers: Manufacturer[] = [];
+  filteredManufacturers: Manufacturer[] = [];
+  allModels: Model[] = [];
+  filteredModels: Model[] = [];
 
   // Category tracking
   currentCategory: string = '';
   categoryMappings: { [key: string]: Category } = {};
-
-  // Networks (if needed for network assets)
-  networks: string[] = ['Network 1', 'Network 2', 'Network 3'];
 
   // Location data from API
   branches: Branch[] = [];
@@ -126,6 +148,9 @@ export class AddAssetComponent implements OnInit {
 
   // Status options
   statusOptions: string[] = ['Active', 'In Use', 'Maintenance', 'Retired', 'Storage'];
+
+  // Type-specific field configurations
+  typeFieldConfigs: { [key: string]: TypeFieldConfig } = {};
 
   isLoading = false;
 
@@ -149,11 +174,15 @@ export class AddAssetComponent implements OnInit {
     forkJoin({
       categories: this.categoryService.getAll(),
       types: this.typeService.getAll(),
+      manufacturers: this.manufacturerService.getAll(),
+      models: this.modelService.getAll(),
       branches: this.branchService.getAll(),
     }).subscribe({
-      next: ({ categories, types, branches }) => {
+      next: ({ categories, types, manufacturers, models, branches }) => {
         this.categories = categories;
         this.availableTypes = types;
+        this.allManufacturers = manufacturers;
+        this.allModels = models;
         this.branches = branches;
         
         // Build category mappings
@@ -161,6 +190,9 @@ export class AddAssetComponent implements OnInit {
         categories.forEach(cat => {
           this.categoryMappings[cat.name] = cat;
         });
+
+        // Initialize type-specific field configurations
+        this.initializeTypeFieldConfigs();
         
         this.isLoading = false;
       },
@@ -170,6 +202,134 @@ export class AddAssetComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  private initializeTypeFieldConfigs(): void {
+    // Define specific fields for each type/category
+    // These are sample configurations - adjust based on your actual types
+    
+    // Computers
+    this.typeFieldConfigs['Computers'] = {
+      typeName: 'Computers',
+      fields: [
+        { name: 'cpu', label: 'Processor (CPU)', type: 'text', required: false, placeholder: 'e.g., Intel i7' },
+        { name: 'ram', label: 'RAM (GB)', type: 'number', required: false, placeholder: 'e.g., 16' },
+        { name: 'storageType', label: 'Storage Type', type: 'select', required: false, options: [
+          { value: 'SSD', label: 'SSD' },
+          { value: 'HDD', label: 'HDD' },
+          { value: 'NVMe', label: 'NVMe' }
+        ]},
+        { name: 'storageCapacity', label: 'Storage (GB)', type: 'number', required: false, placeholder: 'e.g., 512' },
+        { name: 'osType', label: 'Operating System', type: 'text', required: false, placeholder: 'e.g., Windows 11 Pro' }
+      ]
+    };
+
+    // Networking Devices
+    this.typeFieldConfigs['Networking'] = {
+      typeName: 'Networking',
+      fields: [
+        { name: 'ipAddress', label: 'IP Address', type: 'text', required: false, placeholder: '192.168.1.1' },
+        { name: 'macAddress', label: 'MAC Address', type: 'text', required: false, placeholder: '00:1A:2B:3C:4D:5E' },
+        { name: 'portCount', label: 'Number of Ports', type: 'number', required: false },
+        { name: 'bandwidth', label: 'Bandwidth (Gbps)', type: 'number', required: false, placeholder: 'e.g., 1 or 10' }
+      ]
+    };
+
+    // Servers
+    this.typeFieldConfigs['Servers'] = {
+      typeName: 'Servers',
+      fields: [
+        { name: 'cpu', label: 'Processor (CPU)', type: 'text', required: false, placeholder: 'e.g., Xeon E5' },
+        { name: 'ram', label: 'RAM (GB)', type: 'number', required: false, placeholder: 'e.g., 64' },
+        { name: 'storageType', label: 'Storage Type', type: 'select', required: false, options: [
+          { value: 'SSD', label: 'SSD' },
+          { value: 'HDD', label: 'HDD' },
+          { value: 'NVMe', label: 'NVMe' }
+        ]},
+        { name: 'storageCapacity', label: 'Storage (TB)', type: 'number', required: false, placeholder: 'e.g., 2' },
+        { name: 'redundancy', label: 'Redundancy Type', type: 'text', required: false, placeholder: 'e.g., RAID 6' }
+      ]
+    };
+
+    // Printers
+    this.typeFieldConfigs['Printers'] = {
+      typeName: 'Printers',
+      fields: [
+        { name: 'printerType', label: 'Printer Type', type: 'select', required: false, options: [
+          { value: 'Laser', label: 'Laser' },
+          { value: 'Inkjet', label: 'Inkjet' },
+          { value: 'Thermal', label: 'Thermal' }
+        ]},
+        { name: 'colorCapable', label: 'Color Capable', type: 'select', required: false, options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]},
+        { name: 'ppm', label: 'Pages Per Minute (PPM)', type: 'number', required: false },
+        { name: 'networkEnabled', label: 'Network Enabled', type: 'select', required: false, options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]},
+        { name: 'tonerModel', label: 'Toner/Ink Model', type: 'text', required: false }
+      ]
+    };
+
+    // IP Phones
+    this.typeFieldConfigs['IP Phones'] = {
+      typeName: 'IP Phones',
+      fields: [
+        { name: 'sipSupport', label: 'SIP Support', type: 'select', required: false, options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]},
+        { name: 'displayType', label: 'Display Type', type: 'text', required: false, placeholder: 'e.g., Color LCD' },
+        { name: 'ports', label: 'Number of Ports', type: 'number', required: false }
+      ]
+    };
+
+    // Cameras
+    this.typeFieldConfigs['Cameras'] = {
+      typeName: 'Cameras',
+      fields: [
+        { name: 'sensorType', label: 'Sensor Type', type: 'text', required: false, placeholder: 'e.g., CMOS' },
+        { name: 'megapixels', label: 'Megapixels', type: 'number', required: false },
+        { name: 'resolution', label: 'Resolution', type: 'text', required: false, placeholder: 'e.g., 1920x1080' },
+        { name: 'lensType', label: 'Lens Type', type: 'text', required: false, placeholder: 'e.g., Fixed or Varifocal' }
+      ]
+    };
+
+    // Projectors
+    this.typeFieldConfigs['Projectors'] = {
+      typeName: 'Projectors',
+      fields: [
+        { name: 'brightness', label: 'Brightness (Lumens)', type: 'number', required: false },
+        { name: 'resolution', label: 'Resolution', type: 'text', required: false, placeholder: 'e.g., 1080p or 4K' },
+        { name: 'lensType', label: 'Lens Type', type: 'text', required: false, placeholder: 'e.g., Standard' },
+        { name: 'connectivity', label: 'Connectivity', type: 'text', required: false, placeholder: 'e.g., HDMI, VGA' }
+      ]
+    };
+  }
+
+  getTypeSpecificFields(): TypeFieldConfig | null {
+    if (!this.generalData.typeId) return null;
+    
+    const selectedType = this.availableTypes.find(t => t.id === this.generalData.typeId);
+    if (!selectedType) return null;
+
+    // Try to find config by exact type name
+    let config = this.typeFieldConfigs[selectedType.name];
+    
+    // If not found, try to match by checking if type name includes common keywords
+    if (!config) {
+      const typeNameLower = selectedType.name.toLowerCase();
+      for (const [key, value] of Object.entries(this.typeFieldConfigs)) {
+        if (typeNameLower.includes(key.toLowerCase())) {
+          config = value;
+          break;
+        }
+      }
+    }
+
+    return config || null;
   }
 
   loadBranches(): void {
@@ -212,8 +372,32 @@ export class AddAssetComponent implements OnInit {
   }
 
   onNetworkChange(): void {
-    // Handle network change if needed
-    console.log('Network changed:', this.generalData.network);
+    // Reset manufacturer and model when type changes
+    this.generalData.manufacturerId = null;
+    this.generalData.modelId = null;
+    this.filteredManufacturers = [];
+    this.filteredModels = [];
+    
+    if (this.generalData.typeId) {
+      const selectedType = this.availableTypes.find(t => t.id === this.generalData.typeId);
+      if (selectedType) {
+        // For now, show all manufacturers. In future, you might want to filter by type
+        this.filteredManufacturers = this.allManufacturers;
+      }
+    }
+  }
+
+  onManufacturerChange(): void {
+    // Reset model when manufacturer changes
+    this.generalData.modelId = null;
+    this.filteredModels = [];
+    
+    if (this.generalData.manufacturerId) {
+      // Filter models by selected manufacturer
+      this.filteredModels = this.allModels.filter(
+        m => m.manufacturerId === this.generalData.manufacturerId
+      );
+    }
   }
 
   addNewSpecificData(): void {
@@ -318,8 +502,8 @@ export class AddAssetComponent implements OnInit {
       categoryId: this.generalData.categoryId,
       typeId: this.generalData.typeId,
       serialNumber: this.specificData.serialNumber,
-      brand: this.generalData.brand || undefined,
-      model: this.generalData.model || undefined,
+      manufacturerId: this.generalData.manufacturerId || undefined,
+      modelId: this.generalData.modelId || undefined,
       branchId: this.generalData.branchId || undefined,
       buildingId: this.generalData.buildingId || undefined,
       floorId: this.generalData.floorId || undefined,

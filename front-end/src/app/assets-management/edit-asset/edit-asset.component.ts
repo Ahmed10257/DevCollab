@@ -5,6 +5,8 @@ import { forkJoin } from 'rxjs';
 import { Asset, UpdateAssetDto } from '../models/asset.model';
 import { Category } from '../models/category.model';
 import { Type } from '../models/type.model';
+import { Manufacturer } from '../models/manufacturer.model';
+import { Model } from '../models/model.model';
 import { Branch } from '../models/branch.model';
 import { Building } from '../models/building.model';
 import { Floor } from '../models/floor.model';
@@ -12,6 +14,8 @@ import { Room } from '../models/room.model';
 import { AssetService } from '../services/asset.service';
 import { CategoryService } from '../services/category.service';
 import { TypeService } from '../services/type.service';
+import { ManufacturerService } from '../services/manufacturer.service';
+import { ModelService } from '../services/model.service';
 import { BranchService } from '../services/branch.service';
 import { BuildingService } from '../services/building.service';
 import { FloorService } from '../services/floor.service';
@@ -34,6 +38,8 @@ export class EditAssetComponent implements OnInit {
   private assetService = inject(AssetService);
   private categoryService = inject(CategoryService);
   private typeService = inject(TypeService);
+  private manufacturerService = inject(ManufacturerService);
+  private modelService = inject(ModelService);
   private branchService = inject(BranchService);
   private buildingService = inject(BuildingService);
   private floorService = inject(FloorService);
@@ -44,6 +50,10 @@ export class EditAssetComponent implements OnInit {
   // Data from API
   categories: Category[] = [];
   availableTypes: Type[] = [];
+  allManufacturers: Manufacturer[] = [];
+  filteredManufacturers: Manufacturer[] = [];
+  allModels: Model[] = [];
+  filteredModels: Model[] = [];
   branches: Branch[] = [];
   buildings: Building[] = [];
   floors: Floor[] = [];
@@ -65,12 +75,24 @@ export class EditAssetComponent implements OnInit {
     forkJoin({
       categories: this.categoryService.getAll(),
       types: this.typeService.getAll(),
+      manufacturers: this.manufacturerService.getAll(),
+      models: this.modelService.getAll(),
       branches: this.branchService.getAll(),
     }).subscribe({
-      next: ({ categories, types, branches }) => {
+      next: ({ categories, types, manufacturers, models, branches }) => {
         this.categories = categories;
         this.availableTypes = types.filter(t => t.categoryId === this.editedAsset.categoryId);
+        this.allManufacturers = manufacturers;
+        this.allModels = models;
         this.branches = branches;
+        
+        // Set filtered manufacturers and models based on current asset
+        if (this.editedAsset.typeId) {
+          this.filteredManufacturers = manufacturers;
+        }
+        if (this.editedAsset.manufacturerId) {
+          this.filteredModels = models.filter(m => m.manufacturerId === this.editedAsset.manufacturerId);
+        }
         
         // Load location hierarchy based on current asset
         if (this.editedAsset.branchId) {
@@ -125,6 +147,17 @@ export class EditAssetComponent implements OnInit {
     }
   }
 
+  onManufacturerChange(): void {
+    this.editedAsset.modelId = undefined;
+    if (this.editedAsset.manufacturerId) {
+      this.filteredModels = this.allModels.filter(
+        m => m.manufacturerId === this.editedAsset.manufacturerId
+      );
+    } else {
+      this.filteredModels = [];
+    }
+  }
+
   onBuildingChange(): void {
     this.editedAsset.floorId = undefined;
     this.editedAsset.roomId = undefined;
@@ -176,8 +209,8 @@ export class EditAssetComponent implements OnInit {
       categoryId: this.editedAsset.categoryId,
       typeId: this.editedAsset.typeId,
       serialNumber: this.editedAsset.serialNumber,
-      brand: this.editedAsset.brand || undefined,
-      model: this.editedAsset.model || undefined,
+      manufacturerId: this.editedAsset.manufacturerId || undefined,
+      modelId: this.editedAsset.modelId || undefined,
       branchId: this.editedAsset.branchId || undefined,
       buildingId: this.editedAsset.buildingId || undefined,
       floorId: this.editedAsset.floorId || undefined,

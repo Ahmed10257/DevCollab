@@ -72,38 +72,42 @@
               <span class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">Shared</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <!-- Type (Network/Category) -->
+              <!-- Type -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Type <span class="text-red-500">*</span>
                 </label>
                 <select
-                  [(ngModel)]="generalData.network"
-                  name="network"
+                  [(ngModel)]="generalData.typeId"
+                  name="typeId"
                   (change)="onNetworkChange()"
                   required
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                 >
-                  <option value="" disabled>Select Network</option>
-                  <option *ngFor="let network of networks" [value]="network">
-                    {{ network }}
+                  <option [ngValue]="null" disabled>Select Type</option>
+                  <option *ngFor="let type of availableTypes" [ngValue]="type.id">
+                    {{ type.name }}
                   </option>
                 </select>
               </div>
 
-              <!-- Brand -->
+              <!-- Brand (Manufacturer) -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Brand <span class="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  [(ngModel)]="generalData.brand"
-                  name="brand"
-                  placeholder="Enter brand"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                />
+                <select
+                  [(ngModel)]="generalData.manufacturerId"
+                  name="manufacturerId"
+                  (change)="onManufacturerChange()"
+                  [disabled]="!generalData.typeId || filteredManufacturers.length === 0"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option [ngValue]="null" disabled>Select Brand</option>
+                  <option *ngFor="let manufacturer of filteredManufacturers" [ngValue]="manufacturer.id">
+                    {{ manufacturer.name }}
+                  </option>
+                </select>
               </div>
 
               <!-- Model -->
@@ -111,14 +115,17 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Model <span class="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  [(ngModel)]="generalData.model"
-                  name="model"
-                  placeholder="Enter model"
-                  required
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                />
+                <select
+                  [(ngModel)]="generalData.modelId"
+                  name="modelId"
+                  [disabled]="!generalData.manufacturerId || filteredModels.length === 0"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option [ngValue]="null" disabled>Select Model</option>
+                  <option *ngFor="let model of filteredModels" [ngValue]="model.id">
+                    {{ model.name }}
+                  </option>
+                </select>
               </div>
 
               <!-- Location Button -->
@@ -407,10 +414,25 @@
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Name -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Asset Name <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="specificData.name"
+                    [name]="'name_' + i"
+                    placeholder="Enter asset name"
+                    required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  />
+                </div>
+
                 <!-- Serial -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Serial <span class="text-red-500">*</span>
+                    Serial Number <span class="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -421,20 +443,112 @@
                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   />
                 </div>
+              </div>
 
-                <!-- Note -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Note
-                  </label>
-                  <input
-                    type="text"
-                    [(ngModel)]="specificData.notes"
-                    [name]="'note_' + i"
-                    placeholder="Add a note (optional)"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  />
+              <!-- Type-Specific Fields -->
+              <div *ngIf="getTypeSpecificFields()" class="mt-6 pt-6 border-t border-purple-200">
+                <h4 class="text-sm font-semibold text-gray-800 mb-4">
+                  {{ getTypeSpecificFields()?.typeName }} Specifications
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <ng-container *ngFor="let field of getTypeSpecificFields()?.fields">
+                    <!-- Text Input -->
+                    <div *ngIf="field.type === 'text'">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ field.label }}
+                        <span *ngIf="field.required" class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        [(ngModel)]="specificData[field.name]"
+                        [name]="field.name + '_' + i"
+                        [placeholder]="field.placeholder || 'Enter ' + field.label"
+                        [required]="field.required"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+
+                    <!-- Number Input -->
+                    <div *ngIf="field.type === 'number'">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ field.label }}
+                        <span *ngIf="field.required" class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        [(ngModel)]="specificData[field.name]"
+                        [name]="field.name + '_' + i"
+                        [placeholder]="field.placeholder || 'Enter ' + field.label"
+                        [required]="field.required"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+
+                    <!-- Date Input -->
+                    <div *ngIf="field.type === 'date'">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ field.label }}
+                        <span *ngIf="field.required" class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        [(ngModel)]="specificData[field.name]"
+                        [name]="field.name + '_' + i"
+                        [required]="field.required"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+
+                    <!-- Select Input -->
+                    <div *ngIf="field.type === 'select'">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ field.label }}
+                        <span *ngIf="field.required" class="text-red-500">*</span>
+                      </label>
+                      <select
+                        [(ngModel)]="specificData[field.name]"
+                        [name]="field.name + '_' + i"
+                        [required]="field.required"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      >
+                        <option [ngValue]="null">Select {{ field.label }}</option>
+                        <option *ngFor="let option of field.options" [value]="option.value">
+                          {{ option.label }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Textarea Input -->
+                    <div *ngIf="field.type === 'textarea'" class="md:col-span-2 lg:col-span-3">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ field.label }}
+                        <span *ngIf="field.required" class="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        [(ngModel)]="specificData[field.name]"
+                        [name]="field.name + '_' + i"
+                        [placeholder]="field.placeholder || 'Enter ' + field.label"
+                        [required]="field.required"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </ng-container>
                 </div>
+              </div>
+
+              <!-- Notes Section -->
+              <div class="mt-6 pt-6 border-t border-purple-200">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Notes
+                </label>
+                <textarea
+                  [(ngModel)]="specificData.notes"
+                  [name]="'note_' + i"
+                  placeholder="Add any additional notes (optional)"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  rows="3"
+                ></textarea>
               </div>
             </div>
           </div>

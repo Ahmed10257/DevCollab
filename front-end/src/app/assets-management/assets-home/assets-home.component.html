@@ -285,7 +285,7 @@
           <div>
             <p class="text-gray-600 text-sm mb-1">Quick Actions</p>
             <button
-              routerLink="/assets/add"
+              (click)="openAddModal()"
               class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
             >
               Add New Asset
@@ -311,3 +311,10 @@
     </div>
   </div>
 </div>
+
+<!-- Add Asset Modal -->
+<app-add-asset
+  *ngIf="showAddModal"
+  (close)="closeAddModal()"
+  (save)="onAssetAdded($event)"
+></app-add-asset>

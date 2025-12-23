@@ -21,6 +21,7 @@ import { AssetService } from '../services/asset.service';
 import { Category } from '../models/category.model';
 import { Type } from '../models/type.model';
 import { Asset } from '../models/asset.model';
+import { AddAssetComponent } from '../add-asset/add-asset.component';
 
 interface CategoryWithDetails extends Category {
   icon: string;
@@ -44,7 +45,7 @@ const categoryStyleMap: { [key: string]: { icon: string; color: string } } = {
 @Component({
   selector: 'app-assets-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule],
+  imports: [CommonModule, RouterModule, LucideAngularModule, AddAssetComponent],
   templateUrl: './assets-home.component.html',
   styleUrl: './assets-home.component.css',
 })
@@ -68,6 +69,7 @@ export class AssetsHomeComponent implements OnInit {
   totalAssets: number = 0;
   categories: CategoryWithDetails[] = [];
   isLoading: boolean = true;
+  showAddModal: boolean = false;
 
   ngOnInit(): void {
     console.log('🚀 AssetsHomeComponent initialized');
@@ -135,5 +137,19 @@ export class AssetsHomeComponent implements OnInit {
     this.router.navigate(['/assets/list'], {
       queryParams: { categoryId: categoryId },
     });
+  }
+
+  openAddModal(): void {
+    this.showAddModal = true;
+  }
+
+  closeAddModal(): void {
+    this.showAddModal = false;
+  }
+
+  onAssetAdded(asset: Asset): void {
+    this.showAddModal = false;
+    // Reload data to show the newly added asset
+    this.loadData();
   }
 }
