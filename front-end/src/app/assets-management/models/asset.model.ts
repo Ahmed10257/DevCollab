@@ -6,8 +6,6 @@ export interface Asset {
   manufacturerId?: number;
   modelId?: number;
   serialNumber: string;
-  manufacturerId?: number;
-  modelId?: number;
   branchId?: number;
   buildingId?: number;
   floorId?: number;
@@ -29,8 +27,6 @@ export interface CreateAssetDto {
   manufacturerId?: number;
   modelId?: number;
   serialNumber: string;
-  manufacturerId?: number;
-  modelId?: number;
   branchId?: number;
   buildingId?: number;
   floorId?: number;
@@ -50,8 +46,6 @@ export interface UpdateAssetDto {
   manufacturerId?: number;
   modelId?: number;
   serialNumber?: string;
-  manufacturerId?: number;
-  modelId?: number;
   branchId?: number;
   buildingId?: number;
   floorId?: number;

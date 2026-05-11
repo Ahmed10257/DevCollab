@@ -21,8 +21,6 @@ import { BranchService } from '../services/branch.service';
 import { BuildingService } from '../services/building.service';
 import { FloorService } from '../services/floor.service';
 import { RoomService } from '../services/room.service';
-import { ManufacturerService } from '../services/manufacturer.service';
-import { ModelService } from '../services/model.service';
 import { Branch } from '../models/branch.model';
 import { Building } from '../models/building.model';
 import { Floor } from '../models/floor.model';
@@ -122,6 +120,25 @@ interface SpecificData {
   categorySpecificData: CategorySpecificData;
 }
 
+interface TypeFieldOption {
+  value: string;
+  label: string;
+}
+
+interface TypeSpecificFieldDef {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  placeholder?: string;
+  options?: TypeFieldOption[];
+}
+
+interface TypeFieldConfig {
+  typeName: string;
+  fields: TypeSpecificFieldDef[];
+}
+
 @Component({
   selector: 'app-add-asset',
   standalone: true,
@@ -143,9 +160,7 @@ export class AddAssetComponent implements OnInit {
   private buildingService = inject(BuildingService);
   private floorService = inject(FloorService);
   private roomService = inject(RoomService);
-  private manufacturerService = inject(ManufacturerService);
-  private modelService = inject(ModelService);
-
+  
   // General data (shared across all assets)
   generalData: GeneralData = {
     categoryId: null,
@@ -206,6 +221,9 @@ export class AddAssetComponent implements OnInit {
     'Retired',
     'Storage',
   ];
+
+  /** Extra fields shown when an asset type is selected (keyed by type name / keyword). */
+  typeFieldConfigs: Record<string, TypeFieldConfig> = {};
 
   isLoading = false;
 
@@ -305,6 +323,7 @@ export class AddAssetComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.initializeTypeFieldConfigs();
     this.loadData();
   }
 
@@ -316,13 +335,11 @@ export class AddAssetComponent implements OnInit {
       manufacturers: this.manufacturerService.getAll(),
       models: this.modelService.getAll(),
       branches: this.branchService.getAll(),
-      manufacturers: this.manufacturerService.getAll(),
     }).subscribe({
-      next: ({ categories, types, branches, manufacturers }) => {
+      next: ({ categories, types, models, branches, manufacturers }) => {
         this.categories = categories;
         this.availableTypes = types;
-        this.allManufacturers = manufacturers;
-        this.allModels = models;
+        this.availableModels = models;
         this.branches = branches;
         this.manufacturers = manufacturers;
 

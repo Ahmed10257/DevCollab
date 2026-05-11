@@ -233,8 +233,6 @@ export class EditAssetComponent implements OnInit {
       serialNumber: this.editedAsset.serialNumber,
       manufacturerId: this.editedAsset.manufacturerId || undefined,
       modelId: this.editedAsset.modelId || undefined,
-      manufacturerId: this.editedAsset.manufacturerId || undefined,
-      modelId: this.editedAsset.modelId || undefined,
       branchId: this.editedAsset.branchId || undefined,
       buildingId: this.editedAsset.buildingId || undefined,
       floorId: this.editedAsset.floorId || undefined,
