@@ -3,6 +3,8 @@ export interface Asset {
   name: string;
   categoryId: number;
   typeId: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber: string;
   manufacturerId?: number;
   modelId?: number;
@@ -24,6 +26,8 @@ export interface CreateAssetDto {
   name: string;
   categoryId: number;
   typeId: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber: string;
   manufacturerId?: number;
   modelId?: number;
@@ -43,6 +47,8 @@ export interface UpdateAssetDto {
   name?: string;
   categoryId?: number;
   typeId?: number;
+  manufacturerId?: number;
+  modelId?: number;
   serialNumber?: string;
   manufacturerId?: number;
   modelId?: number;

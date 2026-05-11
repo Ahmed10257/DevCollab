@@ -14,16 +14,20 @@
     >
       <div>
         <h2 class="text-2xl font-bold text-gray-800">{{ asset.name }}</h2>
-        <p class="text-gray-600 text-sm mt-1">Serial: {{ asset.serialNumber }}</p>
+        <p class="text-gray-600 text-sm mt-1">
+          Serial: {{ asset.serialNumber }}
+        </p>
       </div>
       <div class="flex items-center space-x-3">
         <span
           class="px-3 py-1 rounded-full text-sm font-medium"
           [ngClass]="{
             'bg-green-100 text-green-800': asset.status === 'Active',
-            'bg-yellow-100 text-yellow-800': asset.status === 'Maintenance' || asset.status === 'In Use',
+            'bg-yellow-100 text-yellow-800':
+              asset.status === 'Maintenance' || asset.status === 'In Use',
             'bg-red-100 text-red-800': asset.status === 'Inactive',
-            'bg-gray-100 text-gray-800': asset.status === 'Retired' || asset.status === 'Storage'
+            'bg-gray-100 text-gray-800':
+              asset.status === 'Retired' || asset.status === 'Storage'
           }"
         >
           {{ asset.status }}
@@ -52,20 +56,20 @@
     <!-- Content -->
     <div class="px-6 py-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Brand -->
-        <div *ngIf="asset.brand">
+        <!-- Manufacturer ID -->
+        <div *ngIf="asset.manufacturerId">
           <label class="block text-sm font-medium text-gray-500 mb-1"
-            >Brand</label
+            >Manufacturer</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.brand }}</p>
+          <p class="text-gray-900 text-lg">{{ asset.manufacturerId }}</p>
         </div>
 
-        <!-- Model -->
-        <div *ngIf="asset.model">
+        <!-- Model ID -->
+        <div *ngIf="asset.modelId">
           <label class="block text-sm font-medium text-gray-500 mb-1"
             >Model</label
           >
-          <p class="text-gray-900 text-lg">{{ asset.model }}</p>
+          <p class="text-gray-900 text-lg">{{ asset.modelId }}</p>
         </div>
 
         <!-- Category ID -->
@@ -73,7 +77,9 @@
           <label class="block text-sm font-medium text-gray-500 mb-1"
             >Category</label
           >
-          <p class="text-gray-900 text-lg">{{ categoryName || 'Category #' + asset.categoryId }}</p>
+          <p class="text-gray-900 text-lg">
+            {{ categoryName || "Category #" + asset.categoryId }}
+          </p>
         </div>
 
         <!-- Type ID -->
@@ -81,7 +87,9 @@
           <label class="block text-sm font-medium text-gray-500 mb-1"
             >Type</label
           >
-          <p class="text-gray-900 text-lg">{{ typeName || 'Type #' + asset.typeId }}</p>
+          <p class="text-gray-900 text-lg">
+            {{ typeName || "Type #" + asset.typeId }}
+          </p>
         </div>
 
         <!-- Branch -->
@@ -149,7 +157,9 @@
           <label class="block text-sm font-medium text-gray-500 mb-1"
             >Responsible User</label
           >
-          <p class="text-gray-900 text-lg">User #{{ asset.responsibleUserId }}</p>
+          <p class="text-gray-900 text-lg">
+            User #{{ asset.responsibleUserId }}
+          </p>
         </div>
 
         <!-- Assigned User -->

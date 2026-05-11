@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -46,7 +53,7 @@ export class EditAssetComponent implements OnInit {
   private roomService = inject(RoomService);
 
   editedAsset!: Asset;
-  
+
   // Data from API
   categories: Category[] = [];
   availableTypes: Type[] = [];
@@ -60,8 +67,14 @@ export class EditAssetComponent implements OnInit {
   rooms: Room[] = [];
 
   // Status options
-  statuses: string[] = ['Active', 'In Use', 'Maintenance', 'Retired', 'Storage'];
-  
+  statuses: string[] = [
+    'Active',
+    'In Use',
+    'Maintenance',
+    'Retired',
+    'Storage',
+  ];
+
   isLoading = false;
 
   ngOnInit(): void {
@@ -98,7 +111,7 @@ export class EditAssetComponent implements OnInit {
         if (this.editedAsset.branchId) {
           this.onBranchChange();
         }
-        
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -111,7 +124,7 @@ export class EditAssetComponent implements OnInit {
 
   onCategoryChange(): void {
     this.editedAsset.typeId = undefined as any;
-    
+
     if (this.editedAsset.categoryId) {
       this.typeService.getAll(this.editedAsset.categoryId).subscribe({
         next: (types) => {
@@ -198,8 +211,17 @@ export class EditAssetComponent implements OnInit {
 
   onSubmit(): void {
     // Validate required fields
-    if (!this.editedAsset.name || !this.editedAsset.categoryId || !this.editedAsset.typeId || !this.editedAsset.serialNumber) {
-      Swal.fire('Validation Error', 'Please fill in all required fields', 'error');
+    if (
+      !this.editedAsset.name ||
+      !this.editedAsset.categoryId ||
+      !this.editedAsset.typeId ||
+      !this.editedAsset.serialNumber
+    ) {
+      Swal.fire(
+        'Validation Error',
+        'Please fill in all required fields',
+        'error'
+      );
       return;
     }
 
@@ -209,6 +231,8 @@ export class EditAssetComponent implements OnInit {
       categoryId: this.editedAsset.categoryId,
       typeId: this.editedAsset.typeId,
       serialNumber: this.editedAsset.serialNumber,
+      manufacturerId: this.editedAsset.manufacturerId || undefined,
+      modelId: this.editedAsset.modelId || undefined,
       manufacturerId: this.editedAsset.manufacturerId || undefined,
       modelId: this.editedAsset.modelId || undefined,
       branchId: this.editedAsset.branchId || undefined,
