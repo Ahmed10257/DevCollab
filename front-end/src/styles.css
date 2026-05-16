@@ -1,2 +1,121 @@
-/* You can add global styles to this file, and also import other style files */
+/* DevCollab global styles — design tokens + Tailwind */
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Light theme (default) ─── */
+:root,
+.light {
+  --dc-bg-main: #f3f4f6;
+  --dc-bg-elevated: #ffffff;
+  --dc-bg-card: #ffffff;
+  --dc-bg-hero: #0f172a;
+  --dc-bg-header: #1a1d23;
+  --dc-text-primary: #111827;
+  --dc-text-secondary: #4b5563;
+  --dc-text-muted: #6b7280;
+  --dc-text-on-dark: #f9fafb;
+  --dc-border: #e5e7eb;
+  --dc-border-subtle: #f3f4f6;
+  --dc-glass-bg: rgba(255, 255, 255, 0.12);
+  --dc-glass-border: rgba(255, 255, 255, 0.25);
+  --dc-shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --dc-brand: #6366f1;
+  --dc-brand-hover: #4f46e5;
+  --dc-fab-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+}
+
+/* ─── Dark theme ─── */
+.dark {
+  --dc-bg-main: #0f1117;
+  --dc-bg-elevated: #1a1d23;
+  --dc-bg-card: #1f2937;
+  --dc-bg-hero: #0a0c10;
+  --dc-bg-header: #1a1d23;
+  --dc-text-primary: #f9fafb;
+  --dc-text-secondary: #d1d5db;
+  --dc-text-muted: #9ca3af;
+  --dc-text-on-dark: #f9fafb;
+  --dc-border: #374151;
+  --dc-border-subtle: #1f2937;
+  --dc-glass-bg: rgba(255, 255, 255, 0.08);
+  --dc-glass-border: rgba(255, 255, 255, 0.15);
+  --dc-shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.25);
+}
+
+body {
+  background-color: var(--dc-bg-main);
+  color: var(--dc-text-primary);
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Semantic utility classes (use across components) */
+.dc-page {
+  min-height: 100vh;
+  background-color: var(--dc-bg-main);
+  color: var(--dc-text-primary);
+}
+
+.dc-card {
+  background-color: var(--dc-bg-card);
+  border: 1px solid var(--dc-border);
+  border-radius: 1rem;
+  box-shadow: var(--dc-shadow-card);
+}
+
+.dc-text-secondary {
+  color: var(--dc-text-secondary);
+}
+
+.dc-text-muted {
+  color: var(--dc-text-muted);
+}
+
+.dc-glass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--dc-glass-border);
+  background: var(--dc-glass-bg);
+  color: var(--dc-text-on-dark);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.dc-glass-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.dc-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 9999px;
+  border: none;
+  background: var(--dc-fab-gradient);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  box-shadow: 0 10px 25px -5px rgb(99 102 241 / 0.45);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dc-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -5px rgb(99 102 241 / 0.55);
+}

@@ -1,17 +1,29 @@
-<nav class="bg-gray-800 text-white p-4">
-  <div class="flex justify-between items-center">
-    <h1 class="m-0 text-xl font-semibold">DevCollab</h1>
-    <ul class="flex list-none m-0 p-0 space-x-4">
-      <li>
-        <a href="#" class="text-white no-underline hover:underline">Home</a>
-      </li>
-      <li>
-        <a href="#" class="text-white no-underline hover:underline">About</a>
-      </li>
-      <li>
-        <a href="#" class="text-white no-underline hover:underline">Contact</a>
-      </li>
+<nav class="app-nav">
+  <div class="app-nav__inner">
+    <a routerLink="/assets/home" class="app-nav__brand">
+      <span class="app-nav__logo" aria-hidden="true">D</span>
+      <span class="app-nav__title">DevCollab</span>
+    </a>
+
+    <ul class="app-nav__links">
+      <li><a routerLink="/assets/home" class="app-nav__link">Home</a></li>
+      <li><a href="#" class="app-nav__link">About</a></li>
+      <li><a href="#" class="app-nav__link">Contact</a></li>
     </ul>
+
+    <button
+      type="button"
+      class="app-nav__theme-btn"
+      (click)="toggleTheme()"
+      [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      @if (theme.mode() === 'dark') {
+        <span aria-hidden="true">☀️</span>
+      } @else {
+        <span aria-hidden="true">🌙</span>
+      }
+    </button>
   </div>
 </nav>
-<router-outlet></router-outlet>
+
+<router-outlet />
