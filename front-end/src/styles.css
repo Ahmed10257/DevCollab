@@ -10,7 +10,14 @@
   --dc-bg-elevated: #ffffff;
   --dc-bg-card: #ffffff;
   --dc-bg-hero: #0f172a;
-  --dc-bg-header: #1a1d23;
+  --dc-bg-header: #ffffff;
+  --dc-nav-brand-text: #111827;
+  --dc-nav-greeting-text: #4b5563;
+  --dc-nav-border: rgb(0 0 0 / 0.08);
+  /* Visible logo box in navbar (not the raw image file size) */
+  --dc-nav-logo-size: 2.75rem;
+  /* Scale up the mark — PNG has extra padding around the icon */
+  --dc-nav-logo-scale: 3.25;
   --dc-text-primary: #111827;
   --dc-text-secondary: #4b5563;
   --dc-text-muted: #6b7280;
@@ -32,6 +39,11 @@
   --dc-bg-card: #1f2937;
   --dc-bg-hero: #0a0c10;
   --dc-bg-header: #1a1d23;
+  --dc-nav-brand-text: #f9fafb;
+  --dc-nav-greeting-text: #d1d5db;
+  --dc-nav-border: rgb(255 255 255 / 0.06);
+  --dc-nav-logo-size: 2.75rem;
+  --dc-nav-logo-scale: 3.25;
   --dc-text-primary: #f9fafb;
   --dc-text-secondary: #d1d5db;
   --dc-text-muted: #9ca3af;
@@ -92,10 +104,48 @@ body {
   color: var(--dc-text-muted);
 }
 
-.dc-glass-btn {
+/**
+ * Buttons/links with a leading Lucide icon + label.
+ * Add `dc-btn-icon` on the control; wrap the icon in `dc-btn-icon__icon`
+ * and the text in `dc-btn-icon__label` (icon slot is aria-hidden when decorative).
+ */
+.dc-btn-icon {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  line-height: 1;
+}
+
+.dc-btn-icon__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  line-height: 0;
+}
+
+.dc-btn-icon__icon lucide-angular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+}
+
+.dc-btn-icon__icon lucide-angular svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+.dc-btn-icon__label {
+  line-height: 1;
+}
+
+.dc-glass-btn {
   padding: 0.75rem 1.25rem;
   border-radius: 0.75rem;
   border: 1px solid var(--dc-glass-border);
@@ -120,10 +170,6 @@ body {
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   padding: 0.875rem 1.5rem;
   border-radius: 9999px;
   border: none;
@@ -135,26 +181,6 @@ body {
   box-shadow: 0 10px 25px -5px rgb(99 102 241 / 0.45);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.dc-fab__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-.dc-fab__icon svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.dc-fab__label {
-  display: inline-block;
-  line-height: 1;
 }
 
 .dc-fab:hover {

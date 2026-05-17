@@ -4,16 +4,20 @@
     <div class="hero-glow hero-glow--right" aria-hidden="true"></div>
 
     <div class="hero-inner">
-      <a routerLink="/assets/manage-locations" class="dc-glass-btn hero-action">
-        <lucide-angular [img]="MapPin" class="hero-action-icon" [strokeWidth]="2" />
-        Manage Locations
+      <a routerLink="/assets/manage-locations" class="dc-glass-btn dc-btn-icon hero-action">
+        <span class="dc-btn-icon__icon" aria-hidden="true">
+          <lucide-angular [img]="MapPin" [strokeWidth]="2" />
+        </span>
+        <span class="dc-btn-icon__label">Manage Locations</span>
       </a>
 
       <h1 class="hero-title">Assets Overview</h1>
 
-      <a routerLink="/assets/manage-manufacturers-models" class="dc-glass-btn hero-action">
-        <lucide-angular [img]="Building2" class="hero-action-icon" [strokeWidth]="2" />
-        Manage Manufacturers
+      <a routerLink="/assets/manage-manufacturers-models" class="dc-glass-btn dc-btn-icon hero-action">
+        <span class="dc-btn-icon__icon" aria-hidden="true">
+          <lucide-angular [img]="Building2" [strokeWidth]="2" />
+        </span>
+        <span class="dc-btn-icon__label">Manage Manufacturers</span>
       </a>
     </div>
   </header>
@@ -134,12 +138,14 @@
 
   <button
     type="button"
-    class="dc-fab"
+    class="dc-fab dc-btn-icon"
     (click)="openAddModal()"
     aria-label="Add new asset"
   >
-    <lucide-angular [img]="Plus" class="dc-fab__icon" [strokeWidth]="2" />
-    <span class="dc-fab__label">Add Asset</span>
+    <span class="dc-btn-icon__icon" aria-hidden="true">
+      <lucide-angular [img]="Plus" [strokeWidth]="2" />
+    </span>
+    <span class="dc-btn-icon__label">Add Asset</span>
   </button>
 </div>
 

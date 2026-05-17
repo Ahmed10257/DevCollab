@@ -2,6 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import {
+  LucideAngularModule,
+  ArrowLeft,
+  Plus,
+  Pencil,
+  Check,
+  X,
+} from 'lucide-angular';
 import { BranchService } from '../assets-management/services/branch.service';
 import { BuildingService } from '../assets-management/services/building.service';
 import { FloorService } from '../assets-management/services/floor.service';
@@ -15,11 +23,17 @@ import { LocationModalComponent, LocationData } from '../assets-management/locat
 @Component({
   selector: 'app-manage-locations',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, LocationModalComponent],
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule, LocationModalComponent],
   templateUrl: './manage-locations.component.html',
   styleUrl: './manage-locations.component.css'
 })
 export class ManageLocationsComponent implements OnInit {
+  readonly ArrowLeft = ArrowLeft;
+  readonly Plus = Plus;
+  readonly Pencil = Pencil;
+  readonly Check = Check;
+  readonly X = X;
+
   private branchService = inject(BranchService);
   private buildingService = inject(BuildingService);
   private floorService = inject(FloorService);

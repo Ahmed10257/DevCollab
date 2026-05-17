@@ -1,0 +1,15 @@
+@if (variant() === 'icon') {
+  <img
+    class="brand-logo brand-logo--icon"
+    [src]="iconSrc"
+    [alt]="alt()"
+    decoding="async"
+  />
+} @else {
+  <img
+    class="brand-logo brand-logo--full"
+    [src]="fullSrc"
+    [alt]="alt()"
+    decoding="async"
+  />
+}

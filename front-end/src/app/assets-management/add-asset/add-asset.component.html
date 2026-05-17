@@ -1,560 +1,480 @@
-<!-- Modal Backdrop -->
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop animate-fade-in bg-transparent-black backdrop-blur-sm"
+  class="add-asset-backdrop modal-backdrop animate-fade-in"
   (click)="onBackdropClick($event)"
 >
-  <!-- Modal Container -->
   <div
-    class="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden animate-slide-up flex flex-col"
+    class="add-asset-card animate-slide-up"
     (click)="$event.stopPropagation()"
   >
-    <!-- Header -->
-    <div
-      class="border-b border-gray-200 px-8 py-6 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50"
-    >
-      <div>
-        <h2 class="text-3xl font-bold text-gray-900">Add Asset</h2>
-        <p class="text-gray-600 text-sm mt-1">
-          Add a new asset to your inventory system
-        </p>
-      </div>
-      <button
-        type="button"
-        (click)="onClose()"
-        class="text-gray-400 hover:text-gray-600 transition"
-        title="Close"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
+    <header class="add-asset-header">
+      <h2 class="add-asset-title">Add Asset</h2>
+      <p class="add-asset-legend">
+        Required <span class="add-asset-legend__star">*</span>
+      </p>
+    </header>
 
-    <!-- Scrollable Content -->
-    <div class="overflow-y-auto flex-1 px-8 py-6">
-      <form (ngSubmit)="onSubmit()" #assetForm="ngForm">
-        <!-- ASSET CLASSIFICATION SECTION -->
-        <div
-          class="mb-8 border-2 border-indigo-300 rounded-xl p-6 bg-indigo-50/30"
-        >
-          <h3
-            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-          >
-            <svg
-              class="w-5 h-5 mr-2 text-indigo-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            Asset Classification
-            <span
-              class="ml-2 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full"
-              >Required</span
-            >
+    <div class="add-asset-body">
+      <form class="add-asset-form" (ngSubmit)="onSubmit()" #assetForm="ngForm">
+        <!-- Classification -->
+        <section class="add-asset-section">
+          <h3 class="add-asset-section__title">
+            <span class="add-asset-dot add-asset-dot--blue" aria-hidden="true"></span>
+            Classification
           </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Category -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Category <span class="text-red-500">*</span>
+          <div class="add-asset-grid add-asset-grid--2">
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="category">
+                Category <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.categoryId"
-                name="category"
-                (change)="onCategoryChange()"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                title="Select asset category"
-              >
-                <option [ngValue]="null" disabled>Select Category</option>
-                <option *ngFor="let cat of categories" [ngValue]="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="category"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.categoryId"
+                  name="category"
+                  (change)="onCategoryChange()"
+                  required
+                  title="Select asset category"
+                >
+                  <option [ngValue]="null" disabled>Select Category</option>
+                  <option *ngFor="let cat of categories" [ngValue]="cat.id">
+                    {{ cat.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="LayoutGrid" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Type -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Type <span class="text-red-500">*</span>
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="type">
+                Type <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.typeId"
-                name="type"
-                [disabled]="!generalData.categoryId"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                title="Select asset type"
-              >
-                <option [ngValue]="null" disabled>Select Type</option>
-                <option *ngFor="let type of availableTypes" [ngValue]="type.id">
-                  {{ type.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="type"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.typeId"
+                  name="type"
+                  [disabled]="!generalData.categoryId"
+                  required
+                  title="Select asset type"
+                >
+                  <option [ngValue]="null" disabled>Select Type</option>
+                  <option *ngFor="let type of availableTypes" [ngValue]="type.id">
+                    {{ type.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="SlidersHorizontal" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Manufacturer -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Manufacturer <span class="text-red-500">*</span>
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="manufacturer">
+                Manufacturer <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.manufacturerId"
-                name="manufacturer"
-                (change)="onManufacturerChange()"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                title="Select manufacturer"
-              >
-                <option [ngValue]="null" disabled>Select Manufacturer</option>
-                <option *ngFor="let mfr of manufacturers" [ngValue]="mfr.id">
-                  {{ mfr.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="manufacturer"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.manufacturerId"
+                  name="manufacturer"
+                  (change)="onManufacturerChange()"
+                  required
+                  title="Select manufacturer"
+                >
+                  <option [ngValue]="null" disabled>Select Manufacturer</option>
+                  <option *ngFor="let mfr of manufacturers" [ngValue]="mfr.id">
+                    {{ mfr.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Briefcase" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Model -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Model <span class="text-red-500">*</span>
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="model">
+                Model <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.modelId"
-                name="model"
-                [disabled]="!generalData.manufacturerId"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                title="Select model"
-              >
-                <option [ngValue]="null" disabled>Select Model</option>
-                <option *ngFor="let mdl of availableModels" [ngValue]="mdl.id">
-                  {{ mdl.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="model"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.modelId"
+                  name="model"
+                  [disabled]="!generalData.manufacturerId"
+                  required
+                  title="Select model"
+                >
+                  <option [ngValue]="null" disabled>Select Model</option>
+                  <option *ngFor="let mdl of availableModels" [ngValue]="mdl.id">
+                    {{ mdl.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Layers" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- BASIC INFORMATION SECTION -->
-        <div class="mb-8 border-2 border-blue-300 rounded-xl p-6 bg-blue-50/30">
-          <h3
-            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-          >
-            <svg
-              class="w-5 h-5 mr-2 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Basic Information
-            <span
-              class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full"
-              >Required</span
-            >
+        <!-- Basic Info -->
+        <section class="add-asset-section">
+          <h3 class="add-asset-section__title">
+            <span class="add-asset-dot add-asset-dot--green" aria-hidden="true"></span>
+            Basic Info
           </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Asset Name -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Asset Name <span class="text-red-500">*</span>
+          <div class="add-asset-grid add-asset-grid--3">
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="assetName">
+                Asset Name <span class="add-asset-required">*</span>
               </label>
-              <input
-                type="text"
-                [(ngModel)]="specificData.name"
-                name="name"
-                placeholder="e.g., Web Server 01"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                title="Enter asset name"
-              />
+              <div class="add-asset-input-wrap">
+                <input
+                  id="assetName"
+                  type="text"
+                  class="add-asset-input"
+                  [(ngModel)]="specificData.name"
+                  name="name"
+                  placeholder="e.g., Dell Latitude 7420"
+                  required
+                  title="Enter asset name"
+                />
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="FileText" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Serial Number -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Serial Number <span class="text-red-500">*</span>
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="serialNumber">
+                Serial Number <span class="add-asset-required">*</span>
               </label>
-              <input
-                type="text"
-                [(ngModel)]="specificData.serialNumber"
-                name="serialNumber"
-                placeholder="e.g., SN-2025-001"
-                required
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                title="Enter serial number"
-              />
+              <div class="add-asset-input-wrap">
+                <input
+                  id="serialNumber"
+                  type="text"
+                  class="add-asset-input"
+                  [(ngModel)]="specificData.serialNumber"
+                  name="serialNumber"
+                  placeholder="e.g., SN-DELL-001"
+                  required
+                  title="Enter serial number"
+                />
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Hash" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Status -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Status
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="status">
+                Status <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.status"
-                name="status"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                title="Select asset status"
-              >
-                <option *ngFor="let status of statusOptions" [value]="status">
-                  {{ status }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="status"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.status"
+                  name="status"
+                  required
+                  title="Select asset status"
+                >
+                  <option *ngFor="let status of statusOptions" [value]="status">
+                    {{ status }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Flag" [strokeWidth]="1.75" />
+                </span>
+              </div>
+            </div>
+
+            <div class="add-asset-field add-asset-field--full">
+              <label class="add-asset-label" for="notes">Notes</label>
+              <textarea
+                id="notes"
+                class="add-asset-input add-asset-input--textarea"
+                [(ngModel)]="specificData.notes"
+                name="notes"
+                placeholder="Add any additional notes..."
+                rows="3"
+                title="Enter notes"
+              ></textarea>
             </div>
           </div>
+        </section>
 
-          <!-- Notes -->
-          <div class="mt-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Notes
-            </label>
-            <textarea
-              [(ngModel)]="specificData.notes"
-              name="notes"
-              placeholder="Add any additional notes..."
-              rows="3"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-              title="Enter notes"
-            ></textarea>
-          </div>
-        </div>
-
-        <!-- CATEGORY-SPECIFIC DETAILS SECTION -->
-        <div
-          *ngIf="getSpecificFields().length > 0"
-          class="mb-8 border-2 border-green-300 rounded-xl p-6 bg-green-50/30"
-        >
-          <h3
-            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-          >
-            <svg
-              class="w-5 h-5 mr-2 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+        <!-- Category-specific -->
+        <section *ngIf="getSpecificFields().length > 0" class="add-asset-section">
+          <h3 class="add-asset-section__title">
+            <span class="add-asset-dot add-asset-dot--teal" aria-hidden="true"></span>
             {{ currentCategory }} Specifications
-            <span
-              class="ml-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full"
-              >Category-Specific</span
-            >
           </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="add-asset-grid add-asset-grid--3">
             <ng-container *ngFor="let field of getSpecificFields()">
-              <div *ngIf="getFieldType(field) !== 'checkbox'">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+              <div *ngIf="getFieldType(field) !== 'checkbox'" class="add-asset-field">
+                <label class="add-asset-label" [attr.for]="field">
                   {{ getFieldLabel(field) }}
                 </label>
                 <input
+                  [id]="field"
                   [type]="getFieldType(field)"
+                  class="add-asset-input"
+                  style="padding-right: 0.875rem"
                   [(ngModel)]="specificData.categorySpecificData[field]"
                   [name]="field"
                   [placeholder]="getFieldLabel(field)"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                   [title]="getFieldLabel(field)"
                 />
               </div>
               <div
                 *ngIf="getFieldType(field) === 'checkbox'"
-                class="flex items-center mt-7"
+                class="add-asset-field add-asset-checkbox-row"
               >
                 <input
                   type="checkbox"
+                  class="add-asset-checkbox"
                   [(ngModel)]="specificData.categorySpecificData[field]"
                   [name]="field"
-                  class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                  [id]="field"
                   [title]="getFieldLabel(field)"
                 />
-                <label class="ml-2 text-sm font-medium text-gray-700">
+                <label class="add-asset-label" [attr.for]="field">
                   {{ getFieldLabel(field) }}
                 </label>
               </div>
             </ng-container>
           </div>
-        </div>
+        </section>
 
-        <!-- LOCATION SECTION -->
-        <div
-          class="mb-8 border-2 border-purple-300 rounded-xl p-6 bg-purple-50/30"
-        >
-          <h3
-            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-          >
-            <svg
-              class="w-5 h-5 mr-2 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+        <!-- Location -->
+        <section class="add-asset-section">
+          <h3 class="add-asset-section__title">
+            <span class="add-asset-dot add-asset-dot--purple" aria-hidden="true"></span>
             Location
-            <span class="text-xs text-gray-500 ml-2"
-              >(Branch → Building → Floor → Room)</span
-            >
           </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Branch -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Branch
+          <div class="add-asset-grid add-asset-grid--4">
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="branch">
+                Branch <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.branchId"
-                name="branch"
-                (change)="onBranchChange()"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                title="Select branch"
-              >
-                <option [ngValue]="null">Select Branch</option>
-                <option *ngFor="let branch of branches" [ngValue]="branch.id">
-                  {{ branch.name }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Building -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Building
-              </label>
-              <select
-                [(ngModel)]="generalData.buildingId"
-                name="building"
-                (change)="onBuildingChange()"
-                [disabled]="!generalData.branchId"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                title="Select building"
-              >
-                <option [ngValue]="null">Select Building</option>
-                <option
-                  *ngFor="let building of buildings"
-                  [ngValue]="building.id"
+              <div class="add-asset-input-wrap">
+                <select
+                  id="branch"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.branchId"
+                  name="branch"
+                  (change)="onBranchChange()"
+                  required
+                  title="Select branch"
                 >
-                  {{ building.name }}
-                </option>
-              </select>
+                  <option [ngValue]="null" disabled>Select Branch</option>
+                  <option *ngFor="let branch of branches" [ngValue]="branch.id">
+                    {{ branch.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="MapPin" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Floor -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Floor
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="building">
+                Building <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.floorId"
-                name="floor"
-                (change)="onFloorChange()"
-                [disabled]="!generalData.buildingId"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                title="Select floor"
-              >
-                <option [ngValue]="null">Select Floor</option>
-                <option *ngFor="let floor of floors" [ngValue]="floor.id">
-                  {{ floor.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="building"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.buildingId"
+                  name="building"
+                  (change)="onBuildingChange()"
+                  [disabled]="!generalData.branchId"
+                  required
+                  title="Select building"
+                >
+                  <option [ngValue]="null" disabled>Select Building</option>
+                  <option *ngFor="let building of buildings" [ngValue]="building.id">
+                    {{ building.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Building2" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Room -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Room
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="floor">
+                Floor <span class="add-asset-required">*</span>
               </label>
-              <select
-                [(ngModel)]="generalData.roomId"
-                name="room"
-                [disabled]="!generalData.floorId"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                title="Select room"
-              >
-                <option [ngValue]="null">Select Room</option>
-                <option *ngFor="let room of rooms" [ngValue]="room.id">
-                  {{ room.name }}
-                </option>
-              </select>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="floor"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.floorId"
+                  name="floor"
+                  (change)="onFloorChange()"
+                  [disabled]="!generalData.buildingId"
+                  required
+                  title="Select floor"
+                >
+                  <option [ngValue]="null" disabled>Select Floor</option>
+                  <option *ngFor="let floor of floors" [ngValue]="floor.id">
+                    {{ floor.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Armchair" [strokeWidth]="1.75" />
+                </span>
+              </div>
+            </div>
+
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="room">
+                Room <span class="add-asset-required">*</span>
+              </label>
+              <div class="add-asset-input-wrap">
+                <select
+                  id="room"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.roomId"
+                  name="room"
+                  [disabled]="!generalData.floorId"
+                  required
+                  title="Select room"
+                >
+                  <option [ngValue]="null" disabled>Select Room</option>
+                  <option *ngFor="let room of rooms" [ngValue]="room.id">
+                    {{ room.name }}
+                  </option>
+                </select>
+                <span class="add-asset-select-chevron" aria-hidden="true">
+                  <lucide-angular [img]="ChevronDown" [strokeWidth]="2" />
+                </span>
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="DoorOpen" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- PURCHASE & WARRANTY SECTION -->
-        <div
-          class="mb-8 border-2 border-orange-300 rounded-xl p-6 bg-orange-50/30"
-        >
-          <h3
-            class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
-          >
-            <svg
-              class="w-5 h-5 mr-2 text-orange-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Purchase & Warranty
-            <span
-              class="ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full"
-              >Optional</span
-            >
+        <!-- Finance & Warranty -->
+        <section class="add-asset-section">
+          <h3 class="add-asset-section__title">
+            <span class="add-asset-dot add-asset-dot--orange" aria-hidden="true"></span>
+            Finance &amp; Warranty
           </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Purchase Date -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Purchase Date
+          <div class="add-asset-grid add-asset-grid--3">
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="purchaseDate">
+                Purchase Date <span class="add-asset-required">*</span>
               </label>
-              <input
-                type="date"
-                [(ngModel)]="generalData.purchaseDate"
-                name="purchaseDate"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
-                title="Select purchase date"
-              />
+              <div class="add-asset-input-wrap">
+                <input
+                  id="purchaseDate"
+                  type="date"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.purchaseDate"
+                  name="purchaseDate"
+                  required
+                  title="Select purchase date"
+                />
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Calendar" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Warranty Expiry -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Warranty Expiry
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="warrantyExpiry">
+                Warranty Expiry <span class="add-asset-required">*</span>
               </label>
-              <input
-                type="date"
-                [(ngModel)]="generalData.warrantyExpiry"
-                name="warrantyExpiry"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
-                title="Select warranty expiry date"
-              />
+              <div class="add-asset-input-wrap">
+                <input
+                  id="warrantyExpiry"
+                  type="date"
+                  class="add-asset-input"
+                  [(ngModel)]="generalData.warrantyExpiry"
+                  name="warrantyExpiry"
+                  required
+                  title="Select warranty expiry date"
+                />
+                <span class="add-asset-input-icon" aria-hidden="true">
+                  <lucide-angular [img]="Calendar" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
 
-            <!-- Responsible User -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Responsible User
-              </label>
-              <input
-                type="number"
-                [(ngModel)]="generalData.responsibleUserId"
-                name="responsibleUserId"
-                placeholder="User ID"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
-                title="Enter responsible user ID"
-              />
+            <div class="add-asset-field">
+              <label class="add-asset-label" for="responsibleUserId">Responsible User</label>
+              <div class="add-asset-input-wrap">
+                <input
+                  id="responsibleUserId"
+                  type="number"
+                  class="add-asset-input add-asset-input--icon-left"
+                  [(ngModel)]="generalData.responsibleUserId"
+                  name="responsibleUserId"
+                  placeholder="Enter User ID"
+                  title="Enter responsible user ID"
+                />
+                <span class="add-asset-input-icon add-asset-input-icon--left" aria-hidden="true">
+                  <lucide-angular [img]="User" [strokeWidth]="1.75" />
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </form>
     </div>
 
-    <!-- Footer with Actions -->
-    <div
-      class="border-t border-gray-200 px-8 py-4 flex justify-end space-x-3 bg-gray-50"
-    >
-      <button
-        type="button"
-        (click)="onClose()"
-        class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
-      >
+    <footer class="add-asset-footer">
+      <button type="button" class="add-asset-btn-cancel" (click)="onClose()">
         Cancel
       </button>
       <button
         type="submit"
+        class="add-asset-btn-submit"
         (click)="onSubmit()"
         [disabled]="isLoading"
-        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
       >
-        <span *ngIf="!isLoading">
-          <svg
-            class="w-4 h-4 mr-2 inline"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Create Asset
-        </span>
-        <span *ngIf="isLoading">
-          <svg
-            class="animate-spin w-4 h-4 mr-2 inline"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          Creating...
-        </span>
+        <span *ngIf="!isLoading">Create Asset</span>
+        <span *ngIf="isLoading" class="add-asset-btn-spinner" aria-hidden="true"></span>
+        <span *ngIf="isLoading">Creating...</span>
       </button>
-    </div>
+    </footer>
   </div>
 </div>

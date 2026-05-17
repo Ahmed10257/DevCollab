@@ -8,6 +8,23 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  LucideAngularModule,
+  LayoutGrid,
+  SlidersHorizontal,
+  Briefcase,
+  Layers,
+  FileText,
+  Hash,
+  Flag,
+  MapPin,
+  Building2,
+  Armchair,
+  DoorOpen,
+  Calendar,
+  User,
+  ChevronDown,
+} from 'lucide-angular';
 import { forkJoin } from 'rxjs';
 import { Asset, CreateAssetDto } from '../models/asset.model';
 import { Category } from '../models/category.model';
@@ -142,7 +159,7 @@ interface TypeFieldConfig {
 @Component({
   selector: 'app-add-asset',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './add-asset.component.html',
   styleUrls: ['./add-asset.component.css'],
 })
@@ -226,6 +243,21 @@ export class AddAssetComponent implements OnInit {
   typeFieldConfigs: Record<string, TypeFieldConfig> = {};
 
   isLoading = false;
+
+  readonly LayoutGrid = LayoutGrid;
+  readonly SlidersHorizontal = SlidersHorizontal;
+  readonly Briefcase = Briefcase;
+  readonly Layers = Layers;
+  readonly FileText = FileText;
+  readonly Hash = Hash;
+  readonly Flag = Flag;
+  readonly MapPin = MapPin;
+  readonly Building2 = Building2;
+  readonly Armchair = Armchair;
+  readonly DoorOpen = DoorOpen;
+  readonly Calendar = Calendar;
+  readonly User = User;
+  readonly ChevronDown = ChevronDown;
 
   // Category-specific fields to display
   categorySpecificFields: { [key: number]: string[] } = {

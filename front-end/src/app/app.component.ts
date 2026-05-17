@@ -8,6 +8,7 @@ import { filter, firstValueFrom, map, startWith } from 'rxjs';
 import { ThemeService } from './core/theme/theme.service';
 import { AuthService } from './core/services/auth.service';
 import { NotificationService } from './core/services/notification.service';
+import { BrandLogoComponent } from './shared/components/brand-logo/brand-logo.component';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { NotificationService } from './core/services/notification.service';
     CommonModule,
     LucideAngularModule,
     NgxSonnerToaster,
+    BrandLogoComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

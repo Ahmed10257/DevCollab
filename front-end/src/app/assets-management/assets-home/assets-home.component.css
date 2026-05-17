@@ -55,11 +55,6 @@
   flex-shrink: 0;
 }
 
-.hero-action-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
 @media (min-width: 768px) {
   .hero-title {
     flex: 1 1 auto;

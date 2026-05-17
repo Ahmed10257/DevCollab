@@ -42,6 +42,8 @@ export const themeColors: Record<
     glassBg: string;
     glassBorder: string;
     shadowCard: string;
+    navBrandText: string;
+    navGreetingText: string;
   }
 > = {
   light: {
@@ -57,6 +59,8 @@ export const themeColors: Record<
     glassBg: 'rgba(255, 255, 255, 0.12)',
     glassBorder: 'rgba(255, 255, 255, 0.25)',
     shadowCard: '0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06)',
+    navBrandText: '#111827',
+    navGreetingText: '#4b5563',
   },
   dark: {
     bgMain: '#0f1117',
@@ -71,6 +75,8 @@ export const themeColors: Record<
     glassBg: 'rgba(255, 255, 255, 0.08)',
     glassBorder: 'rgba(255, 255, 255, 0.15)',
     shadowCard: '0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.25)',
+    navBrandText: '#f9fafb',
+    navGreetingText: '#d1d5db',
   },
 };
 

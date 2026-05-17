@@ -13,44 +13,46 @@
     <div class="app-nav__inner">
       <div class="app-nav__left">
         <a routerLink="/assets/home" class="app-nav__brand">
-          <span class="app-nav__logo" aria-hidden="true">D</span>
-          <span class="app-nav__brand-text">
+          <app-brand-logo variant="icon" class="app-nav__logo-icon" />
+          <span class="app-nav__brand-copy">
             <span class="app-nav__title">DevCollab</span>
             @if (auth.user(); as user) {
               <span class="app-nav__greeting">Hello, {{ user.name }}</span>
             }
           </span>
         </a>
-
-        
       </div>
-<div class="app-nav__right">
-      <button
-        type="button"
-        class="app-nav__theme-btn"
-        (click)="toggleTheme()"
-        [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-      >
-        <span class="app-nav__theme-icon-wrap" aria-hidden="true">
-          <lucide-angular
-            [img]="theme.mode() === 'dark' ? Sun : Moon"
-            class="app-nav__theme-icon"
-            [strokeWidth]="1.75"
-          />
-        </span>
-      </button>
-      @if (auth.user()) {
+
+      <div class="app-nav__right">
         <button
           type="button"
-          class="app-nav__logout-btn"
-          (click)="logout()"
-          aria-label="Sign out"
+          class="app-nav__theme-btn"
+          (click)="toggleTheme()"
+          [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
         >
-          <lucide-angular [img]="LogOut" class="app-nav__logout-icon" [strokeWidth]="1.75" />
-          <span>Sign out</span>
+          <span class="app-nav__theme-icon-wrap" aria-hidden="true">
+            <lucide-angular
+              [img]="theme.mode() === 'dark' ? Sun : Moon"
+              class="app-nav__theme-icon"
+              [strokeWidth]="1.75"
+            />
+          </span>
         </button>
-      }
-    </div>
+
+        @if (auth.user()) {
+          <button
+            type="button"
+            class="app-nav__logout-btn dc-btn-icon"
+            (click)="logout()"
+            aria-label="Sign out"
+          >
+            <span class="dc-btn-icon__icon" aria-hidden="true">
+              <lucide-angular [img]="LogOut" [strokeWidth]="1.75" />
+            </span>
+            <span class="dc-btn-icon__label">Sign out</span>
+          </button>
+        }
+      </div>
     </div>
   </nav>
 }
