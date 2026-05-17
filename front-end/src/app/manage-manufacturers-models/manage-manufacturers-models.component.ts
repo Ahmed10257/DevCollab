@@ -2,6 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import {
+  LucideAngularModule,
+  Building2,
+  Package,
+  Pencil,
+  Trash2,
+  Check,
+  X,
+} from 'lucide-angular';
 import { ManufacturerService } from '../assets-management/services/manufacturer.service';
 import { ModelService } from '../assets-management/services/model.service';
 import { Manufacturer, CreateManufacturerDto, UpdateManufacturerDto } from '../assets-management/models/manufacturer.model';
@@ -9,24 +18,30 @@ import { Model, CreateModelDto, UpdateModelDto } from '../assets-management/mode
 
 @Component({
   selector: 'app-manage-manufacturers-models',
-  imports: [CommonModule, FormsModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
   templateUrl: './manage-manufacturers-models.component.html',
-  styleUrl: './manage-manufacturers-models.component.css'
+  styleUrl: './manage-manufacturers-models.component.css',
 })
 export class ManageManufacturersModelsComponent implements OnInit {
+  readonly Building2 = Building2;
+  readonly Package = Package;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
+  readonly Check = Check;
+  readonly X = X;
+
   activeTab: 'manufacturers' | 'models' = 'manufacturers';
-  
+
   manufacturers: Manufacturer[] = [];
   models: Model[] = [];
-  
-  // For manufacturers
+
   editingManufacturer: UpdateManufacturerDto | null = null;
   editingManufacturerId: number | null = null;
   isEditingManufacturer = false;
   addingManufacturer = false;
   newManufacturer: CreateManufacturerDto = { name: '' };
-  
-  // For models
+
   editingModel: UpdateModelDto | null = null;
   editingModelId: number | null = null;
   isEditingModel = false;
@@ -36,7 +51,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
 
   constructor(
     private manufacturerService: ManufacturerService,
-    private modelService: ModelService
+    private modelService: ModelService,
   ) {}
 
   ngOnInit() {
@@ -50,7 +65,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading manufacturers:', error);
-      }
+      },
     });
   }
 
@@ -61,7 +76,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading models:', error);
-      }
+      },
     });
   }
 
@@ -69,6 +84,8 @@ export class ManageManufacturersModelsComponent implements OnInit {
     this.activeTab = tab;
     this.cancelEditManufacturer();
     this.cancelEditModel();
+    this.cancelAddManufacturer();
+    this.cancelAddModel();
     if (tab === 'models' && !this.selectedManufacturerId && this.manufacturers.length > 0) {
       this.selectedManufacturerId = this.manufacturers[0].id;
       this.loadModels(this.selectedManufacturerId);
@@ -83,7 +100,17 @@ export class ManageManufacturersModelsComponent implements OnInit {
     }
   }
 
-  // Manufacturer CRUD
+  formatWebsiteUrl(website: string | undefined): string {
+    if (!website?.trim()) {
+      return '';
+    }
+    const value = website.trim();
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value;
+    }
+    return `https://${value}`;
+  }
+
   startAddManufacturer() {
     this.addingManufacturer = true;
     this.newManufacturer = { name: '', description: '', website: '', supportEmail: '', supportPhone: '' };
@@ -99,7 +126,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating manufacturer:', error);
-        }
+        },
       });
     }
   }
@@ -111,12 +138,12 @@ export class ManageManufacturersModelsComponent implements OnInit {
 
   editManufacturer(manufacturer: Manufacturer) {
     this.editingManufacturerId = manufacturer.id;
-    this.editingManufacturer = { 
+    this.editingManufacturer = {
       name: manufacturer.name,
       description: manufacturer.description,
       website: manufacturer.website,
       supportEmail: manufacturer.supportEmail,
-      supportPhone: manufacturer.supportPhone
+      supportPhone: manufacturer.supportPhone,
     };
     this.isEditingManufacturer = true;
   }
@@ -130,7 +157,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating manufacturer:', error);
-        }
+        },
       });
     }
   }
@@ -149,24 +176,23 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting manufacturer:', error);
-        }
+        },
       });
     }
   }
 
-  // Model CRUD
   startAddModel() {
     if (!this.selectedManufacturerId) {
       alert('Please select a manufacturer first');
       return;
     }
     this.addingModel = true;
-    this.newModel = { 
-      name: '', 
+    this.newModel = {
+      name: '',
       manufacturerId: this.selectedManufacturerId,
       modelNumber: '',
       description: '',
-      specifications: ''
+      specifications: '',
     };
   }
 
@@ -180,7 +206,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating model:', error);
-        }
+        },
       });
     }
   }
@@ -197,7 +223,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
       manufacturerId: model.manufacturerId,
       modelNumber: model.modelNumber,
       description: model.description,
-      specifications: model.specifications
+      specifications: model.specifications,
     };
     this.isEditingModel = true;
   }
@@ -211,7 +237,7 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating model:', error);
-        }
+        },
       });
     }
   }
@@ -230,13 +256,13 @@ export class ManageManufacturersModelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting model:', error);
-        }
+        },
       });
     }
   }
 
   getManufacturerName(manufacturerId: number): string {
-    const manufacturer = this.manufacturers.find(m => m.id === manufacturerId);
+    const manufacturer = this.manufacturers.find((m) => m.id === manufacturerId);
     return manufacturer ? manufacturer.name : 'Unknown';
   }
 }
