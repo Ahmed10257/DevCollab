@@ -1,44 +1,56 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { inject } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { signal } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterModule],
-  providers: [AuthService],
+  standalone: true,
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: '../shared/auth-form.css',
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  loading = signal(false);
-  error = signal<string | null>(null);
-  logo = environment.logo;
+  private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  constructor(private auth: AuthService, private router: Router) { }
+  readonly navigateToRegister = output<void>();
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+
+  readonly form = this.fb.nonNullable.group({
+    username: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(1)]],
   });
 
-  async onSubmit() {
-    if (this.form.invalid) return;
+  async onSubmit(): Promise<void> {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading.set(true);
     this.error.set(null);
 
     try {
-      const { email, password } = this.form.getRawValue() as { email: string; password: string };
-      await firstValueFrom(this.auth.login({ email, password }));
-      // this.router.navigate(['/dashboard']);
-    } catch (err: any) {
-      this.error.set(err?.error?.message || 'Login failed.');
+      const { username, password } = this.form.getRawValue();
+      await firstValueFrom(this.auth.login({ username, password }));
+      await this.router.navigate(['/assets/home']);
+    } catch (err: unknown) {
+      const apiMessage = (err as { error?: { message?: string | string[] } })
+        ?.error?.message;
+      const message = Array.isArray(apiMessage)
+        ? apiMessage.join(', ')
+        : apiMessage ?? 'Login failed. Check your username and password.';
+
+      this.error.set(
+        message === 'Invalid credentials'
+          ? 'Invalid credentials. Use your AD username (e.g. ahmed.mabrouk) or your @aast.edu email.'
+          : message,
+      );
     } finally {
       this.loading.set(false);
     }

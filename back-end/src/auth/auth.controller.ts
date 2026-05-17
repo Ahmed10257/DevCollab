@@ -12,9 +12,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('login')
-  @ApiOperation({ summary: 'Login user' })
+  @ApiOperation({ summary: 'Login with Active Directory credentials' })
   async login(@Body() loginDto: LoginDto) {
-    console.log('Login DTO from Controller:', loginDto);
     return this.authService.login(loginDto);
   }
 

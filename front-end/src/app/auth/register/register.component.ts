@@ -1,41 +1,74 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, output, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
-import { RouterModule } from '@angular/router';
+
+function passwordsMatch(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+  return password && confirm && password !== confirm
+    ? { passwordsMismatch: true }
+    : null;
+}
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterModule],
+  standalone: true,
+  imports: [ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: '../shared/auth-form.css',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
 
-  @Output() switchToLogin = new EventEmitter<void>();
-  form: any;
+  readonly navigateToLogin = output<void>();
 
-  constructor(private readonly authService: AuthService) { }
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
 
-  ngOnInit(): void {
-    this.form = this.fb.group({
+  readonly form = this.fb.nonNullable.group(
+    {
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-    });
+    },
+    { validators: passwordsMatch }
+  );
+
+  async onSubmit(): Promise<void> {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const { name, email, password } = this.form.getRawValue();
+      await firstValueFrom(this.auth.register({ name, email, password }));
+    } catch (err: unknown) {
+      const message =
+        (err as { error?: { message?: string } })?.error?.message ??
+        'Registration failed.';
+      this.error.set(message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      const { name, email, password, confirmPassword } = this.form.value;
-      if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-      }
-
-      // Your register logic here
-      console.log('Registering:', this.form.value);
-    }
+  passwordsMismatch(): boolean {
+    return (
+      this.form.hasError('passwordsMismatch') &&
+      !!this.form.get('confirmPassword')?.touched
+    );
   }
 }

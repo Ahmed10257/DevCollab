@@ -21,16 +21,49 @@ export class UsersRepository {
         return this.db.query.users.findFirst({ where: eq(users.email, email) });
     }
 
-    create(user: CreateUserDto) {
-        return this.db.insert(users).values(user).returning();
+    findByUsername(username: string) {
+        return this.db.query.users.findFirst({ where: eq(users.username, username) });
+    }
+
+    create(user: CreateUserDto & { role?: string }) {
+        return this.db.insert(users).values({
+            ...user,
+            role: user.role ?? 'user',
+        }).returning();
+    }
+
+    createFromAd(data: {
+        username: string;
+        name: string;
+        email: string;
+        role: string;
+    }) {
+        return this.db
+            .insert(users)
+            .values({
+                username: data.username,
+                name: data.name,
+                email: data.email,
+                role: data.role,
+                isVerified: true,
+            })
+            .returning();
     }
 
     findById(id: number) {
         return this.db.query.users.findFirst({ where: eq(users.id, id) });
     }
 
-    update(id: number, user: UpdateUserDto) {
+    update(id: number, user: UpdateUserDto & { role?: string; username?: string }) {
         return this.db.update(users).set(user).where(eq(users.id, id)).returning();
+    }
+
+    updateRefreshToken(userId: number, refreshToken: string | null) {
+        return this.db
+            .update(users)
+            .set({ refreshToken })
+            .where(eq(users.id, userId))
+            .returning();
     }
 
     delete(id: number) {

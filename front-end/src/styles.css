@@ -43,11 +43,31 @@
   --dc-shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.25);
 }
 
+html {
+  background-color: var(--dc-bg-main);
+}
+
 body {
   background-color: var(--dc-bg-main);
   color: var(--dc-text-primary);
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Smooth theme switch — applied briefly by ThemeService on toggle */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition:
+      background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      fill 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
 }
 
 /* Semantic utility classes (use across components) */
@@ -102,6 +122,7 @@ body {
   z-index: 50;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
   border-radius: 9999px;
@@ -110,12 +131,63 @@ body {
   color: #fff;
   font-weight: 600;
   font-size: 0.9375rem;
+  line-height: 1;
   box-shadow: 0 10px 25px -5px rgb(99 102 241 / 0.45);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dc-fab__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.dc-fab__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dc-fab__label {
+  display: inline-block;
+  line-height: 1;
 }
 
 .dc-fab:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 28px -5px rgb(99 102 241 / 0.55);
+}
+
+/* ─── ngx-sonner (theme-aware toasts) ─── */
+.dc-sonner[data-sonner-toaster] {
+  --normal-bg: var(--dc-bg-card);
+  --normal-border: var(--dc-border);
+  --normal-text: var(--dc-text-primary);
+  --success-bg: var(--dc-bg-card);
+  --success-border: rgb(34 197 94 / 0.35);
+  --success-text: var(--dc-text-primary);
+  --info-bg: var(--dc-bg-card);
+  --info-border: rgb(99 102 241 / 0.35);
+  --info-text: var(--dc-text-primary);
+  --warning-bg: var(--dc-bg-card);
+  --warning-border: rgb(245 158 11 / 0.35);
+  --warning-text: var(--dc-text-primary);
+  --error-bg: var(--dc-bg-card);
+  --error-border: rgb(239 68 68 / 0.35);
+  --error-text: var(--dc-text-primary);
+  --border-radius: 0.75rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dc-sonner [data-sonner-toast][data-styled='true'] {
+  box-shadow: var(--dc-shadow-card);
+  backdrop-filter: blur(8px);
+}
+
+.dc-sonner [data-description] {
+  color: var(--dc-text-muted) !important;
 }

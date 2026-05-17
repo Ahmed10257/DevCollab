@@ -64,6 +64,13 @@
       "when": 1760822580302,
       "tag": "0008_stale_namorita",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1778977600000,
+      "tag": "0009_ad_user_fields",
+      "breakpoints": true
     }
   ]
 }

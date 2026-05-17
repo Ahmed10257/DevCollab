@@ -1,6 +1,6 @@
 import { CreateUserDto } from './../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CurrentUser } from './types/current-user';
@@ -12,12 +12,18 @@ import refreshJwtConfig from './config/refresh-jwt.config';
 import { Inject } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { Logger } from 'nestjs-pino';
+import { AdService } from './ad/ad.service';
+import { Role } from './enums/role.enum';
+import { users } from 'src/drizzle/schema/user.schema';
+
+type DbUser = typeof users.$inferSelect;
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
-        private readonly jwtService: JwtService, // Used to create JWT tokens, it comes from the @nestjs/jwt package
+        private readonly jwtService: JwtService,
+        private readonly adService: AdService,
         @Inject(refreshJwtConfig.KEY)
         private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
         private readonly logger: Logger,
@@ -31,40 +37,61 @@ export class AuthService {
             password: hashedPassword,
         });
 
-        // optional: send verification email here
-
         return { message: 'User created' };
     }
 
     async login(dto: LoginDto) {
-        console.log('Login DTO:', dto);
-        const user = await this.userService.findUserByEmail(dto.email);
-        if (!user) {
-            this.logger.error({ msg: 'User not found', email: dto.email }, 'AuthService');
+        const principal = dto.principal;
+        if (!principal) {
+            throw new UnauthorizedException('userName or email is required');
+        }
+
+        let adUser;
+        try {
+            adUser = await this.adService.authenticate(principal, dto.password);
+        } catch (error) {
+            this.logger.warn(
+                { msg: 'AD authentication failed', principal, error },
+                'AuthService',
+            );
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-
-        if (!isPasswordValid) {
-            this.logger.error({ msg: 'Wrong Password', user }, 'AuthService');
-            throw new UnauthorizedException('Invalid credentials');
+        let isAdmin = false;
+        try {
+            isAdmin = await this.adService.isUserInGroup(
+                principal,
+                this.adService.adminGroup,
+            );
+        } catch (error) {
+            this.logger.warn(
+                { msg: 'AD group membership check failed', principal, error },
+                'AuthService',
+            );
         }
+        const role = isAdmin ? Role.ADMIN : Role.USER;
+        const user = await this.userService.upsertFromAd(adUser, role);
 
-        const payload = { sub: user.id, email: user.email }; // the payload is the data that will be encoded in the JWT token
-        const accessToken = await this.jwtService.signAsync(payload);
-        const refreshToken = await this.jwtService.signAsync(payload);
+        const { accessToken, refreshToken } = await this.generateTokens(user.id);
+        const hashedRefreshToken = await argon2.hash(refreshToken);
+        await this.userService.updateHashedRefreshToken(user.id, hashedRefreshToken);
 
-        // store hashed refresh token in DB
-        await this.userService.updateHashedRefreshToken(user.id, refreshToken);
-        this.logger.log({ msg: 'User logged in', user }, 'AuthService');
-        return { accessToken, refreshToken };
+        this.logger.log({ msg: 'User logged in via AD', userId: user.id, role }, 'AuthService');
+
+        return {
+            accessToken,
+            refreshToken,
+            user: this.toPublicUser(user),
+        };
     }
 
     async validateJwtUser(userId: number) {
         const user = await this.userService.findOne(userId);
         if (!user) throw new UnauthorizedException('User not found!');
-        const currentUser: CurrentUser = { id: user.id, role: user.role };
+        const currentUser: CurrentUser = {
+            id: user.id,
+            role: (user.role as Role) ?? Role.USER,
+        };
         return currentUser;
     }
 
@@ -81,11 +108,11 @@ export class AuthService {
 
     async validateRefreshToken(userId: number, refreshToken: string) {
         const user = await this.userService.findOne(userId);
-        if (!user || !user.hashedRefreshToken)
+        if (!user || !user.refreshToken)
             throw new UnauthorizedException('Invalid Refresh Token');
 
         const refreshTokenMatches = await argon2.verify(
-            user.hashedRefreshToken,
+            user.refreshToken,
             refreshToken,
         );
         if (!refreshTokenMatches)
@@ -112,4 +139,8 @@ export class AuthService {
         return { message: 'User signed out' };
     }
 
+    private toPublicUser(user: DbUser) {
+        const { password, refreshToken, ...publicUser } = user;
+        return publicUser;
+    }
 }

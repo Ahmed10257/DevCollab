@@ -28,6 +28,10 @@ DevCollab uses a **class-based** theme on `<html>`:
 - Duplicating hex values in components — import from `theme.tokens.ts` instead.
 - Assuming the page is always light; the hero is dark in both modes, but cards follow `--dc-bg-card`.
 
+## Smooth transitions
+
+On toggle, `ThemeService` briefly adds `theme-transition` to `<html>`, which animates `background-color`, `color`, `border-color`, and related properties over **400ms**. Respects `prefers-reduced-motion`.
+
 ## Toggling theme
 
 Inject `ThemeService` and call `toggle()` or `setMode('dark' | 'light')`.

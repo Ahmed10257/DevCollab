@@ -3,6 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { ThemeMode } from './theme.tokens';
 
 const STORAGE_KEY = 'devcollab-theme';
+const TRANSITION_CLASS = 'theme-transition';
+const TRANSITION_MS = 400;
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
@@ -18,10 +20,11 @@ export class ThemeService {
   }
 
   setMode(mode: ThemeMode): void {
+    const changed = this.mode() !== mode;
     this.mode.set(mode);
     if (this.isBrowser) {
       localStorage.setItem(STORAGE_KEY, mode);
-      this.applyToDocument(mode);
+      this.applyToDocument(mode, changed);
     }
   }
 
@@ -42,10 +45,22 @@ export class ThemeService {
       : 'light';
   }
 
-  private applyToDocument(mode: ThemeMode): void {
+  private applyToDocument(mode: ThemeMode, animate = false): void {
     const root = document.documentElement;
+
+    if (animate) {
+      root.classList.add(TRANSITION_CLASS);
+    }
+
     root.classList.remove('light', 'dark');
     root.classList.add(mode);
     root.setAttribute('data-theme', mode);
+
+    if (animate) {
+      window.setTimeout(
+        () => root.classList.remove(TRANSITION_CLASS),
+        TRANSITION_MS,
+      );
+    }
   }
 }

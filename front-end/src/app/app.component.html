@@ -1,29 +1,58 @@
-<nav class="app-nav">
-  <div class="app-nav__inner">
-    <a routerLink="/assets/home" class="app-nav__brand">
-      <span class="app-nav__logo" aria-hidden="true">D</span>
-      <span class="app-nav__title">DevCollab</span>
-    </a>
+<ngx-sonner-toaster
+  class="dc-sonner"
+  [theme]="sonnerTheme()"
+  position="top-right"
+  [richColors]="true"
+  [closeButton]="true"
+  [expand]="true"
+  [duration]="4500"
+/>
 
-    <ul class="app-nav__links">
-      <li><a routerLink="/assets/home" class="app-nav__link">Home</a></li>
-      <li><a href="#" class="app-nav__link">About</a></li>
-      <li><a href="#" class="app-nav__link">Contact</a></li>
-    </ul>
+@if (showNav()) {
+  <nav class="app-nav">
+    <div class="app-nav__inner">
+      <div class="app-nav__left">
+        <a routerLink="/assets/home" class="app-nav__brand">
+          <span class="app-nav__logo" aria-hidden="true">D</span>
+          <span class="app-nav__brand-text">
+            <span class="app-nav__title">DevCollab</span>
+            @if (auth.user(); as user) {
+              <span class="app-nav__greeting">Hello, {{ user.name }}</span>
+            }
+          </span>
+        </a>
 
-    <button
-      type="button"
-      class="app-nav__theme-btn"
-      (click)="toggleTheme()"
-      [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-    >
-      @if (theme.mode() === 'dark') {
-        <span aria-hidden="true">☀️</span>
-      } @else {
-        <span aria-hidden="true">🌙</span>
+        
+      </div>
+<div class="app-nav__right">
+      <button
+        type="button"
+        class="app-nav__theme-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        <span class="app-nav__theme-icon-wrap" aria-hidden="true">
+          <lucide-angular
+            [img]="theme.mode() === 'dark' ? Sun : Moon"
+            class="app-nav__theme-icon"
+            [strokeWidth]="1.75"
+          />
+        </span>
+      </button>
+      @if (auth.user()) {
+        <button
+          type="button"
+          class="app-nav__logout-btn"
+          (click)="logout()"
+          aria-label="Sign out"
+        >
+          <lucide-angular [img]="LogOut" class="app-nav__logout-icon" [strokeWidth]="1.75" />
+          <span>Sign out</span>
+        </button>
       }
-    </button>
-  </div>
-</nav>
+    </div>
+    </div>
+  </nav>
+}
 
 <router-outlet />

@@ -31,6 +31,8 @@ import {
   CategoryTheme,
   getCategoryTheme,
 } from '../../core/theme/theme.tokens';
+import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface CategoryWithDetails extends Category {
   theme: CategoryTheme;
@@ -67,6 +69,8 @@ export class AssetsHomeComponent implements OnInit {
   private typeService = inject(TypeService);
   private assetService = inject(AssetService);
   private router = inject(Router);
+  private auth = inject(AuthService);
+  private notify = inject(NotificationService);
 
   totalAssets = 0;
   categories: CategoryWithDetails[] = [];
@@ -78,7 +82,16 @@ export class AssetsHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showWelcomeIfNeeded();
     this.loadData();
+  }
+
+  private showWelcomeIfNeeded(): void {
+    if (!this.auth.consumeWelcome()) {
+      return;
+    }
+    const name = this.auth.user()?.name ?? 'there';
+    this.notify.welcome(name);
   }
 
   getCategoryIcon(theme: CategoryTheme): LucideIconData {
