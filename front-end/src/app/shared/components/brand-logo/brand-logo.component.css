@@ -23,12 +23,27 @@
   flex-shrink: 0;
 }
 
-:host.app-nav__logo-icon .brand-logo--icon {
+:host.app-nav__logo-icon .brand-logo--icon,
+:host.branding__logo-icon .brand-logo--icon {
   width: 100%;
   height: 100%;
   max-width: none;
-  transform: scale(var(--dc-nav-logo-scale, 3.25));
   transform-origin: center center;
+}
+
+:host.app-nav__logo-icon .brand-logo--icon {
+  transform: scale(var(--dc-nav-logo-scale, 3.25));
+}
+
+:host.branding__logo-icon {
+  width: var(--dc-branding-logo-size, 10rem);
+  height: var(--dc-branding-logo-size, 10rem);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+:host.branding__logo-icon .brand-logo--icon {
+  transform: scale(var(--dc-branding-logo-scale, var(--dc-nav-logo-scale, 3.25)));
 }
 
 .brand-logo--full {

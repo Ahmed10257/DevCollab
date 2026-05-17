@@ -189,41 +189,51 @@
                   }
                 </td>
                 <td class="mmm-table__actions">
-                  @if (!isEditingManufacturer || editingManufacturerId !== manufacturer.id) {
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--edit"
-                      (click)="editManufacturer(manufacturer)"
-                      [attr.aria-label]="'Edit ' + manufacturer.name"
-                    >
-                      <lucide-angular [img]="Pencil" [strokeWidth]="2" />
-                    </button>
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--delete"
-                      (click)="deleteManufacturer(manufacturer.id)"
-                      [attr.aria-label]="'Delete ' + manufacturer.name"
-                    >
-                      <lucide-angular [img]="Trash2" [strokeWidth]="2" />
-                    </button>
-                  } @else {
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--save"
-                      (click)="saveEditManufacturer()"
-                      aria-label="Save"
-                    >
-                      <lucide-angular [img]="Check" [strokeWidth]="2" />
-                    </button>
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--cancel"
-                      (click)="cancelEditManufacturer()"
-                      aria-label="Cancel"
-                    >
-                      <lucide-angular [img]="X" [strokeWidth]="2" />
-                    </button>
-                  }
+                  <div class="mmm-table__actions-group">
+                    @if (!isEditingManufacturer || editingManufacturerId !== manufacturer.id) {
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--edit"
+                        (click)="editManufacturer(manufacturer)"
+                        [attr.aria-label]="'Edit ' + manufacturer.name"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Pencil" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--delete"
+                        (click)="deleteManufacturer(manufacturer.id)"
+                        [attr.aria-label]="'Delete ' + manufacturer.name"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Trash2" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--save"
+                        (click)="saveEditManufacturer()"
+                        aria-label="Save"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Check" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--cancel"
+                        (click)="cancelEditManufacturer()"
+                        aria-label="Cancel"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="X" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                    }
+                  </div>
                 </td>
               </tr>
             } @empty {
@@ -375,41 +385,51 @@
                   }
                 </td>
                 <td class="mmm-table__actions">
-                  @if (!isEditingModel || editingModelId !== model.id) {
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--edit"
-                      (click)="editModel(model)"
-                      [attr.aria-label]="'Edit ' + model.name"
-                    >
-                      <lucide-angular [img]="Pencil" [strokeWidth]="2" />
-                    </button>
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--delete"
-                      (click)="deleteModel(model.id)"
-                      [attr.aria-label]="'Delete ' + model.name"
-                    >
-                      <lucide-angular [img]="Trash2" [strokeWidth]="2" />
-                    </button>
-                  } @else {
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--save"
-                      (click)="saveEditModel()"
-                      aria-label="Save"
-                    >
-                      <lucide-angular [img]="Check" [strokeWidth]="2" />
-                    </button>
-                    <button
-                      type="button"
-                      class="mmm-icon-btn mmm-icon-btn--cancel"
-                      (click)="cancelEditModel()"
-                      aria-label="Cancel"
-                    >
-                      <lucide-angular [img]="X" [strokeWidth]="2" />
-                    </button>
-                  }
+                  <div class="mmm-table__actions-group">
+                    @if (!isEditingModel || editingModelId !== model.id) {
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--edit"
+                        (click)="editModel(model)"
+                        [attr.aria-label]="'Edit ' + model.name"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Pencil" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--delete"
+                        (click)="deleteModel(model.id)"
+                        [attr.aria-label]="'Delete ' + model.name"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Trash2" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--save"
+                        (click)="saveEditModel()"
+                        aria-label="Save"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="Check" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class="mmm-icon-btn mmm-icon-btn--cancel"
+                        (click)="cancelEditModel()"
+                        aria-label="Cancel"
+                      >
+                        <span class="mmm-icon-btn__icon" aria-hidden="true">
+                          <lucide-angular [img]="X" [strokeWidth]="2" />
+                        </span>
+                      </button>
+                    }
+                  </div>
                 </td>
               </tr>
             } @empty {

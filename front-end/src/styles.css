@@ -14,6 +14,12 @@
   --dc-nav-brand-text: #111827;
   --dc-nav-greeting-text: #4b5563;
   --dc-nav-border: rgb(0 0 0 / 0.08);
+  --dc-nav-btn-text: #374151;
+  --dc-nav-btn-border: rgb(0 0 0 / 0.14);
+  --dc-nav-btn-bg: rgb(0 0 0 / 0.04);
+  --dc-nav-btn-hover-bg: rgb(239 68 68 / 0.08);
+  --dc-nav-btn-hover-border: rgb(220 38 38 / 0.35);
+  --dc-nav-btn-hover-text: #b91c1c;
   /* Visible logo box in navbar (not the raw image file size) */
   --dc-nav-logo-size: 2.75rem;
   /* Scale up the mark — PNG has extra padding around the icon */
@@ -42,6 +48,12 @@
   --dc-nav-brand-text: #f9fafb;
   --dc-nav-greeting-text: #d1d5db;
   --dc-nav-border: rgb(255 255 255 / 0.06);
+  --dc-nav-btn-text: #d1d5db;
+  --dc-nav-btn-border: rgb(255 255 255 / 0.14);
+  --dc-nav-btn-bg: rgb(255 255 255 / 0.06);
+  --dc-nav-btn-hover-bg: rgb(239 68 68 / 0.14);
+  --dc-nav-btn-hover-border: rgb(248 113 113 / 0.4);
+  --dc-nav-btn-hover-text: #fecaca;
   --dc-nav-logo-size: 2.75rem;
   --dc-nav-logo-scale: 3.25;
   --dc-text-primary: #f9fafb;

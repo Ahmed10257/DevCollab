@@ -7,13 +7,13 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form__fields">
     <div class="auth-field">
-      <label class="auth-field__label" for="login-username">Username or email</label>
+      <label class="auth-field__label" for="login-username">Email</label>
       <input
         id="login-username"
         type="text"
         formControlName="username"
         class="auth-field__input"
-        placeholder="ahmed.mabrouk or you@aast.edu"
+        placeholder="username@egypt.aast.edu"
         autocomplete="username"
       />
     </div>

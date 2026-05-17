@@ -377,6 +377,13 @@
   white-space: nowrap;
 }
 
+.mmm-table__actions-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+}
+
 .mmm-table__link {
   color: var(--mmm-link);
   text-decoration: none;
@@ -409,18 +416,43 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
   padding: 0;
-  margin-left: 0.375rem;
+  margin: 0;
   border: none;
   border-radius: 0.375rem;
+  line-height: 0;
+  vertical-align: middle;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.mmm-icon-btn:first-child {
-  margin-left: 0;
+.mmm-icon-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.mmm-icon-btn__icon lucide-angular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+.mmm-icon-btn__icon lucide-angular svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
 }
 
 .mmm-icon-btn--edit {
@@ -458,11 +490,6 @@
 .mmm-icon-btn--cancel:hover {
   background: var(--dc-border);
   color: var(--dc-text-secondary);
-}
-
-.mmm-icon-btn lucide-angular {
-  width: 1rem;
-  height: 1rem;
 }
 
 .mmm-empty {
