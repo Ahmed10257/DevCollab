@@ -1,7 +1,7 @@
-import { pgTable, serial, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { mysqlTable, int, varchar, timestamp } from 'drizzle-orm/mysql-core';
 
-export const priority = pgTable('priority', {
-    id: serial('id').primaryKey(),
+export const priority = mysqlTable('priority', {
+    id: int('id').autoincrement().primaryKey(),
     name: varchar('name', { length: 100 }).notNull(),
     createdAt: timestamp('created_at').defaultNow(),
 });

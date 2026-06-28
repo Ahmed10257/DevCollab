@@ -1,20 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import { types, manufacturers, models } from './drizzle/schema/schema';
-import * as schema from '../src/drizzle/schema/schema';
 import { eq } from 'drizzle-orm';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedAdditionalEquipment() {
+export async function seedAdditionalEquipment({ db, schema }: SeedContext) {
   try {
     console.log('🌱 Starting additional equipment seeding...');
 
@@ -26,9 +14,7 @@ async function seedAdditionalEquipment() {
 
     // Insert missing types
     console.log('🏷️  Inserting missing types...');
-    const newTypes = await db
-      .insert(types)
-      .values([
+    const newTypes = await insertReturning(db, schema.types, [
         {
           name: 'Rack Server',
           categoryId: serversCategory!.id,
@@ -60,7 +46,6 @@ async function seedAdditionalEquipment() {
           description: 'Network equipment racks',
         },
       ])
-      .returning()
       .catch((err) => {
         console.log('⚠️  Types might already exist, continuing...');
         return [];
@@ -70,9 +55,7 @@ async function seedAdditionalEquipment() {
 
     // Insert new manufacturers
     console.log('🏢 Inserting new manufacturers...');
-    const newManufacturers = await db
-      .insert(manufacturers)
-      .values([
+    const newManufacturers = await insertReturning(db, schema.manufacturers, [
         {
           name: 'BenQ',
           description: 'Taiwanese multinational company specializing in projectors and displays',
@@ -109,7 +92,6 @@ async function seedAdditionalEquipment() {
           supportPhone: '+1-773-869-1234',
         },
       ])
-      .returning()
       .catch((err) => {
         console.log('⚠️  Some manufacturers might already exist, continuing...');
         return [];
@@ -133,9 +115,7 @@ async function seedAdditionalEquipment() {
 
     // Insert new models
     console.log('📦 Inserting new models...');
-    const newModels = await db
-      .insert(models)
-      .values([
+    const newModels = await insertReturning(db, schema.models, [
         // BenQ Projector Models
         {
           name: 'MW855UST+',
@@ -289,7 +269,6 @@ async function seedAdditionalEquipment() {
           specifications: '42U, 48" depth, Front/rear doors',
         },
       ])
-      .returning()
       .catch((err) => {
         console.log('⚠️  Some models might already exist:', err.message);
         return [];
@@ -302,14 +281,9 @@ async function seedAdditionalEquipment() {
     console.log(`   - New Manufacturers: ${newManufacturers.length}`);
     console.log(`   - New Models: ${newModels.length}`);
     console.log('\n✨ Additional equipment seeding completed successfully!');
-
-    await pool.end();
-    process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding additional equipment:', error);
-    await pool.end();
-    process.exit(1);
+throw error;
   }
 }
 
-seedAdditionalEquipment();

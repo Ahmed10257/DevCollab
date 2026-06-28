@@ -5,8 +5,11 @@ import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { users } from '../drizzle/schema/user.schema';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
-
-
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class UsersRepository {
@@ -15,7 +18,6 @@ export class UsersRepository {
     findAll() {
         return this.db.query.users.findMany();
     }
-
 
     findByEmail(email: string) {
         return this.db.query.users.findFirst({ where: eq(users.email, email) });
@@ -26,10 +28,10 @@ export class UsersRepository {
     }
 
     create(user: CreateUserDto & { role?: string }) {
-        return this.db.insert(users).values({
+        return insertReturning(this.db, users, {
             ...user,
             role: user.role ?? 'user',
-        }).returning();
+        });
     }
 
     createFromAd(data: {
@@ -38,16 +40,13 @@ export class UsersRepository {
         email: string;
         role: string;
     }) {
-        return this.db
-            .insert(users)
-            .values({
-                username: data.username,
-                name: data.name,
-                email: data.email,
-                role: data.role,
-                isVerified: true,
-            })
-            .returning();
+        return insertReturning(this.db, users, {
+            username: data.username,
+            name: data.name,
+            email: data.email,
+            role: data.role,
+            isVerified: true,
+        });
     }
 
     findById(id: number) {
@@ -55,18 +54,14 @@ export class UsersRepository {
     }
 
     update(id: number, user: UpdateUserDto & { role?: string; username?: string }) {
-        return this.db.update(users).set(user).where(eq(users.id, id)).returning();
+        return updateReturning(this.db, users, eq(users.id, id), user);
     }
 
     updateRefreshToken(userId: number, refreshToken: string | null) {
-        return this.db
-            .update(users)
-            .set({ refreshToken })
-            .where(eq(users.id, userId))
-            .returning();
+        return updateReturning(this.db, users, eq(users.id, userId), { refreshToken });
     }
 
     delete(id: number) {
-        return this.db.delete(users).where(eq(users.id, id)).returning();
+        return deleteReturningById(this.db, users, id);
     }
 }

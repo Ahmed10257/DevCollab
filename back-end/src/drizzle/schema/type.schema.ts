@@ -1,10 +1,10 @@
-import { pgTable, serial, varchar, timestamp, integer } from 'drizzle-orm/pg-core';
+import { mysqlTable, int, varchar, timestamp, int } from 'drizzle-orm/mysql-core';
 import { categories } from './category.schema';
 
-export const types = pgTable('types', {
-  id: serial('id').primaryKey(),
+export const types = mysqlTable('types', {
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
-  categoryId: integer('category_id')
+  categoryId: int('category_id')
     .notNull()
     .references(() => categories.id, { onDelete: 'cascade' }),
   description: varchar('description', { length: 255 }),

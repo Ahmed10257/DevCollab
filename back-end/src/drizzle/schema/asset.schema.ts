@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, timestamp, integer, date } from 'drizzle-orm/pg-core';
+import { mysqlTable, int, varchar, timestamp, int, date } from 'drizzle-orm/mysql-core';
 import { categories } from './category.schema';
 import { types } from './type.schema';
 import { manufacturers } from './manufacturer.schema';
@@ -9,35 +9,34 @@ import { floors } from './floor.schema';
 import { rooms } from './room.schema';
 import { users } from './user.schema';
 
-export const assets = pgTable('assets', {
-  id: serial('id').primaryKey(),
+export const assets = mysqlTable('assets', {
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
-  categoryId: integer('category_id')
+  categoryId: int('category_id')
     .notNull()
     .references(() => categories.id, { onDelete: 'restrict' }),
-  typeId: integer('type_id')
+  typeId: int('type_id')
     .notNull()
     .references(() => types.id, { onDelete: 'restrict' }),
   serialNumber: varchar('serial_number', { length: 255 }).notNull().unique(),
-  manufacturerId: integer('manufacturer_id')
+  manufacturerId: int('manufacturer_id')
     .references(() => manufacturers.id, { onDelete: 'set null' }),
-  modelId: integer('model_id')
+  modelId: int('model_id')
     .references(() => models.id, { onDelete: 'set null' }),
-  // Location hierarchy - all optional for flexibility
-  branchId: integer('branch_id')
+  branchId: int('branch_id')
     .references(() => branches.id, { onDelete: 'set null' }),
-  buildingId: integer('building_id')
+  buildingId: int('building_id')
     .references(() => buildings.id, { onDelete: 'set null' }),
-  floorId: integer('floor_id')
+  floorId: int('floor_id')
     .references(() => floors.id, { onDelete: 'set null' }),
-  roomId: integer('room_id')
+  roomId: int('room_id')
     .references(() => rooms.id, { onDelete: 'set null' }),
-  status: varchar('status', { length: 50 }).notNull().default('Available'), // Available, In Use, Under Maintenance, Retired
+  status: varchar('status', { length: 50 }).notNull().default('Available'),
   purchaseDate: date('purchase_date'),
   warrantyExpiry: date('warranty_expiry'),
-  responsibleUserId: integer('responsible_user_id')
+  responsibleUserId: int('responsible_user_id')
     .references(() => users.id, { onDelete: 'set null' }),
-  assignedUserId: integer('assigned_user_id')
+  assignedUserId: int('assigned_user_id')
     .references(() => users.id, { onDelete: 'set null' }),
   notes: varchar('notes', { length: 1000 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),

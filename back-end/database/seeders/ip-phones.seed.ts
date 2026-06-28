@@ -1,18 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
 
-const pool = new Pool({
-connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedIpPhones() {
+export async function seedIpPhones({ db, schema }: SeedContext) {
 try {
 console.log('🌱 Starting IP phones seeding...\n');
 
@@ -28,7 +18,7 @@ const users = await db.query.users.findMany();
 const ipPhonesCategory = categories.find((c) => c.name === 'IP Phones');
 if (!ipPhonesCategory) {
 console.log('❌ IP Phones category not found');
-process.exit(1);
+throw new Error('Seeding prerequisite not met');
 }
 
 const deskPhoneType = types.find((t) => t.name === 'Desk Phone');
@@ -42,9 +32,7 @@ console.log('📦 Creating IP phone assets...');
 
 // Create desk phones
 for (let i = 1; i <= 5; i++) {
-const phoneAsset = await db
-.insert(schema.assets)
-.values({
+const phoneAsset = await insertReturning(db, schema.assets, {
 name: `Cisco IP Desk Phone 0${i}`,
 categoryId: ipPhonesCategory.id,
 typeId: deskPhoneType!.id,
@@ -56,10 +44,9 @@ status: 'In Use',
 purchaseDate: '2022-11-10',
 warrantyExpiry: '2025-11-10',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-await db.insert(schema.ipPhones).values({
+await insertReturning(db, schema.ipPhones, {
 assetId: phoneAsset[0].id,
 phoneType: 'Desk Phone',
 phoneSystem: 'Cisco Unified Communications',
@@ -78,9 +65,7 @@ registrationStatus: 'Registered',
 }
 
 // Create conference phones
-const conferenceAsset = await db
-.insert(schema.assets)
-.values({
+const conferenceAsset = await insertReturning(db, schema.assets, {
 name: 'Cisco IP Conference Phone',
 categoryId: ipPhonesCategory.id,
 typeId: conferencePhoneType!.id,
@@ -92,10 +77,9 @@ status: 'In Use',
 purchaseDate: '2022-12-01',
 warrantyExpiry: '2025-12-01',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-await db.insert(schema.ipPhones).values({
+await insertReturning(db, schema.ipPhones, {
 assetId: conferenceAsset[0].id,
 phoneType: 'Conference Phone',
 phoneSystem: 'Cisco Unified Communications',
@@ -116,8 +100,7 @@ console.log(`✅ Created 6 IP phone assets and details\n`);
 console.log('✨ IP phones seeding completed successfully!\n');
 } catch (error) {
 console.error('❌ Error seeding IP phones:', error);
-process.exit(1);
+throw error;
 }
 }
 
-seedIpPhones().finally(() => pool.end());

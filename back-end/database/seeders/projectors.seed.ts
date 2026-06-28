@@ -1,18 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
 
-const pool = new Pool({
-connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedProjectors() {
+export async function seedProjectors({ db, schema }: SeedContext) {
 try {
 console.log('🌱 Starting projectors seeding...\n');
 
@@ -28,7 +18,7 @@ const users = await db.query.users.findMany();
 const projectorsCategory = categories.find((c) => c.name === 'Projectors');
 if (!projectorsCategory) {
 console.log('❌ Projectors category not found');
-process.exit(1);
+throw new Error('Seeding prerequisite not met');
 }
 
 const interactiveType = types.find((t) => t.name === 'Interactive');
@@ -40,9 +30,7 @@ const mainBuilding = buildings[0];
 // Create sample projector assets
 console.log('📦 Creating projector assets...');
 
-const projector1Asset = await db
-.insert(schema.assets)
-.values({
+const projector1Asset = await insertReturning(db, schema.assets, {
 name: 'Epson Interactive Projector',
 categoryId: projectorsCategory.id,
 typeId: interactiveType!.id,
@@ -54,12 +42,9 @@ status: 'In Use',
 purchaseDate: '2022-08-15',
 warrantyExpiry: '2025-08-15',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-const projector2Asset = await db
-.insert(schema.assets)
-.values({
+const projector2Asset = await insertReturning(db, schema.assets, {
 name: 'Epson Long Throw Projector',
 categoryId: projectorsCategory.id,
 typeId: longThrowType!.id,
@@ -71,8 +56,7 @@ status: 'In Use',
 purchaseDate: '2023-02-20',
 warrantyExpiry: '2026-02-20',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 console.log(`✅ Created 2 projector assets\n`);
 
@@ -117,8 +101,7 @@ console.log(`✅ Created 2 projector details\n`);
 console.log('✨ Projectors seeding completed successfully!\n');
 } catch (error) {
 console.error('❌ Error seeding projectors:', error);
-process.exit(1);
+throw error;
 }
 }
 
-seedProjectors().finally(() => pool.end());

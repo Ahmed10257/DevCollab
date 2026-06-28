@@ -1,8 +1,8 @@
-import { pgTable, varchar, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { mysqlTable, varchar, int, timestamp } from 'drizzle-orm/mysql-core';
 
-export const teams = pgTable('teams', {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+export const teams = mysqlTable('teams', {
+    id: int('id').autoincrement().primaryKey(),
     name: varchar('name', { length: 100 }).notNull(),
-    leaderId: integer('leader_id'),
+    leaderId: int('leader_id'),
     createdAt: timestamp('created_at').defaultNow(),
 });

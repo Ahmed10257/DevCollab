@@ -4,7 +4,11 @@ import { teams } from '../drizzle/schema/team.schema';
 import { DrizzleDB } from "../drizzle/types/drizzle";
 import { CreateTeamDto } from "../team/dto/create-team.dto";
 import { DRIZZLE } from "../drizzle/drizzle.module";
-
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class TeamRepository {
@@ -27,14 +31,14 @@ export class TeamRepository {
     }
 
     create(team: CreateTeamDto) {
-        return this.db.insert(teams).values(team).returning();
+        return insertReturning(this.db, teams, team);
     }
 
-    update(id: number, team: any) {
-        return this.db.update(teams).set(team).where(eq(teams.id, id)).returning();
+    update(id: number, team: Record<string, unknown>) {
+        return updateReturning(this.db, teams, eq(teams.id, id), team);
     }
 
     delete(id: number) {
-        return this.db.delete(teams).where(eq(teams.id, id)).returning();
+        return deleteReturningById(this.db, teams, id);
     }
 }

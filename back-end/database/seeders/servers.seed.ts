@@ -1,18 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
 
-const pool = new Pool({
-connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedServers() {
+export async function seedServers({ db, schema }: SeedContext) {
 try {
 console.log('🌱 Starting servers seeding...\n');
 
@@ -28,7 +18,7 @@ const users = await db.query.users.findMany();
 const serversCategory = categories.find((c) => c.name === 'Servers');
 if (!serversCategory) {
 console.log('❌ Servers category not found');
-process.exit(1);
+throw new Error('Seeding prerequisite not met');
 }
 
 const rackServerType = types.find((t) => t.name === 'Rack Server');
@@ -44,9 +34,7 @@ const mainBuilding = buildings[0];
 console.log('📦 Creating server assets...');
 
 // Create first server asset
-const server1Asset = await db
-.insert(schema.assets)
-.values({
+const server1Asset = await insertReturning(db, schema.assets, {
 name: 'Web Server 01',
 categoryId: serversCategory.id,
 typeId: rackServerType!.id,
@@ -58,13 +46,10 @@ status: 'In Use',
 purchaseDate: '2022-01-15',
 warrantyExpiry: '2025-01-15',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 // Create second server asset
-const server2Asset = await db
-.insert(schema.assets)
-.values({
+const server2Asset = await insertReturning(db, schema.assets, {
 name: 'Database Server',
 categoryId: serversCategory.id,
 typeId: rackServerType!.id,
@@ -76,13 +61,10 @@ status: 'In Use',
 purchaseDate: '2022-06-20',
 warrantyExpiry: '2025-06-20',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 // Create third server asset
-const server3Asset = await db
-.insert(schema.assets)
-.values({
+const server3Asset = await insertReturning(db, schema.assets, {
 name: 'Application Server Tower',
 categoryId: serversCategory.id,
 typeId: towerServerType!.id,
@@ -94,8 +76,7 @@ status: 'In Use',
 purchaseDate: '2023-03-10',
 warrantyExpiry: '2026-03-10',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 console.log(`✅ Created 3 server assets\n`);
 
@@ -154,8 +135,7 @@ console.log(`✅ Created 3 server details\n`);
 console.log('✨ Servers seeding completed successfully!\n');
 } catch (error) {
 console.error('❌ Error seeding servers:', error);
-process.exit(1);
+throw error;
 }
 }
 
-seedServers().finally(() => pool.end());

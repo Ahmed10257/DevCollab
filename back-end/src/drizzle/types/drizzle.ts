@@ -1,4 +1,4 @@
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as schema from '../schema/schema';
 
-export type DrizzleDB = NodePgDatabase<typeof schema>;
+export type DrizzleDB = MySql2Database<typeof schema>;

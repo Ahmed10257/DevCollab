@@ -5,13 +5,14 @@ import { tasks } from "../drizzle/schema/task.schema";
 import { DRIZZLE } from "../drizzle/drizzle.module";
 import { CreateTaskDto } from "../task/dto/create-task.dto";
 import { UpdateTaskDto } from "../task/dto/update-task.dto";
+import { insertReturning, updateReturning } from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class TaskRepository {
     constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) { }
 
     async createTask(task: CreateTaskDto): Promise<any> {
-        return this.db.insert(tasks).values(task).returning();
+        return insertReturning(this.db, tasks, task);
     }
 
     async findAllTasks(): Promise<any[]> {
@@ -24,7 +25,7 @@ export class TaskRepository {
     }
 
     async updateTask(id: number, task: UpdateTaskDto): Promise<any> {
-        return this.db.update(tasks).set(task).where(eq(tasks.id, id)).returning();
+        return updateReturning(this.db, tasks, eq(tasks.id, id), task);
     }
 
     async deleteTask(id: number): Promise<void> {

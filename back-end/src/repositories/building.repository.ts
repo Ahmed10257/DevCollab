@@ -3,6 +3,11 @@ import { Injectable, Inject } from '@nestjs/common';
 import { buildings } from '../drizzle/schema/building.schema';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class BuildingsRepository {
@@ -34,22 +39,18 @@ export class BuildingsRepository {
     }
 
     create(name: string, branchId: number) {
-        return this.db.insert(buildings).values({ name, branchId }).returning();
+        return insertReturning(this.db, buildings, { name, branchId });
     }
 
     update(id: number, name: string, branchId?: number) {
-        const updateData: any = { name, updatedAt: new Date() };
+        const updateData: Record<string, unknown> = { name, updatedAt: new Date() };
         if (branchId !== undefined) {
             updateData.branchId = branchId;
         }
-        return this.db
-            .update(buildings)
-            .set(updateData)
-            .where(eq(buildings.id, id))
-            .returning();
+        return updateReturning(this.db, buildings, eq(buildings.id, id), updateData);
     }
 
     delete(id: number) {
-        return this.db.delete(buildings).where(eq(buildings.id, id)).returning();
+        return deleteReturningById(this.db, buildings, id);
     }
 }

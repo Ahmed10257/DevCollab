@@ -1,13 +1,13 @@
 import {
-  pgTable,
-  serial,
+  mysqlTable,
+  int,
   varchar,
   text,
   timestamp,
-} from 'drizzle-orm/pg-core';
+} from 'drizzle-orm/mysql-core';
 
-export const manufacturers = pgTable('manufacturers', {
-  id: serial('id').primaryKey(),
+export const manufacturers = mysqlTable('manufacturers', {
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull().unique(),
   description: text('description'),
   website: varchar('website', { length: 255 }),

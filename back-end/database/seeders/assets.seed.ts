@@ -1,20 +1,7 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { assets, networkingDevices, computers } from './drizzle/schema/schema';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedAssets() {
+export async function seedAssets({ db, schema }: SeedContext) {
   try {
     console.log('🌱 Starting assets seeding...');
 
@@ -67,7 +54,7 @@ async function seedAssets() {
     console.log('🔌 Inserting networking assets...');
     
     // Switches
-    const switch1 = await db.insert(assets).values({
+    const switch1 = await insertReturning(db, schema.assets, {
       name: 'Cisco Catalyst 2960-X Series',
       categoryId: networkingCategory.id,
       typeId: switchType!.id,
@@ -83,9 +70,9 @@ async function seedAssets() {
       warrantyExpiry: '2026-01-15',
       responsibleUserId: users[0]?.id,
       notes: '24-port Gigabit switch',
-    }).returning();
+    });
 
-    await db.insert(networkingDevices).values({
+    await insertReturning(db, schema.networkingDevices, {
       assetId: switch1[0].id,
       ipAddress: '192.168.1.10',
       macAddress: '00:1A:2B:3C:4D:5E',
@@ -94,7 +81,7 @@ async function seedAssets() {
       firmwareVersion: '15.2(7)E',
     });
 
-    const switch2 = await db.insert(assets).values({
+    const switch2 = await insertReturning(db, schema.assets, {
       name: 'HP Aruba 2930F Series',
       categoryId: networkingCategory.id,
       typeId: switchType!.id,
@@ -110,9 +97,9 @@ async function seedAssets() {
       warrantyExpiry: '2026-03-20',
       responsibleUserId: users[0]?.id,
       notes: '48-port Gigabit switch',
-    }).returning();
+    });
 
-    await db.insert(networkingDevices).values({
+    await insertReturning(db, schema.networkingDevices, {
       assetId: switch2[0].id,
       ipAddress: '192.168.1.11',
       macAddress: '00:1A:2B:3C:4D:5F',
@@ -122,7 +109,7 @@ async function seedAssets() {
     });
 
     // Routers
-    const router1 = await db.insert(assets).values({
+    const router1 = await insertReturning(db, schema.assets, {
       name: 'Cisco ISR 4000 Series Router',
       categoryId: networkingCategory.id,
       typeId: routerType!.id,
@@ -138,9 +125,9 @@ async function seedAssets() {
       warrantyExpiry: '2025-11-10',
       responsibleUserId: users[0]?.id,
       notes: 'Main office router',
-    }).returning();
+    });
 
-    await db.insert(networkingDevices).values({
+    await insertReturning(db, schema.networkingDevices, {
       assetId: router1[0].id,
       ipAddress: '192.168.1.1',
       macAddress: '00:1A:2B:3C:4D:60',
@@ -150,7 +137,7 @@ async function seedAssets() {
     });
 
     // Access Points
-    const ap1 = await db.insert(assets).values({
+    const ap1 = await insertReturning(db, schema.assets, {
       name: 'HP Aruba AP-515',
       categoryId: networkingCategory.id,
       typeId: accessPointType!.id,
@@ -166,9 +153,9 @@ async function seedAssets() {
       warrantyExpiry: '2024-05-15',
       responsibleUserId: users[0]?.id,
       notes: 'Floor 1 main area WiFi',
-    }).returning();
+    });
 
-    await db.insert(networkingDevices).values({
+    await insertReturning(db, schema.networkingDevices, {
       assetId: ap1[0].id,
       ipAddress: '192.168.1.50',
       macAddress: '00:1A:2B:3C:4D:61',
@@ -182,7 +169,7 @@ async function seedAssets() {
     console.log('💻 Inserting computer assets...');
 
     // Desktops
-    const desktop1 = await db.insert(assets).values({
+    const desktop1 = await insertReturning(db, schema.assets, {
       name: 'Dell OptiPlex 7090',
       categoryId: computersCategory.id,
       typeId: desktopType!.id,
@@ -199,9 +186,9 @@ async function seedAssets() {
       responsibleUserId: users[0]?.id,
       assignedUserId: users[1]?.id,
       notes: 'Assigned to IT department',
-    }).returning();
+    });
 
-    await db.insert(computers).values({
+    await insertReturning(db, schema.computers, {
       assetId: desktop1[0].id,
       deviceType: 'Desktop',
       cpu: 'Intel Core i7-11700',
@@ -214,7 +201,7 @@ async function seedAssets() {
       operatingSystem: 'Windows 11 Pro',
     });
 
-    const desktop2 = await db.insert(assets).values({
+    const desktop2 = await insertReturning(db, schema.assets, {
       name: 'Lenovo ThinkCentre M90a',
       categoryId: computersCategory.id,
       typeId: desktopType!.id,
@@ -231,9 +218,9 @@ async function seedAssets() {
       responsibleUserId: users[0]?.id,
       assignedUserId: users[2]?.id,
       notes: 'HR department workstation',
-    }).returning();
+    });
 
-    await db.insert(computers).values({
+    await insertReturning(db, schema.computers, {
       assetId: desktop2[0].id,
       deviceType: 'Desktop',
       cpu: 'Intel Core i5-11500',
@@ -247,7 +234,7 @@ async function seedAssets() {
     });
 
     // Laptops
-    const laptop1 = await db.insert(assets).values({
+    const laptop1 = await insertReturning(db, schema.assets, {
       name: 'Dell Latitude 5420',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
@@ -264,9 +251,9 @@ async function seedAssets() {
       responsibleUserId: users[0]?.id,
       assignedUserId: users[3]?.id,
       notes: 'Sales department laptop',
-    }).returning();
+    });
 
-    await db.insert(computers).values({
+    await insertReturning(db, schema.computers, {
       assetId: laptop1[0].id,
       deviceType: 'Laptop',
       cpu: 'Intel Core i7-1185G7',
@@ -278,7 +265,7 @@ async function seedAssets() {
       operatingSystem: 'Windows 11 Pro',
     });
 
-    const laptop2 = await db.insert(assets).values({
+    const laptop2 = await insertReturning(db, schema.assets, {
       name: 'Lenovo ThinkPad X1 Carbon',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
@@ -295,9 +282,9 @@ async function seedAssets() {
       responsibleUserId: users[0]?.id,
       assignedUserId: users[4]?.id,
       notes: 'Executive laptop',
-    }).returning();
+    });
 
-    await db.insert(computers).values({
+    await insertReturning(db, schema.computers, {
       assetId: laptop2[0].id,
       deviceType: 'Laptop',
       cpu: 'Intel Core i7-1165G7',
@@ -309,7 +296,7 @@ async function seedAssets() {
       operatingSystem: 'Windows 11 Pro',
     });
 
-    const laptop3 = await db.insert(assets).values({
+    const laptop3 = await insertReturning(db, schema.assets, {
       name: 'Dell Latitude 5420',
       categoryId: computersCategory.id,
       typeId: laptopType!.id,
@@ -325,9 +312,9 @@ async function seedAssets() {
       warrantyExpiry: '2026-09-10',
       responsibleUserId: users[0]?.id,
       notes: 'Spare laptop for temporary assignments',
-    }).returning();
+    });
 
-    await db.insert(computers).values({
+    await insertReturning(db, schema.computers, {
       assetId: laptop3[0].id,
       deviceType: 'Laptop',
       cpu: 'Intel Core i5-1135G7',
@@ -346,14 +333,9 @@ async function seedAssets() {
     console.log('   - Computer Assets: 6 (2 desktops, 4 laptops)');
     console.log('   - Total Assets: 10');
     console.log('\n✨ Assets seeding completed successfully!');
-
-    await pool.end();
-    process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding assets:', error);
-    await pool.end();
-    process.exit(1);
+throw error;
   }
 }
 
-seedAssets();

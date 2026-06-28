@@ -1,11 +1,11 @@
-import { pgTable, varchar, integer, timestamp } from 'drizzle-orm/pg-core';
+import { mysqlTable, varchar, int, timestamp } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 import { floors } from './floor.schema';
 
-export const rooms = pgTable('rooms', {
-    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+export const rooms = mysqlTable('rooms', {
+    id: int('id').autoincrement().primaryKey(),
     name: varchar('name', { length: 100 }).notNull(),
-    floorId: integer('floor_id').notNull().references(() => floors.id, { onDelete: 'cascade' }),
+    floorId: int('floor_id').notNull().references(() => floors.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });

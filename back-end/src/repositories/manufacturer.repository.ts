@@ -1,14 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DRIZZLE } from '../drizzle/drizzle.module';
-import * as schema from '../drizzle/schema/schema';
+import { DrizzleDB } from '../drizzle/types/drizzle';
 import { manufacturers, NewManufacturer } from '../drizzle/schema/manufacturer.schema';
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class ManufacturerRepository {
   constructor(
-    @Inject(DRIZZLE) private db: NodePgDatabase<typeof schema>,
+    @Inject(DRIZZLE) private db: DrizzleDB,
   ) {}
 
   async findAll() {
@@ -25,24 +29,20 @@ export class ManufacturerRepository {
   }
 
   async create(data: NewManufacturer) {
-    const result = await this.db.insert(manufacturers).values(data).returning();
+    const result = await insertReturning(this.db, manufacturers, data);
     return result[0];
   }
 
   async update(id: number, data: Partial<NewManufacturer>) {
-    const result = await this.db
-      .update(manufacturers)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(manufacturers.id, id))
-      .returning();
+    const result = await updateReturning(this.db, manufacturers, eq(manufacturers.id, id), {
+      ...data,
+      updatedAt: new Date(),
+    });
     return result[0] || null;
   }
 
   async remove(id: number) {
-    const result = await this.db
-      .delete(manufacturers)
-      .where(eq(manufacturers.id, id))
-      .returning();
+    const result = await deleteReturningById(this.db, manufacturers, id);
     return result[0] || null;
   }
 }

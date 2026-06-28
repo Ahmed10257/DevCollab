@@ -1,75 +1,12 @@
 {
   "version": "7",
-  "dialect": "postgresql",
+  "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
-      "version": "7",
-      "when": 1746686638435,
-      "tag": "0000_sleepy_black_tom",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1746695211645,
-      "tag": "0001_blushing_punisher",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1746699275555,
-      "tag": "0002_serious_luminals",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1746699400275,
-      "tag": "0003_mixed_butterfly",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1760727207666,
-      "tag": "0004_many_boomerang",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1760736342475,
-      "tag": "0005_adorable_wild_pack",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1760792417329,
-      "tag": "0006_known_scream",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1760818487333,
-      "tag": "0007_spicy_the_watchers",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1760822580302,
-      "tag": "0008_stale_namorita",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1778977600000,
-      "tag": "0009_ad_user_fields",
+      "version": "5",
+      "when": 1782622270893,
+      "tag": "0000_numerous_grey_gargoyle",
       "breakpoints": true
     }
   ]

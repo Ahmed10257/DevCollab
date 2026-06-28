@@ -9,6 +9,11 @@ import { cameras } from '../drizzle/schema/camera.schema';
 import { ipPhones } from '../drizzle/schema/ip-phone.schema';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 export interface AssetFilters {
 categoryId?: number;
@@ -167,24 +172,20 @@ details: categoryDetails,
 }
 
 async create(data: typeof assets.$inferInsert) {
-const result = await this.db.insert(assets).values(data).returning();
+const result = await insertReturning(this.db, assets, data);
 return result[0];
 }
 
 async update(id: number, data: Partial<typeof assets.$inferInsert>) {
-const result = await this.db
-.update(assets)
-.set({ ...data, updatedAt: new Date() })
-.where(eq(assets.id, id))
-.returning();
+const result = await updateReturning(this.db, assets, eq(assets.id, id), {
+...data,
+updatedAt: new Date(),
+});
 return result[0];
 }
 
 async delete(id: number) {
-const result = await this.db
-.delete(assets)
-.where(eq(assets.id, id))
-.returning();
+const result = await deleteReturningById(this.db, assets, id);
 return result[0];
 }
 }

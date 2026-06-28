@@ -1,18 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
 
-const pool = new Pool({
-connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedRacks() {
+export async function seedRacks({ db, schema }: SeedContext) {
 try {
 console.log('🌱 Starting racks seeding...\n');
 
@@ -28,7 +18,7 @@ const users = await db.query.users.findMany();
 const racksCategory = categories.find((c) => c.name === 'Racks');
 if (!racksCategory) {
 console.log('❌ Racks category not found');
-process.exit(1);
+throw new Error('Seeding prerequisite not met');
 }
 
 const serverRackType = types.find((t) => t.name === 'Server Rack');
@@ -40,9 +30,7 @@ const mainBuilding = buildings[0];
 // Create sample rack assets
 console.log('📦 Creating rack assets...');
 
-const rack1Asset = await db
-.insert(schema.assets)
-.values({
+const rack1Asset = await insertReturning(db, schema.assets, {
 name: 'Server Rack 01',
 categoryId: racksCategory.id,
 typeId: serverRackType!.id,
@@ -54,12 +42,9 @@ status: 'In Use',
 purchaseDate: '2021-05-10',
 warrantyExpiry: '2024-05-10',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-const rack2Asset = await db
-.insert(schema.assets)
-.values({
+const rack2Asset = await insertReturning(db, schema.assets, {
 name: 'Network Rack 01',
 categoryId: racksCategory.id,
 typeId: networkRackType!.id,
@@ -71,8 +56,7 @@ status: 'In Use',
 purchaseDate: '2021-06-15',
 warrantyExpiry: '2024-06-15',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 console.log(`✅ Created 2 rack assets\n`);
 
@@ -113,8 +97,7 @@ console.log(`✅ Created 2 rack details\n`);
 console.log('✨ Racks seeding completed successfully!\n');
 } catch (error) {
 console.error('❌ Error seeding racks:', error);
-process.exit(1);
+throw error;
 }
 }
 
-seedRacks().finally(() => pool.end());

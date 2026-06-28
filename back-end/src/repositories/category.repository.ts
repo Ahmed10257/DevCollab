@@ -3,6 +3,11 @@ import { eq } from 'drizzle-orm';
 import { categories } from '../drizzle/schema/category.schema';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class CategoryRepository {
@@ -21,27 +26,20 @@ export class CategoryRepository {
   }
 
   async create(data: typeof categories.$inferInsert) {
-    const result = await this.db
-      .insert(categories)
-      .values(data)
-      .returning();
+    const result = await insertReturning(this.db, categories, data);
     return result[0];
   }
 
   async update(id: number, data: Partial<typeof categories.$inferInsert>) {
-    const result = await this.db
-      .update(categories)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(categories.id, id))
-      .returning();
+    const result = await updateReturning(this.db, categories, eq(categories.id, id), {
+      ...data,
+      updatedAt: new Date(),
+    });
     return result[0];
   }
 
   async delete(id: number) {
-    const result = await this.db
-      .delete(categories)
-      .where(eq(categories.id, id))
-      .returning();
+    const result = await deleteReturningById(this.db, categories, id);
     return result[0];
   }
 }

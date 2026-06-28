@@ -1,28 +1,13 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { categories, types, manufacturers, models } from './drizzle/schema/schema';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedCategoriesAndTypes() {
+export async function seedCategoriesTypes({ db, schema }: SeedContext) {
   try {
     console.log('🌱 Starting categories and types seeding...');
 
     // Insert Categories
     console.log('📁 Inserting categories...');
-    const insertedCategories = await db
-      .insert(categories)
-      .values([
+    const insertedCategories = await insertReturning(db, schema.categories, [
         {
           name: 'Networking',
           description: 'Network infrastructure equipment',
@@ -56,8 +41,7 @@ async function seedCategoriesAndTypes() {
           description: 'Equipment racks and enclosures',
         },
 
-      ])
-      .returning();
+      ]);
 
     console.log(`✅ Inserted ${insertedCategories.length} categories`);
 
@@ -89,9 +73,7 @@ async function seedCategoriesAndTypes() {
 
     // Insert Types
     console.log('🏷️  Inserting types...');
-    const insertedTypes = await db
-      .insert(types)
-      .values([
+    const insertedTypes = await insertReturning(db, schema.types, [
         // Networking types
         {
           name: 'Switches',
@@ -195,16 +177,13 @@ async function seedCategoriesAndTypes() {
           categoryId: racksCategory!.id,
           description: 'Network equipment racks',
         },
-      ])
-      .returning();
+      ]);
 
     console.log(`✅ Inserted ${insertedTypes.length} types`);
 
     // Insert Manufacturers
     console.log('🏢 Inserting manufacturers...');
-    const insertedManufacturers = await db
-      .insert(manufacturers)
-      .values([
+    const insertedManufacturers = await insertReturning(db, schema.manufacturers, [
         {
           name: 'Cisco',
           description: 'American multinational technology conglomerate specializing in networking hardware',
@@ -310,8 +289,7 @@ async function seedCategoriesAndTypes() {
           supportEmail: 'support@tripplite.com',
           supportPhone: '+1-773-869-1234',
         },
-      ])
-      .returning();
+      ]);
 
     console.log(`✅ Inserted ${insertedManufacturers.length} manufacturers`);
 
@@ -334,9 +312,7 @@ async function seedCategoriesAndTypes() {
 
     // Insert Models
     console.log('📦 Inserting models...');
-    const insertedModels = await db
-      .insert(models)
-      .values([
+    const insertedModels = await insertReturning(db, schema.models, [
         // Cisco Models
         {
           name: 'Catalyst 2960-X Series',
@@ -638,8 +614,7 @@ async function seedCategoriesAndTypes() {
           description: '42U deep rack enclosure',
           specifications: '42U, 48" depth, Front/rear doors',
         },
-      ])
-      .returning();
+      ]);
 
     console.log(`✅ Inserted ${insertedModels.length} models`);
 
@@ -649,14 +624,9 @@ async function seedCategoriesAndTypes() {
     console.log(`   - Manufacturers: ${insertedManufacturers.length}`);
     console.log(`   - Models: ${insertedModels.length}`);
     console.log('\n✨ Asset management data seeding completed successfully!');
-
-    await pool.end();
-    process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding categories and types:', error);
-    await pool.end();
-    process.exit(1);
+throw error;
   }
 }
 
-seedCategoriesAndTypes();

@@ -1,18 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
-import * as schema from '../src/drizzle/schema/schema';
+import type { SeedContext } from '../connection';
+import { insertReturning } from '../helpers';
 
-// Load environment variables
-dotenv.config();
 
-const pool = new Pool({
-connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
-
-async function seedPrinters() {
+export async function seedPrinters({ db, schema }: SeedContext) {
 try {
 console.log('🌱 Starting printers seeding...\n');
 
@@ -28,7 +18,7 @@ const users = await db.query.users.findMany();
 const printersCategory = categories.find((c) => c.name === 'Printers');
 if (!printersCategory) {
 console.log('❌ Printers category not found');
-process.exit(1);
+throw new Error('Seeding prerequisite not met');
 }
 
 const printerType = types.find((t) => t.name === 'Printer');
@@ -44,9 +34,7 @@ const mainBuilding = buildings[0];
 // Create sample printer assets
 console.log('📦 Creating printer assets...');
 
-const printer1Asset = await db
-.insert(schema.assets)
-.values({
+const printer1Asset = await insertReturning(db, schema.assets, {
 name: 'HP LaserJet Pro Printer',
 categoryId: printersCategory.id,
 typeId: printerType!.id,
@@ -58,12 +46,9 @@ status: 'In Use',
 purchaseDate: '2022-09-20',
 warrantyExpiry: '2024-09-20',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-const printer2Asset = await db
-.insert(schema.assets)
-.values({
+const printer2Asset = await insertReturning(db, schema.assets, {
 name: 'Canon ImageRunner Copier',
 categoryId: printersCategory.id,
 typeId: copierType!.id,
@@ -75,12 +60,9 @@ status: 'In Use',
 purchaseDate: '2022-07-10',
 warrantyExpiry: '2025-07-10',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
-const printer3Asset = await db
-.insert(schema.assets)
-.values({
+const printer3Asset = await insertReturning(db, schema.assets, {
 name: 'HP ScanJet Pro Scanner',
 categoryId: printersCategory.id,
 typeId: scannerType!.id,
@@ -92,8 +74,7 @@ status: 'In Use',
 purchaseDate: '2023-01-05',
 warrantyExpiry: '2025-01-05',
 responsibleUserId: users[0]?.id,
-})
-.returning();
+});
 
 console.log(`✅ Created 3 printer assets\n`);
 
@@ -155,8 +136,7 @@ console.log(`✅ Created 3 printer details\n`);
 console.log('✨ Printers seeding completed successfully!\n');
 } catch (error) {
 console.error('❌ Error seeding printers:', error);
-process.exit(1);
+throw error;
 }
 }
 
-seedPrinters().finally(() => pool.end());

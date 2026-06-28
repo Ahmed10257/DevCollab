@@ -1,17 +1,17 @@
 import {
-  pgTable,
-  serial,
+  mysqlTable,
+  int,
   varchar,
   text,
   timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
+  int,
+} from 'drizzle-orm/mysql-core';
 import { manufacturers } from './manufacturer.schema';
 
-export const models = pgTable('models', {
-  id: serial('id').primaryKey(),
+export const models = mysqlTable('models', {
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
-  manufacturerId: integer('manufacturer_id')
+  manufacturerId: int('manufacturer_id')
     .notNull()
     .references(() => manufacturers.id, { onDelete: 'cascade' }),
   modelNumber: varchar('model_number', { length: 100 }),

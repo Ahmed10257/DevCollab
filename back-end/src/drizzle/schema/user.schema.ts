@@ -1,8 +1,8 @@
-import { pgTable, varchar, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { mysqlTable, varchar, int, boolean, timestamp } from 'drizzle-orm/mysql-core';
 import { teams } from './team.schema';
 
-export const users = pgTable('users', {
-    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+export const users = mysqlTable('users', {
+    id: int('id').autoincrement().primaryKey(),
     username: varchar('username', { length: 100 }).unique(),
     name: varchar('name', { length: 100 }).notNull(),
     email: varchar('email', { length: 100 }).notNull().unique(),
@@ -11,6 +11,6 @@ export const users = pgTable('users', {
     refreshToken: varchar('refresh_token', { length: 255 }),
     isVerified: boolean('is_verified').default(false),
     isLeader: boolean('is_leader').default(false),
-    teamId: integer('team_id').references(() => teams.id),
+    teamId: int('team_id').references(() => teams.id),
     createdAt: timestamp('created_at').defaultNow(),
 });

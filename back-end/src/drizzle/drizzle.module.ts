@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as schema from './schema/schema';
-import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { drizzle, MySql2Database } from 'drizzle-orm/mysql2';
+import mysql from 'mysql2/promise';
 
 export const DRIZZLE = Symbol('drizzle-connection');
 @Module({
@@ -13,11 +13,10 @@ export const DRIZZLE = Symbol('drizzle-connection');
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const databaseURL = configService.get<string>('DATABASE_URL');
-        const pool = new Pool({
-          connectionString: databaseURL,
-          ssl: false, // Enabled in production
+        const pool = mysql.createPool({
+          uri: databaseURL,
         });
-        return drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
+        return drizzle(pool, { schema, mode: 'default' }) as MySql2Database<typeof schema>;
       },
     },
   ],

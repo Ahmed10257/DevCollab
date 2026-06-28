@@ -3,6 +3,11 @@ import { eq } from 'drizzle-orm';
 import { types } from '../drizzle/schema/type.schema';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
+import {
+    deleteReturningById,
+    insertReturning,
+    updateReturning,
+} from '../drizzle/utils/mysql-helpers';
 
 @Injectable()
 export class TypeRepository {
@@ -28,27 +33,20 @@ export class TypeRepository {
   }
 
   async create(data: typeof types.$inferInsert) {
-    const result = await this.db
-      .insert(types)
-      .values(data)
-      .returning();
+    const result = await insertReturning(this.db, types, data);
     return result[0];
   }
 
   async update(id: number, data: Partial<typeof types.$inferInsert>) {
-    const result = await this.db
-      .update(types)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(types.id, id))
-      .returning();
+    const result = await updateReturning(this.db, types, eq(types.id, id), {
+      ...data,
+      updatedAt: new Date(),
+    });
     return result[0];
   }
 
   async delete(id: number) {
-    const result = await this.db
-      .delete(types)
-      .where(eq(types.id, id))
-      .returning();
+    const result = await deleteReturningById(this.db, types, id);
     return result[0];
   }
 }
